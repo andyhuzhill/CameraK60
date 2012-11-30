@@ -27,7 +27,7 @@
 					<folderInfo id="com.freescale.arm.cdt.toolchain.config.arm.release.1175027978." name="/" resourcePath="">
 						<toolChain id="com.freescale.arm.cdt.toolchain.arm.release.1892603935" name="ARM Toolchain" superClass="com.freescale.arm.cdt.toolchain.arm.release">
 							<targetPlatform id="com.freescale.arm.cdt.toolchain.targetplatform.93283805" isAbstract="false" name="ARM Target Platform" superClass="com.freescale.arm.cdt.toolchain.targetplatform"/>
-							<builder buildPath="${ProjDirPath}/MK60DN512Z_INTERNAL_RAM" id="com.freescale.arm.cdt.toolchain.builder.1327061658" keepEnvironmentInBuildfile="false" name="GNU Make Builder" parallelizationNumber="1" superClass="com.freescale.arm.cdt.toolchain.builder"/>
+							<builder buildPath="${ProjDirPath}/MK60DN512Z_INTERNAL_RAM" id="com.freescale.arm.cdt.toolchain.builder.1327061658" keepEnvironmentInBuildfile="false" name="GNU Make Builder" parallelBuildWorkspaceOn="true" parallelizationNumber="1" superClass="com.freescale.arm.cdt.toolchain.builder"/>
 							<tool id="com.freescale.arm.cdt.toolchain.linker.2053710206" name="ARM Linker" superClass="com.freescale.arm.cdt.toolchain.linker">
 								<option id="com.freescale.arm.cdt.toolchain.linker.libraries.libSearch.820057269" name="Library Search Paths" superClass="com.freescale.arm.cdt.toolchain.linker.libraries.libSearch" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;${MCUToolsBaseDir}/ARM_EABI_Support/ewl/lib&quot;"/>

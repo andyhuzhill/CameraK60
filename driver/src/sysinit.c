@@ -56,7 +56,7 @@ trace_clk_init(void)
 {
 	//设置跟踪时钟为内核时钟
 	SIM_SOPT2 |= SIM_SOPT2_TRACECLKSEL_MASK;    
-	//在PTA6引脚上使能TRACE_CLKOU功能
+	//在PTA6引脚上使能TRACE_CLKOUT功能
 	PORTA_PCR6 = ( PORT_PCR_MUX(0x7));
 }
 
@@ -70,7 +70,7 @@ fb_clk_init(void)
 {
 	//使能FlexBus模块时钟
 	SIM_SCGC7 |= SIM_SCGC7_FLEXBUS_MASK;
-	//在PTA6引脚上使能FB_CLKOUT功能
+	//在PTC3引脚上使能FB_CLKOUT功能
 	PORTC_PCR3 = ( PORT_PCR_MUX(0x5));
 }
 /*

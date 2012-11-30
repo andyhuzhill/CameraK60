@@ -27,7 +27,8 @@ const uint16 table[]=
 		30, 32, 33, 35, 36, 38, 39, 41, 42, 44, 45, 47, 48
 };
 
-int main(void)
+int 
+main(void)
 {
 	int counter = 0;
 	GPIO_InitTypeDef gpio;
@@ -41,7 +42,7 @@ int main(void)
 
 	GPIO_init(PORT_A, &gpio);
 
-	FTM_PWM_init(FTM_0, CH_2, 150, 100);
+	FTM_PWM_init(FTM_0, CH_2, 150, 10);
 	
 	while(1)
 	{
