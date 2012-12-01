@@ -8,6 +8,8 @@
 
 extern uint32 core_clk_khz;
 
+#define BUFF_SIZE 100
+
 const uint16 table[]=
 {
 		50, 52, 53, 55, 56, 58, 59, 61, 62, 64, 65, 67, 68, 
@@ -27,39 +29,77 @@ const uint16 table[]=
 		30, 32, 33, 35, 36, 38, 39, 41, 42, 44, 45, 47, 48
 };
 
+
 int 
 main(void)
 {
 	int counter = 0;
 	GPIO_InitTypeDef gpio;
+	FIL fdst; //文件
+	FATFS fs;
+	
+	uint32 size, sizetmp;
+	
+	int res;
+	char *str = "终于看到了~";
+	
+	uint8 buff[BUFF_SIZE];
 	
 	DELAY_init(core_clk_khz /1000);
 
-	gpio.MODE = Mode_OUT;
-	gpio.PIN = GPIO_Pin_11;
-	gpio.STATE = State_High;
-	gpio.IRQC = IRQ_Disable;
-
-	GPIO_init(PORT_D, &gpio);
-	
-	UART_init(UART_0, Baud_9600);
-	
-//	gpio.PIN = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
-//	gpio.STATE = State_Low;
-//	
+//	gpio.MODE = Mode_OUT;
+//	gpio.PIN = GPIO_Pin_11;
+//	gpio.STATE = State_High;
+//	gpio.IRQC = IRQ_Disable;
+//
 //	GPIO_init(PORT_D, &gpio);
+//	
+//	UART_init(UART_0, Baud_9600);
+//
+//	FTM_PWM_init(FTM_0, CH_2, 1000, 90);
+	
+	for (size = 0; size < BUFF_SIZE; size++) buff[size]=0;
+		
+	f_mount(0, &fs);
+	
+	res = f_open(&fdst, "0:/a.txt", FA_OPEN_ALWAYS |FA_WRITE |FA_READ);
+	
+	if (FR_DISK_ERR == res)
+	{
+		UART_send_string(UART_0, "\n没有插入SD卡？\n");
+		return ;
+	}else if ( FR_OK == res)
+	{
+		UART_send_string(UART_0, "\n 文件打开成功\n");
+	}else
+	{
+		UART_send_string(UART_0, "\n返回值异常\n");
+	}
+	
+	f_puts(str, &fdst);
+	 
+	size = f_size(&fdst);
+	
+	UART_send_string(UART_0, "\n文件大小为 unknown");
+	
+	if (size > BUFF_SIZE) size = BUFF_SIZE;
+	
+	f_lseek(&fdst, 0);
+	f_read (&fdst, buff, size, (UINT *)&sizetmp);
+	
+	UART_send_string(UART_0, buff);
 
-	FTM_PWM_init(FTM_1, CH_0, 1000, 90);
+	f_close(&fdst);
 	
 	while(1)
 	{
-		for(counter = 0; counter < 200; counter++)
-		{
-			FTM_PWM_set_duty(FTM_1, CH_0, table[counter]);
-			delay_ms(5);
-		}
+//		for(counter = 0; counter < 200; counter++)
+//		{
+//			FTM_PWM_set_duty(FTM_0, CH_2, table[counter]);
+//			delay_ms(5);
+//		}
 		GPIO_toggle(PORT_D);
 		delay_ms(5);
-		UART_send_string(UART_0, "hello world\n");
+//		UART_send_string(UART_0, "hello world\n");
 	}
 }

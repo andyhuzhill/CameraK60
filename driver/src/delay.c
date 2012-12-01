@@ -80,3 +80,34 @@ delay_ms(uint32 ms)
 	}
 }
 
+/*
+*  函数名称：time_delay_ms
+*  功能说明：延时函数，使用定功耗定时器延时，准确
+*  参数说明：ms   延时时间，单位为ms
+*  函数返回：无
+*************************************************************************/
+void 
+time_delay_ms(uint32 ms)
+{
+    /* Make sure the clock to the LPTMR is enabled */
+    SIM_SCGC5 |= SIM_SCGC5_LPTIMER_MASK;
+
+    /* Set the compare value to the number of ms to delay */
+    LPTMR0_CMR = ms;
+
+    /* Set up LPTMR to use 1kHz LPO with no prescaler as its clock source */
+    LPTMR0_PSR = LPTMR_PSR_PCS(1) | LPTMR_PSR_PBYP_MASK;
+
+    /* Start the timer */
+    LPTMR0_CSR = LPTMR_CSR_TEN_MASK;
+
+    /* Wait for counter to reach compare value */
+    while (!(LPTMR0_CSR & LPTMR_CSR_TCF_MASK));
+
+    /* Clear Timer Compare Flag */
+    LPTMR0_CSR &= ~LPTMR_CSR_TEN_MASK;
+
+    return;
+}
+
+

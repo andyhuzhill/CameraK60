@@ -1,4 +1,4 @@
- /*
+/*
  * common.h
  *
  *  Created on: Nov 21, 2012
@@ -27,7 +27,7 @@
 #elif defined(__IAR_SYSTEMS_ICC__)
 #define __relocate_code__ __ramfunc
 #else
-  #error Not supported compiler type
+#error Not supported compiler type
 #endif
 
 
@@ -38,6 +38,12 @@
 #define ARM_INTERRUPT_LEVEL_BITS 	4 //中断优先级
 #define EINT	asm(" CPSIE i")       //开总中断
 #define DINT    asm(" CPSID i")       //关总中断
+
+
+//
+#define TRUE 1
+#define FALSE 0
+#define NULL 0
 
 /*
  * 类型定义
@@ -119,6 +125,12 @@ disable_irq(uint16 irq);
  */
 void 
 set_irq_priority(uint16 irq, uint16 prio);
+
+
+//延时函数
+#include "delay.h"
+#define DELAY() 		time_delay_ms(500)
+#define DELAY_MS(ms) 	time_delay_ms(ms)
 
 /*
  * 断言
