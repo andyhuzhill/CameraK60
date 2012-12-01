@@ -36,22 +36,30 @@ main(void)
 	DELAY_init(core_clk_khz /1000);
 
 	gpio.MODE = Mode_OUT;
-	gpio.PIN = GPIO_Pin_14;
+	gpio.PIN = GPIO_Pin_11;
 	gpio.STATE = State_High;
 	gpio.IRQC = IRQ_Disable;
 
-	GPIO_init(PORT_A, &gpio);
+	GPIO_init(PORT_D, &gpio);
+	
+	UART_init(UART_0, Baud_9600);
+	
+//	gpio.PIN = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+//	gpio.STATE = State_Low;
+//	
+//	GPIO_init(PORT_D, &gpio);
 
-	FTM_PWM_init(FTM_0, CH_2, 150, 10);
+	FTM_PWM_init(FTM_1, CH_0, 1000, 90);
 	
 	while(1)
 	{
 		for(counter = 0; counter < 200; counter++)
 		{
-			FTM_PWM_set_duty(FTM_0, CH_2, table[counter]);
-			delay_ms(50);
+			FTM_PWM_set_duty(FTM_1, CH_0, table[counter]);
+			delay_ms(5);
 		}
-		GPIO_toggle_bit(PORT_A, 14);
-		delay_ms(500);
+		GPIO_toggle(PORT_D);
+		delay_ms(5);
+		UART_send_string(UART_0, "hello world\n");
 	}
 }

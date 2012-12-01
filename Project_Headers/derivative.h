@@ -6,5 +6,6 @@
 /* Include the derivative-specific header file */
 #include <MK60DZ10.h>
 #include "k60_gpio.h"
+#include "k60_uart.h"
 #include "k60_ftm.h"
 #include "delay.h"

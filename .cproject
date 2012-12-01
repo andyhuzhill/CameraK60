@@ -650,6 +650,8 @@
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.pathentry"/>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 		</cconfiguration>
 		<cconfiguration id="com.freescale.arm.cdt.toolchain.config.arm.release.501179006">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.freescale.arm.cdt.toolchain.config.arm.release.501179006" moduleId="org.eclipse.cdt.core.settings" name="MK60DN512Z_INTERNAL_FLASH">
@@ -675,7 +677,7 @@
 					<folderInfo id="com.freescale.arm.cdt.toolchain.config.arm.release.501179006." name="/" resourcePath="">
 						<toolChain id="com.freescale.arm.cdt.toolchain.arm.release.527123393" name="ARM Toolchain" superClass="com.freescale.arm.cdt.toolchain.arm.release">
 							<targetPlatform id="com.freescale.arm.cdt.toolchain.targetplatform.227842528" isAbstract="false" name="ARM Target Platform" superClass="com.freescale.arm.cdt.toolchain.targetplatform"/>
-							<builder buildPath="${ProjDirPath}/MK60DN512Z_INTERNAL_FLASH" id="com.freescale.arm.cdt.toolchain.builder.1849789187" keepEnvironmentInBuildfile="false" name="GNU Make Builder" parallelizationNumber="1" superClass="com.freescale.arm.cdt.toolchain.builder"/>
+							<builder buildPath="${ProjDirPath}/MK60DN512Z_INTERNAL_FLASH" id="com.freescale.arm.cdt.toolchain.builder.1849789187" keepEnvironmentInBuildfile="false" name="GNU Make Builder" parallelBuildWorkspaceOn="true" parallelizationNumber="1" superClass="com.freescale.arm.cdt.toolchain.builder"/>
 							<tool id="com.freescale.arm.cdt.toolchain.linker.899073871" name="ARM Linker" superClass="com.freescale.arm.cdt.toolchain.linker">
 								<option id="com.freescale.arm.cdt.toolchain.linker.libraries.libSearch.2025310558" name="Library Search Paths" superClass="com.freescale.arm.cdt.toolchain.linker.libraries.libSearch" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;${MCUToolsBaseDir}/ARM_EABI_Support/ewl/lib&quot;"/>
@@ -1300,6 +1302,8 @@
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.pathentry"/>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

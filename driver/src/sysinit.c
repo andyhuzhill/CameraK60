@@ -12,10 +12,6 @@
  */
 
 #include "sysinit.h"
-//
-////全局变量声明
-//uint32 core_clk_khz;    //芯片内核时钟频率，kHz
-//uint32 periph_clk_khz;  //芯片总线时钟频率，kHz
 
 /*
  * @说明: 系统初始化设定 该函数在 CodeWarrior的启动代码中已经被调用过了，不必重新
@@ -34,7 +30,7 @@ __init_user(void)
 			| SIM_SCGC5_PORTD_MASK
 			| SIM_SCGC5_PORTE_MASK );
 
-	//开启系统时钟,得到96MHz内核/系统时钟，48Mhz总线时钟
+	//开启系统时钟,得到内核/系统时钟, 总线时钟
 	core_clk_khz=pll_init(CORE_CLK_MHZ);
 	periph_clk_khz = core_clk_khz / (((SIM_CLKDIV1 //外设时钟（总线时钟，KHz）
 			& SIM_CLKDIV1_OUTDIV2_MASK) >> 24)+ 1);  

@@ -182,6 +182,123 @@ FTM_PWM_set_freq(FTM_TypeDef ftmn, Channel_TypeDef chan, uint32 freq)
 	FTM_MOD_REG(FTMx[ftmn])   = mod;                                                    //Modulo value模数, EPWM的周期为 ：MOD - CNTIN + 0x0001
 	FTM_CNTIN_REG(FTMx[ftmn]) = 0;                                                      //Counter Initial Value 计数器初始化值
 	FTM_CNT_REG(FTMx[ftmn])   = 0;                                                      //计数器。只有低16位可用
+
+	return 0;
+}
+
+
+/*
+ * @说明: 输入捕获初始化
+ * @参数: ftmn 模块号
+ * 		  chan 通道号
+ * 		  capcfg  捕获类型
+ * @返回值: 0为正常 否则为异常
+ */
+uint8
+FTM_Capture_init(FTM_TypeDef ftmn, Channel_TypeDef chan, Cap_TypeDef capcfg)
+{
+	assert((ftmn == FTM_0) || ((ftmn == FTM_1|| ftmn == FTM_2) && (chan <= CH_1)));
+
+	//开启时钟和IO复用
+	switch(ftmn)
+	{
+	case FTM_0:
+	{
+		SIM_SCGC6 |= SIM_SCGC6_FTM0_MASK;  //使能FTM0时钟
+		switch(chan)
+		{
+		case CH_0:
+		case CH_1:
+		case CH_2:
+		case CH_3:
+			SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;  // PTC时钟使能
+			PORT_PCR_REG(PORTC_BASE_PTR, chan+1) = PORT_PCR_MUX(4);  //PTC1 复用
+			break;
+		case CH_4:
+		case CH_5:
+		case CH_6:
+		case CH_7:
+			SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
+			PORT_PCR_REG(PORTD_BASE_PTR, chan) = PORT_PCR_MUX(4);
+		default:
+			return -1;
+			break;
+		}
+		break;
+	}
+	case FTM_1:
+	{
+		switch(chan)
+		{
+		case CH_0:
+		case CH_1:
+			PORT_PCR_REG(PORTA_BASE_PTR, chan+8) = PORT_PCR_MUX(3);
+			break;
+		default:
+			return -1;
+		}
+		break;
+	}	
+	case FTM_2:
+	{
+		switch(chan)
+		{
+		case CH_0:
+		case CH_1:
+			PORT_PCR_REG(PORTA_BASE_PTR, chan+10) = PORT_PCR_MUX(3);
+			break;
+		default:
+			return -1;
+			break;
+		}
+		break;
+	}
+	default:
+		return -1;
+		break;
+	}
+
+	//设置输入捕获功能
+
+	switch(capcfg)
+	{
+	case Rising:
+	{
+		FTM_CnSC_REG(FTMx[ftmn], 0) |= (FTM_CnSC_ELSA_MASK | FTM_CnSC_CHIE_MASK);
+		FTM_CnSC_REG(FTMx[ftmn], 0) &= ~(FTM_CnSC_ELSB_MASK | FTM_CnSC_MSB_MASK \
+				| FTM_CnSC_MSA_MASK);
+		break;
+	}
+	case Falling:
+	{
+		FTM_CnSC_REG(FTMx[ftmn], 0) |= (FTM_CnSC_ELSB_MASK | FTM_CnSC_CHIE_MASK);
+		FTM_CnSC_REG(FTMx[ftmn], 0) &= ~(FTM_CnSC_ELSA_MASK | FTM_CnSC_MSB_MASK \
+				| FTM_CnSC_MSA_MASK);
+		break;
+	}
+	case Rising_Falling:
+	{
+		FTM_CnSC_REG(FTMx[ftmn], 0) |= (FTM_CnSC_ELSA_MASK | FTM_CnSC_ELSB_MASK \
+				| FTM_CnSC_CHIE_MASK);
+		FTM_CnSC_REG(FTMx[ftmn], 0) &= ~( FTM_CnSC_MSB_MASK | FTM_CnSC_MSA_MASK);
+		break;
+	}
+	default:
+		return -1;
+		break;
+	}
+	
+	FTM_SC_REG(FTMx[ftmn]) = FTM_SC_CLKS(0x1);  //系统时钟
+
+	FTM_MODE_REG(FTMx[ftmn]) = FTM_MODE_WPDIS_MASK;
+	FTM_COMBINE_REG(FTMx[ftmn]) = 0;
+	FTM_MODE_REG(FTMx[ftmn]) &= ~FTM_MODE_FTMEN_MASK;
+	FTM_CNTIN_REG(FTMx[ftmn]) = 0;
+	
+	FTM_STATUS_REG(FTMx[ftmn]) = 0x00; 			//清中断标志
+	
+	//开启输入捕获中断
+	enable_irq(78-16+ftmn);
 	
 	return 0;
 }

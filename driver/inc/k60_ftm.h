@@ -36,6 +36,12 @@ typedef enum{
 	CH_7 = 7,  // 	PTD7	x		x
 }Channel_TypeDef;
 
+typedef enum{
+	Rising = 0,  //上升沿捕获
+	Falling = 1, //下降沿捕获
+	Rising_Falling  = 2 //跳变沿捕获
+}Cap_TypeDef;
+
 /*
  * @说明: 初始化FTM的PWM功能，并设置频率、占空比
  * @参数: ftmn 模块号
@@ -67,6 +73,14 @@ FTM_PWM_set_duty(FTM_TypeDef ftmn, Channel_TypeDef chan, uint32 duty);
 uint8
 FTM_PWM_set_freq(FTM_TypeDef ftmn, Channel_TypeDef chan, uint32 freq);
 
-
+/*
+ * @说明: 输入捕获初始化
+ * @参数: ftmn 模块号
+ * 		  chan 通道号
+ * 		  capcfg 捕获类型
+ * @返回值: 0为正常， 非0为异常
+ */
+uint8
+FTM_Capture_init(FTM_TypeDef ftmn, Channel_TypeDef chan, Cap_TypeDef capcfg);
 
 #endif /* K60_FTM_H_ */
