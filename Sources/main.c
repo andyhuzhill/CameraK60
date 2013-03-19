@@ -14,6 +14,7 @@
 
 #include "derivative.h" /* include peripheral declarations */
 
+
 uint8 img_bin_buff[CAMERA_SIZE];
 
 

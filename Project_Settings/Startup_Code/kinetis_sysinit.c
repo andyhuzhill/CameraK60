@@ -6,6 +6,7 @@
 
 #include "kinetis_sysinit.h"
 #include "derivative.h"
+#include "isr.h"
 
 typedef void (*const tIsrFunc)(void);
 typedef struct {
