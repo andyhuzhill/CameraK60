@@ -10,11 +10,14 @@
  *    Compiler: CodeWarrior v10.2
  * 	   version: 1.0
  * 
- * TODO: 测试输入函数
- * TODO: 使用assert进行函数参数检查
  */
 
 #include "k60_gpio.h"
+
+
+volatile struct GPIO_MemMap *GPIOx[5] = {PTA_BASE_PTR, PTB_BASE_PTR, PTC_BASE_PTR, PTD_BASE_PTR, PTE_BASE_PTR}; //定义五个指针数组保存 GPIOx 的地址
+volatile struct PORT_MemMap *PORTX[5] = {PORTA_BASE_PTR, PORTB_BASE_PTR, PORTC_BASE_PTR, PORTD_BASE_PTR, PORTE_BASE_PTR};
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //            内部调用函数实现
@@ -90,7 +93,7 @@ GPIO_get_pt_addr(GPIO_TypeDef port)
 //              外部接口函数实现
 ///////////////////////////////////////////////////////////////////////////////
 
-#if 0
+#if 1
 /*
  * @说明: 初始化GPIO口
  * @参数:  port: 端口名 PORT_A~PORT_E
@@ -100,7 +103,7 @@ GPIO_get_pt_addr(GPIO_TypeDef port)
  * @返回值: 0 正常返回， 其他值为异常
  */
 uint8 
-GPIO_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef state)
+gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef state)
 {
     GPIO_MemMapPtr pt = GPIO_get_pt_addr(port);
     PORT_MemMapPtr p  = GPIO_get_port_addr(port);
@@ -154,6 +157,32 @@ GPIO_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
 }
 #endif
 
+//
+//void gpio_init (PORTx portx, uint8 n, GPIO_CFG cfg, uint8 data)
+//{
+//    //选择功能脚 PORTx_PCRx ，每个端口都有个寄存器 PORTx_PCRx
+//    PORT_PCR_REG(PORTX[portx], n) = (0 | PORT_PCR_MUX(1) | cfg);
+//
+//    //端口方向控制输入还是输出
+//    if( ( (cfg & 0x01) == GPI) || (cfg == GPI_UP) ||     (cfg == GPI_UP_PF)      )
+//        //   最低位为0则输入   ||   输入上拉模式  ||   输入上拉，带无源滤波器
+//    {
+//        GPIO_PDDR_REG(GPIOx[portx]) &= ~(1 << n);  //设置端口方向为输入
+//    }
+//    else
+//    {
+//        GPIO_PDDR_REG(GPIOx[portx]) |= (1 << n);    //设置端口方向为输出
+//        if(data == 1)//output
+//        {
+//            GPIO_PSOR_REG(GPIOx[portx]) |= (1 << n);                 //对端口输出控制，输出为1
+//        }
+//        else
+//        {
+//            GPIO_PCOR_REG(GPIOx[portx]) |= (1 << n);                 //对端口输出控制，输出为0
+//        }
+//    }
+//}
+
 /*
  * @说明: ST风格初始化GPIO口 :)
  * @参数:  port: 端口名  PORT_A~PORT_E
@@ -198,7 +227,7 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
     {
     	pos = ((uint32)0x01) << pinpos;
     	//得到引脚位置
-    	currentpin = (InitStruct->PIN) & pos;
+    	currentpin = (InitStruct->Pin) & pos;
     	
     	if(currentpin == pos)
     	{

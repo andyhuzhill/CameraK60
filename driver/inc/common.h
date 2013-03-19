@@ -60,6 +60,8 @@ void set_irq_priority (int, int);
 #include "stdlib.h"
 #include "stdio.h"
 
+#include "k60_config.h"
+
 /*
  * Misc. Defines
  */

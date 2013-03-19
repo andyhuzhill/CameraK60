@@ -17,6 +17,12 @@
 
 #include "common.h"
 
+#include "gpio_cfg.h"
+
+
+extern volatile struct GPIO_MemMap *GPIOx[5]; //定义五个指针数组保存 GPIOx 的地址
+extern volatile struct PORT_MemMap *PORTX[5];
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //		结构体与常量声明
@@ -98,7 +104,7 @@ typedef enum{
 #define GPIO_Pin_31                ((uint32)0x80000000)  /* Pin 31 selected */
 
 typedef struct {
-    uint32 PIN;
+    uint32 Pin;
     GPIOMode_TypeDef MODE;
     GPIOState_TypeDef STATE; //输出状态时 可选 State_High State_Low
     					     //输入状态时，可选 State_NoPull, State_PullUp,\
@@ -106,22 +112,44 @@ typedef struct {
     GPIOIRQ_TypeDef IRQC;  //中断类型
 }GPIO_InitTypeDef;
 
+
+//定义管脚方向
+typedef enum GPIO_CFG
+{
+    //这里的值不能改！！！
+    GPI         = 0,                          //定义管脚输入方向      GPIOx_PDDRn里，0表示输入，1表示输出
+    GPO         = 1,                          //定义管脚输出方向
+
+    GPI_DOWN    = 0x02,                       //输入下拉              PORTx_PCRn需要PE=1，PS=0
+    GPI_UP      = 0x03,                       //输入上拉              PORTx_PCRn需要PE=1，PS=1
+    GPI_PF      = 0x10,                       //输入，带无源滤波器,滤波范围：10 MHz ~ 30 MHz 。不支持高速接口（>=2MHz）  0b10000           Passive Filter Enable
+    GPI_DOWN_PF = GPI_DOWN | GPI_PF ,         //输入下拉，带无源滤波器
+    GPI_UP_PF   = GPI_UP   | GPI_PF ,         //输入上拉，带无源滤波器
+
+    GPO_HDS     = 0x41,                        //输出高驱动能力   0b100 0001    High drive strength
+    GPO_SSR     = 0x05,                        //输出慢变化率          0b101     Slow slew rate
+    GPO_HDS_SSR = GPO_HDS | GPO_SSR,           //输出高驱动能力、慢变化率
+} GPIO_CFG;  //最低位为0，肯定是输入；GPI_UP 和 GPI_UP_PF的最低位为1，其他为输出
+
+#define HIGH  1u
+#define LOW   0u
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //			接口函数声明
 ///////////////////////////////////////////////////////////////////////////////
 
-#if 0
 /*
- * @说明: 初始化GPIO口 
- * @参数:  port: 端口名  PORT_A~PORT_E
- *  		pin: 引脚 取值 1~31
- * 		    dir: 输入输出方向 
- * 		  state: 初始状态
+ * @说明: 初始化GPIO口
+ * @参数:  port: 端口名 PORT_A~PORT_E
+ *          pin: 引脚 取值1 ~ 31
+ *          dir: 输入输出方向 
+ *        state: 初始状态
  * @返回值: 0 正常返回， 其他值为异常
  */
 uint8 
-GPIO_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef state);
-#endif
+gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef state);
 
 /*
  * @说明: 初始化GPIO口
