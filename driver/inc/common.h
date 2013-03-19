@@ -14,7 +14,7 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
-#include <MK60DZ10.h>
+#include "MK60DZ10.h"
 
 //存储器段的宏定义
 #if defined(__CWCC__)
@@ -31,39 +31,85 @@
 #endif
 
 
+/*ARM Cortex M4 implementation for interrupt priority shift*/
+#define ARM_INTERRUPT_LEVEL_BITS          4
+
+/***********************************************************************/
+// function prototypes for arm_cm4.c
+void stop (void);
+void wait (void);
+void write_vtor (int);
+void enable_irq (int);
+void disable_irq (int);
+void set_irq_priority (int, int);
+
+/***********************************************************************/
+  /*!< Macro to enable all interrupts. */
+#define EnableInterrupts asm(" CPSIE i");
+
+  /*!< Macro to disable all interrupts. */
+#define DisableInterrupts asm(" CPSID i");
+/***********************************************************************/
+
+
+// define for printf
+#define TERM_PORT UART3_BASE_PTR
+#define TERMINAL_BAUD 115200
+
+#include "io.h"
+#include "stdlib.h"
+#include "stdio.h"
+
 /*
- *  用于中断的宏
+ * Misc. Defines
  */
+#ifdef  FALSE
+#undef  FALSE
+#endif
+#define FALSE   (0)
 
-#define ARM_INTERRUPT_LEVEL_BITS 	4 //中断优先级
-#define EINT	asm(" CPSIE i")       //开总中断
-#define DINT    asm(" CPSID i")       //关总中断
+#ifdef  TRUE
+#undef  TRUE
+#endif
+#define TRUE    (1)
 
+#ifdef  NULL
+#undef  NULL
+#endif
+#define NULL    (0)
 
-//
-#define TRUE 1
-#define FALSE 0
-#define NULL 0
+#ifdef  ON
+#undef  ON
+#endif
+#define ON      (1)
 
+#ifdef  OFF
+#undef  OFF
+#endif
+#define OFF     (0)
+
+#define ERROR (0)
+#define SUCCESS (1)
+
+/***********************************************************************/
 /*
- * 类型定义
+ * The basic data types
  */
+typedef unsigned char       uint8;  /*  8 bits */
+typedef unsigned short int  uint16; /* 16 bits */
+typedef unsigned long int   uint32; /* 32 bits */
 
-typedef unsigned char uint8;
-typedef unsigned short int  uint16;
-typedef unsigned long int uint32;
+typedef char                int8;   /*  8 bits */
+typedef short int           int16;  /* 16 bits */
+typedef int                 int32;  /* 32 bits */
 
-typedef volatile uint8 vuint8;
-typedef volatile uint16 vuint16;
-typedef volatile uint32 vuint32;
+typedef volatile int8       vint8;  /*  8 bits */
+typedef volatile int16      vint16; /* 16 bits */
+typedef volatile int32      vint32; /* 32 bits */
 
-typedef signed char int8;
-typedef short int int16;
-typedef long int int32;
-
-typedef volatile int8 vint8;
-typedef volatile int16 vint16;
-typedef volatile int32 vint32;
+typedef volatile uint8      vuint8;  /*  8 bits */
+typedef volatile uint16     vuint16; /* 16 bits */
+typedef volatile uint32     vuint32; /* 32 bits */
 
 
 /*
@@ -77,72 +123,17 @@ typedef volatile int32 vint32;
 //读取寄存器reg bit位上的值
 #define BGET(reg, bit) ((reg) >> (bit) &1)
 
-/*
- * @说明: 设置CPU进入STOP模式
- * @参数: 无
- * @返回值:无
- */
-void 
-stop(void);
-
-/*
- * @说明: 设置CPU进入WAIT模式
- * @参数: 无
- * @返回值:无
- */
-void 
-wait(void);
-
-/*
- * @说明: 更改中断向量表偏移寄存器的值 
- * @参数:   vector : 要更改的值
- * @返回值:	无
- */
-void 
-write_vectab(uint16 vector);
-
-/*
- * @说明: 使能irq中断
- * @参数:   irq : 中断号
- * @返回值: 无
- */
-void 
-enable_irq(uint16 irq);
-
-/*
- * @说明: 禁止irq中断
- * @参数: irq : 中断号
- * @返回值: 无
- */
-void 
-disable_irq(uint16 irq);
-
-/*
- * @说明: 设置irq中断和优先级
- * @参数: irq :  中断号
- * 		  prio:  优先级
- * @返回值: 无
- */
-void 
-set_irq_priority(uint16 irq, uint16 prio);
 
 
 //延时函数
-#include "delay.h"
+#include "lptmr.h"
 #define DELAY() 		time_delay_ms(500)
 #define DELAY_MS(ms) 	time_delay_ms(ms)
 
 /*
  * 断言
  */
-#define USE_ASSERT 1
-
-#if defined(USE_ASSERT)
-void assert_failed(uint8 *file, uint32 line);
-#define assert(expr) ((expr) ? (void)0 :assert_failed((uint8 *)__FILE__, __LINE__))
-#else
-#define assert(expr) ((void)0)
-#endif
+#include "assert.h"
 
 
 #endif /* COMMON_H_ */

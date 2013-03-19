@@ -17,7 +17,7 @@
 volatile struct FTM_MemMap *FTMx[3] = {FTM0_BASE_PTR, FTM1_BASE_PTR, FTM2_BASE_PTR};
 
 //引用系统总线时钟频率 ， 该值在sysinit.c文件中获得
-extern uint32 periph_clk_khz;
+extern uint32 bus_clk_khz;
 
 /*
  * @说明: 初始化FTM的PWM功能，并设置频率、占空比
@@ -30,7 +30,7 @@ extern uint32 periph_clk_khz;
 uint8
 FTM_PWM_init(FTM_TypeDef ftmn, Channel_TypeDef chan, uint32 freq, uint32 duty)
 {
-	uint32 clk_hz = (periph_clk_khz * 1000) >> 1;  // bus频率/2
+	uint32 clk_hz = (bus_clk_khz * 1000) >> 1;  // bus频率/2
 	uint16 mod;			//	定时器模数值
 	uint8  ps;  		//  分频系数
 	uint16 cv;			//  通道chan的匹配值
@@ -164,7 +164,7 @@ FTM_PWM_set_duty(FTM_TypeDef ftmn, Channel_TypeDef chan, uint32 duty)
 uint8
 FTM_PWM_set_freq(FTM_TypeDef ftmn, Channel_TypeDef chan, uint32 freq)
 {
-	uint32 clk_hz = (periph_clk_khz * 1000) >> 1;        //总线频率/2
+	uint32 clk_hz = (bus_clk_khz * 1000) >> 1;        //总线频率/2
 	uint32 mod;
 	uint8 ps;
 

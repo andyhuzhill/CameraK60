@@ -20,7 +20,7 @@
 
 //全局变量声明
 uint32 core_clk_khz;    //芯片内核时钟频率，kHz
-uint32 periph_clk_khz;  //芯片总线时钟频率，kHz
+uint32 bus_clk_khz;  //芯片总线时钟频率，kHz
 
 enum PLL_option
 {
