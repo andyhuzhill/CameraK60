@@ -16,6 +16,9 @@
 
 #include "MK60DZ10.h"
 
+
+//#define DEBUG
+
 //存储器段的宏定义
 #if defined(__CWCC__)
 #pragma define_section relocate_code ".relocate_code" ".relocate_code" ".relocate_code" far_abs RX
@@ -136,6 +139,13 @@ typedef volatile uint32     vuint32; /* 32 bits */
  * 断言
  */
 #include "assert.h"
+
+
+#ifdef  DEBUG 
+#define DEBUG_OUT(FORMAT,...)        do{printf("\r\n");printf(FORMAT,##__VA_ARGS__);printf("\r\n");}while(0)    /*无需打印调试信息时，请将宏内容注释掉*/
+#else
+#define DEBUG_OUT(FORMAT,...)
+#endif
 
 
 #endif /* COMMON_H_ */

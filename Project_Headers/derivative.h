@@ -8,3 +8,6 @@
 #include "k60_gpio.h"
 //#include "k60_ftm.h"
 #include "ff.h"
+
+#include "ov7725.h"
+#include "lcd.h"

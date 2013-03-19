@@ -2,8 +2,8 @@
 #define	_LCD_H_
 
 #include "common.h"
-#include "BL144002.h"
-#include "LCD_CH.h"
+#include "bl144002.h"
+#include "lcd_ch.h"
 
 
 /******³£ÓÃÑÕÉ«*****/

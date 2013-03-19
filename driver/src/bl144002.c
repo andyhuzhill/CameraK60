@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include "k60_gpio.h"
-#include "BL144002.h"
+#include "bl144002.h"
 
 
 void lcd_io_init()

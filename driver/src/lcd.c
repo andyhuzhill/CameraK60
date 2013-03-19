@@ -1,6 +1,6 @@
 
 #include "common.h"
-#include "LCD.h"
+#include "lcd.h"
 #include "ASCII.h"	
 #include "k60_gpio.h"
 

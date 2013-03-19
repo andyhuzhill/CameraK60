@@ -1,5 +1,5 @@
 #include "common.h"
-#include "LCD_CH.h"
+#include "lcd_ch.h"
 
 FATFS myfs;                    // Work area (file system object) for logical drive
 FIL myfsrc;            // file objects
