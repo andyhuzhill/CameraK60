@@ -16,7 +16,14 @@
 
 #include "common.h"
 
+
+extern volatile struct FTM_MemMap *FTMx[3];
+
 #define FTM_PRECISON 100u //定义占空比精度，100为精度1%， 100 为精度 0.1%
+
+#define FTM_IRQ_EN(FTMn,CHn)        FTM_CnSC_REG(FTMx[FTMn],CHn) |= FTM_CnSC_CHIE_MASK       //开启 FTMn_CHn 中断
+#define FTM_IRQ_DIS(FTMn,CHn)       FTM_CnSC_REG(FTMx[FTMn],CHn) &= ~FTM_CnSC_CHIE_MASK      //关闭 FTMn_CHn 中断
+
 
 typedef enum FTMn{
 	FTM_0 = 0,

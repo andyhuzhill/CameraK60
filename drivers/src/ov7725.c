@@ -6,16 +6,16 @@
 #include "ov7725.h"
 #include "ov7725_reg.h"
 
-#define OV7725_Delay_ms(time)  DELAY_MS(time)
+#define ov7725_delay_ms(time)  DELAY_MS(time)
 
 #define OV7725_ID           0x21
 
 uint8 *	IMG_BUFF;
 volatile IMG_STATE	    img_flag = IMG_FINISH;		//图像状态
 
-static uint8 Ov7725_reg_Init(void);
+static uint8 ov7725_reg_init(void);
 
-void Ov7725_exti_Init()
+void ov7725_exti_init()
 {
 	//DMA通道0初始化，PTB8上升沿触发DMA传输，源地址为PTD_BYTE0_IN，目的地址为：BUFF ，每次传输1Byte，传输CAMERA_SIZE次后停止传输
 	DMA_PORTx2BUFF_Init(CAMERA_DMA_CH, (void *)&PTB_BYTE0_IN, (void *)IMG_BUFF, PTB8, DMA_BYTE1, CAMERA_SIZE , KEEPON);
@@ -138,28 +138,28 @@ uint8 cfgnum = sizeof(ov7727_reg)/sizeof(ov7727_reg[0]);   /*结构体数组成员数目*
  * 输出  ：返回1成功，返回0失败
  * 注意  ：无
  ************************************************/
-uint8 Ov7725_Init(uint8 *imgaddr)
+uint8 ov7725_init(uint8 *imgaddr)
 {
     IMG_BUFF = imgaddr;
-	while(Ov7725_reg_Init() == 0);
-	Ov7725_exti_Init();
+	while(ov7725_reg_init() == 0);
+	ov7725_exti_init();
     return 0;
 }
 
 /************************************************
- * 函数名：Ov7725_reg_Init
+ * 函数名：ov7725_reg_init
  * 描述  ：Sensor 寄存器 初始化
  * 输入  ：无
  * 输出  ：返回1成功，返回0失败
  * 注意  ：无
  ************************************************/
-uint8 Ov7725_reg_Init(void)
+uint8 ov7725_reg_init(void)
 {
     uint16 i = 0;
     uint8 Sensor_IDCode = 0;
 	SCCB_GPIO_init();
 	
-	OV7725_Delay_ms(50);
+	ov7725_delay_ms(50);
     while( 0 == SCCB_WriteByte ( 0x12, 0x80 ) ) /*复位sensor */
     {
         i++;
@@ -170,7 +170,7 @@ uint8 Ov7725_reg_Init(void)
 			return 0 ;
 		}
     }
-    OV7725_Delay_ms(50);
+    ov7725_delay_ms(50);
     if( 0 == SCCB_ReadByte( &Sensor_IDCode, 1, 0x0b ) )	 /* 读取sensor ID号*/
     {
         printf("警告:读取ID失败");

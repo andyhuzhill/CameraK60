@@ -16,6 +16,7 @@
 //定义三个指针数组保存FTMn的地址
 volatile struct FTM_MemMap *FTMx[3] = {FTM0_BASE_PTR, FTM1_BASE_PTR, FTM2_BASE_PTR};
 
+
 //引用系统总线时钟频率 ， 该值在sysinit.c文件中获得
 extern uint32 bus_clk_khz;
 
@@ -221,6 +222,7 @@ FTM_Capture_init(FTM_TypeDef ftmn, Channel_TypeDef chan, Cap_TypeDef capcfg)
 			SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
 			PORT_PCR_REG(PORTD_BASE_PTR, chan) = PORT_PCR_MUX(4);
 		default:
+		    assert_failed(__FILE__, __LINE__);        
 			return -1;
 			break;
 		}
@@ -235,6 +237,7 @@ FTM_Capture_init(FTM_TypeDef ftmn, Channel_TypeDef chan, Cap_TypeDef capcfg)
 			PORT_PCR_REG(PORTA_BASE_PTR, chan+8) = PORT_PCR_MUX(3);
 			break;
 		default:
+		    assert_failed(__FILE__, __LINE__);        
 			return -1;
 		}
 		break;
@@ -248,6 +251,7 @@ FTM_Capture_init(FTM_TypeDef ftmn, Channel_TypeDef chan, Cap_TypeDef capcfg)
 			PORT_PCR_REG(PORTA_BASE_PTR, chan+10) = PORT_PCR_MUX(3);
 			break;
 		default:
+		    assert_failed(__FILE__, __LINE__);        
 			return -1;
 			break;
 		}
@@ -284,6 +288,7 @@ FTM_Capture_init(FTM_TypeDef ftmn, Channel_TypeDef chan, Cap_TypeDef capcfg)
 		break;
 	}
 	default:
+	    assert_failed(__FILE__, __LINE__);        
 		return -1;
 		break;
 	}

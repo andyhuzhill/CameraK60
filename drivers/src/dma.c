@@ -32,22 +32,22 @@ void DMA_PORTx2BUFF_Init(DMA_CHn CHn, void *SADDR, void *DADDR, PTxn ptxn, DMA_B
 {
     uint8 n, i, tmp;
 
-//    ASSERT(                                             //用断言检测 源地址和每次传输字节数是否正确
-//        (   (byten == DMA_BYTE1)                    //传输一个字节
-//            && ( (SADDR >= &PTA_BYTE0_IN) && (SADDR <= ( &PTE_BYTE3_IN )))
-//        )
-//
-//        || (   (byten == DMA_BYTE2)                   //传输两个字节(注意，不能跨端口)
-//               && ( (SADDR >= &PTA_BYTE0_IN)
-//                    && (SADDR <= ( &PTE_WORD1_IN ))
-//                    && (((uint32)SADDR & 0x03) != 0x03) )         //保证不跨端口
-//           )
-//
-//        || (   (byten == DMA_BYTE4)                   //传输四个字节
-//               && ((SADDR >= &PTA_BYTE0_IN) && (SADDR <= ( &PTE_BYTE0_IN )))
-//               && (((uint32)SADDR & 0x03) == 0x00)           //保证不跨端口
-//           )
-//    );
+    ASSERT(                                             //用断言检测 源地址和每次传输字节数是否正确
+        (   (byten == DMA_BYTE1)                    //传输一个字节
+            && ( (SADDR >= &PTA_BYTE0_IN) && (SADDR <= ( &PTE_BYTE3_IN )))
+        )
+
+        || (   (byten == DMA_BYTE2)                   //传输两个字节(注意，不能跨端口)
+               && ( (SADDR >= &PTA_BYTE0_IN)
+                    && (SADDR <= ( &PTE_WORD1_IN ))
+                    && (((uint32)SADDR & 0x03) != 0x03) )         //保证不跨端口
+           )
+
+        || (   (byten == DMA_BYTE4)                   //传输四个字节
+               && ((SADDR >= &PTA_BYTE0_IN) && (SADDR <= ( &PTE_BYTE0_IN )))
+               && (((uint32)SADDR & 0x03) == 0x00)           //保证不跨端口
+           )
+    );
 
     uint8 BYTEs = (byten == DMA_BYTE1 ? 1 : (byten == DMA_BYTE2 ? 2 : (byten == DMA_BYTE4 ? 4 : 16 ) ) ); //计算传输字节数
 

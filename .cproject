@@ -48,6 +48,7 @@
 									<listOptionValue builtIn="false" value="&quot;${MCUToolsBaseDir}/ARM_EABI_Support/ewl/EWL_C/include&quot;"/>
 								</option>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.exceptions.1404760544" name="Enable Exceptions" superClass="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.exceptions" value="false" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.c99.1300180560" superClass="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.c99" value="true" valueType="boolean"/>
 								<inputType id="com.freescale.arm.cdt.toolchain.armCpp.cSource.615997207" name="ARM C/C++ Compiler" superClass="com.freescale.arm.cdt.toolchain.armCpp.cSource"/>
 							</tool>
 							<tool command="&quot;${ARM_ToolsDir}/mwasmarm&quot;" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="" id="com.freescale.arm.cdt.toolchain.assembler.358579767" name="ARM Assembler" superClass="com.freescale.arm.cdt.toolchain.assembler">

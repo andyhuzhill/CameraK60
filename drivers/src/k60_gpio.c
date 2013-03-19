@@ -140,7 +140,7 @@ gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
     if(Mode_OUT == dir)
     {
         GPIO_PDDR_REG(pt) |= 0x1u << pin;
-        if(State_High == state)
+        if(High == state)
         {
             BSET(GPIO_PDOR_REG(pt), pin);
         }
@@ -237,7 +237,7 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
     		if(Mode_OUT == InitStruct->MODE)
     		{
     			BSET(GPIO_PDDR_REG(pt), pinpos);
-    			if (State_High == InitStruct->STATE)
+    			if (High == InitStruct->STATE)
     			{
     				BSET(GPIO_PDOR_REG(pt), pinpos);
     			}else
@@ -249,10 +249,10 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
     			BCLR(GPIO_PDOR_REG(pt), pinpos);
     			if (InitStruct->IRQC > 0xc) return -1;
     			PORT_PCR_REG(p, pinpos) |= PORT_PCR_IRQC(InitStruct->IRQC);
-    			if (State_PullUp == InitStruct->STATE)
+    			if (PullUp == InitStruct->STATE)
     			{
     				PORT_PCR_REG(p, pinpos) |= PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
-    			}else if (State_PullDown == InitStruct->STATE)
+    			}else if (PullDown == InitStruct->STATE)
     			{
     				PORT_PCR_REG(p, pinpos) |= PORT_PCR_PE_MASK;
     			}else
@@ -277,7 +277,7 @@ GPIO_write_bit(GPIO_TypeDef port, uint8 pin, GPIOState_TypeDef state)
 {
     GPIO_MemMapPtr pt = GPIO_get_pt_addr(port);
     
-    if(State_High == state)
+    if(High == state)
         BCLR(GPIO_PDOR_REG(pt), pin);
     else
         BSET(GPIO_PDOR_REG(pt), pin);

@@ -38,12 +38,12 @@ typedef struct
 extern 	uint8 Ov7725_vsync;
 
 
-extern	uint8 Ov7725_Init(uint8 *imgaddr);
-extern	void    Ov7725_exti_Init();
+extern	uint8 ov7725_init(uint8 *imgaddr);
+extern	void    ov7725_exti_init();
 extern	void    ov7725_get_img();
 
-extern	int  	OV7725_ReadReg(uint8 LCD_Reg,uint16 LCD_RegValue);
-extern	int  	OV7725_WriteReg(uint8 LCD_Reg,uint16 LCD_RegValue);
+extern	int  	ov7725_read_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
+extern	int  	ov7725_write_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
 
 #endif
 

@@ -30,8 +30,8 @@ static void SCCB_delay(volatile uint16 i)
  ********************************************************************/
 void SCCB_GPIO_init(void)
 {
-	gpio_init(PORT_B,10, Mode_OUT, State_Low);  //初始化SCL
-	gpio_init(PORT_B,11, Mode_OUT, State_Low);  //初始化SDA
+	gpio_init(PORT_B, 10, Mode_OUT, Low);  //初始化SCL
+	gpio_init(PORT_B, 11, Mode_OUT, Low);  //初始化SDA
 }
 
 
