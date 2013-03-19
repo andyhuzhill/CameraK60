@@ -16,7 +16,6 @@
 #define K60_GPIO_H_
 
 #include "common.h"
-
 #include "gpio_cfg.h"
 
 

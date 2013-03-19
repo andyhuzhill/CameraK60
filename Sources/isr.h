@@ -17,5 +17,9 @@
 
 #include "common.h"
 
+#undef VECTOR_084
+#define VECTOR_084  PIT0_ISR
+
+void PIT0_ISR(void);
 
 #endif /* ISR_H_ */

@@ -1,7 +1,7 @@
 /*
  *    kinetis_sysinit.c - Default init routines for
  *                     		Kinetis ARM systems
- *    Copyright © 2010 Freescale semiConductor Inc. All Rights Reserved.
+ *    Copyright „1¤7 2010 Freescale semiConductor Inc. All Rights Reserved.
  */
 
 #include "kinetis_sysinit.h"
@@ -43,6 +43,9 @@ void isrINT_NMI(void)
 
 }
 /* end of isrINT_NMI */
+
+
+//extern void PIT0_ISR(void);
 
 #ifdef __cplusplus
 extern "C" {
