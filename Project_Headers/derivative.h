@@ -12,4 +12,6 @@
 #include "ov7725.h"
 #include "lcd.h"
 #include "pit.h"
+#include "dma.h"
+
 
