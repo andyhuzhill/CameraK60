@@ -7,7 +7,7 @@
  *		E-mail: andyhuzhill@gmail.com
  *    Homepage: http://andyhuzhill.github.com
  *	   
- * Description: 
+ * Description: 主程序
  *    Revision:
  * =====================================================
  */
@@ -38,26 +38,28 @@
  */
 
 #include "derivative.h" /* include peripheral declarations */
-
+#include "img_process.h"
 
 uint8 img_bin_buff[CAMERA_SIZE];
-
-#include "img_process.h"
 
 int 
 main(void)
 {   
+#ifdef DEBUG
     Site_t site={0,0};                            //显示图像左上角位置
     Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
     Size_t size={LCD_W,LCD_H};                  //显示区域图像大小 
 
     LCD_Init(RED);
+#endif
     ov7725_init(img_bin_buff);
-    
+
     while(1)
     {
         ov7725_get_img();                     //采集图像
+#ifdef DEBUG
         LCD_Img_Binary_Z(site,size,(uint16 *)img_bin_buff,imgsize);    //显示图像
         imgResize(img_bin_buff);
+#endif
     }
 }

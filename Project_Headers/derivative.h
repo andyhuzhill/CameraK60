@@ -10,7 +10,6 @@
 #include "k60_gpio.h"
 #include "ftm.h"
 
-
 #include "lcd.h"
 #include "pit.h"
 

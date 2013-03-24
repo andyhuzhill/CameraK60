@@ -15,15 +15,13 @@
 #ifndef ISR_H_
 #define ISR_H_
 
-#include "common.h"
-
 #undef  VECTOR_103                       
 #define VECTOR_103    PORTA_ISR    
 
 #undef  VECTOR_016
-#define VECTOR_016   DMA0_ISR  
+#define VECTOR_016    DMA0_ISR  
 
-extern void PORTA_ISR();           //场中断服务函数
-extern void DMA0_ISR();            //DMA中断服务函数
+void PORTA_ISR();           //场中断服务函数
+void DMA0_ISR();            //DMA中断服务函数
 
 #endif /* ISR_H_ */

@@ -17,6 +17,7 @@
 #include "MK60DZ10.h"
 
 #define DEBUG   1
+#undef DEBUG
 
 //´æ´¢Æ÷¶ÎµÄºê¶¨Òå
 #if defined(__CWCC__)

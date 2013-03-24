@@ -14,7 +14,7 @@
 #ifndef _FTM_H_
 #define _FTM_H_
 
-extern volatile struct FTM_MemMap *FTMx[3];
+//volatile struct FTM_MemMap *FTMx[3];
 
 typedef enum FTMn
 {
@@ -47,11 +47,11 @@ typedef enum CHn
                                 duty/FTM_PRECISON */
 
 //初始化FTM的PWM功能并设置频率、占空比。设置通道输出占空比。同一个FTM，各通道的PWM频率是一样的，共3个FTM
-void  FTM_PWM_init(FTMn, CHn, uint32 freq, uint32 duty);  
+void  FTM_PWM_init(FTMn ftmn, CHn ch, uint32 freq, uint32 duty);  
 //设置通道占空比,占空比为 （duty * 精度） % ，如果 FTM_PRECISON 定义为 1000 ，duty = 100 ，则占空比 100*0.1%=10%
-void  FTM_PWM_Duty(FTMn, CHn,  uint32 duty);    
+void FTM_PWM_Duty(FTMn ftmn, CHn ch, uint32 duty);
 //设置FTM的频率
-void  FTM_PWM_freq(FTMn,    uint32 freq);
+void FTM_PWM_freq(FTMn ftmn, uint32 freq);
 
 
 /*********************** 输入捕捉 **************************/
@@ -64,7 +64,7 @@ typedef enum Input_cfg
 } Input_cfg;
 
 
-void FTM_Input_init(FTMn, CHn, Input_cfg);
+void FTM_Input_init(FTMn ftmn, CHn ch, Input_cfg cfg);
 
 #define FTM_IRQ_EN(FTMn,CHn)        FTM_CnSC_REG(FTMx[FTMn],CHn) |= FTM_CnSC_CHIE_MASK       //开启 FTMn_CHn 中断
 #define FTM_IRQ_DIS(FTMn,CHn)       FTM_CnSC_REG(FTMx[FTMn],CHn) &= ~FTM_CnSC_CHIE_MASK      //关闭 FTMn_CHn 中断

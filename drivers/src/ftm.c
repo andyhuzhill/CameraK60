@@ -30,7 +30,7 @@ CH7       PTD7       ×         ×
 ×表示没有
 */
 volatile struct FTM_MemMap *FTMx[3] = {FTM0_BASE_PTR, FTM1_BASE_PTR, FTM2_BASE_PTR}; //定义三个指针数组保存 FTMn 的地址
-
+extern uint32 bus_clk_khz;
 
 
 /*************************************************************************
@@ -46,7 +46,7 @@ volatile struct FTM_MemMap *FTMx[3] = {FTM0_BASE_PTR, FTM1_BASE_PTR, FTM2_BASE_P
 *  修改时间：2012-2-14
 *  备    注：同一个FTM，各通道的PWM频率是一样的，共3个FTM，即可以输出3个不同频率PWM
 *************************************************************************/
-void FTM_PWM_init(FTMn ftmn, CHn ch, uint32 freq, u32 duty)
+void FTM_PWM_init(FTMn ftmn, CHn ch, uint32 freq, uint32 duty)
 {
     uint32 clk_hz = (bus_clk_khz * 1000) >> 1;       //bus频率/2
     uint16 mod;

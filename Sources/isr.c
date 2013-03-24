@@ -21,7 +21,8 @@
 extern 
 volatile IMG_STATE img_flag;
 
-void PORTA_ISR(void)
+void 
+PORTA_ISR(void)
 {
     if(PORTA_ISFR & (1 << 29))                       //PTA29触发中断
     {
@@ -55,7 +56,8 @@ void PORTA_ISR(void)
  * DMA中断处理函数
  */
 
-void DMA0_ISR(void)
+void 
+DMA0_ISR(void)
 {
     DMA_DIS(CAMERA_DMA_CH);             //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
