@@ -5,13 +5,14 @@
 
 /* Include the derivative-specific header file */
 #include "common.h"
-#include "k60_gpio.h"
-//#include "k60_ftm.h"
-#include "ff.h"
-
+#include "dma.h"
 #include "ov7725.h"
+#include "k60_gpio.h"
+#include "ftm.h"
+
+
 #include "lcd.h"
 #include "pit.h"
-#include "dma.h"
+
 
 

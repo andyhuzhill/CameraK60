@@ -28,6 +28,7 @@ imgResize(const uint8 *srcImg)              //½«Ô­À´320X240µÄÊý×é±ä³É320X24µÄÊý×
         }
     }
 
+#ifdef DEBUG
     for (int row = 0; row < (IMG_H); ++row)
     {
         for (int col = 0; col < (IMG_W); ++col)
@@ -36,6 +37,7 @@ imgResize(const uint8 *srcImg)              //½«Ô­À´320X240µÄÊý×é±ä³É320X24µÄÊý×
         }
         printf("\n");
     }
+#endif
 }
 
 /*
