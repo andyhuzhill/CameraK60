@@ -12,7 +12,7 @@
  * =====================================================
 */
 
-/*
+/*  
  *   引脚分配:
  *   PTC14          电机控制使能
  *   PTA8           电机控制PWM1    FTM1 CH0
@@ -42,29 +42,17 @@
 
 uint8 img_bin_buff[CAMERA_SIZE];
 
-
-
+#include "img_process.h"
 
 int 
 main(void)
 {   
-    GPIO_InitTypeDef  gpio;
-    
-    gpio.Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
-    gpio.MODE = Mode_OUT;
-    gpio.IRQC = None_IRQ;
-    gpio.STATE = High;
-    
-    GPIO_init(PORT_D, &gpio);
-    
-    
-    
-    printf("hello world!\n");
-    
-    pit_init(PIT0, 500);
+    LCD_Init(RED);
+    ov7725_init(img_bin_buff);
 
     while(1)
     {
-       
+        ov7725_get_img();
+        imgResize(img_bin_buff);
     }
 }
