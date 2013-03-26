@@ -18,8 +18,8 @@
 #include "common.h"
 #include "derivative.h"
 
-#define IMG_H (CAMERA_H /10) //隔五行取图像
-#define IMG_W (CAMERA_W /8) //图像一行字节数
+#define IMG_H (CAMERA_H /10) //隔十行取图像
+#define IMG_W (CAMERA_W /8)  //图像一行字节数
 
 void
 imgResize(const uint8 *srcImg);

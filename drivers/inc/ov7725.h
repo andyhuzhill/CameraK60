@@ -7,7 +7,7 @@
 #define CAMERA_H            240				//定义摄像头图像高度
 #define CAMERA_INTERLACE    1              	//摄像头间隔采集行数 n - 1,这里1表示不隔行采集，2表示隔行采集
 
-#define CAMERA_DMA_NUM      (CAMERA_W /8 )    //DMA采集次数
+#define CAMERA_DMA_NUM      (CAMERA_W /8)    //DMA采集次数
 #define CAMERA_SIZE         (CAMERA_W * CAMERA_H /8)        //图像占用空间大小
 
 

@@ -60,6 +60,7 @@ main(void)
 #ifdef DEBUG
         LCD_Img_Binary_Z(site,size,(uint16 *)img_bin_buff,imgsize);    //ÏÔÊ¾Í¼Ïñ
         imgResize(img_bin_buff);
+        imgGetMidLine();
 #endif
     }
 }
