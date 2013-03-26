@@ -3,7 +3,7 @@
 
 
 #define	CAMERA_DMA_CH 	    DMA_CH0		    //定义摄像头的DMA采集通道
-#define CAMERA_W            320             	//定义摄像头图像宽度
+#define CAMERA_W            320           	//定义摄像头图像宽度
 #define CAMERA_H            240				//定义摄像头图像高度
 #define CAMERA_INTERLACE    1              	//摄像头间隔采集行数 n - 1,这里1表示不隔行采集，2表示隔行采集
 

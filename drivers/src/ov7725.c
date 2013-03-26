@@ -78,7 +78,7 @@ Register_Info ov7727_reg[] =
 #elif (CAMERA_W == 320)  
     {HOutSize     ,0x50}, 
 #else
-    
+#error CAMERA_W is invalid!
 #endif
 
 #if (CAMERA_H == 60 )
@@ -90,7 +90,7 @@ Register_Info ov7727_reg[] =
 #elif (CAMERA_H == 240 )
     {VOutSize     ,0x78},
 #else
-    
+#error CAMERA_H is invalid!
 #endif 
     
     {EXHCH        ,0x00},
