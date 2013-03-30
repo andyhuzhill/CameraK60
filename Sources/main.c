@@ -54,7 +54,7 @@ main(void)
 #endif
     ov7725_init(img_bin_buff);
 
-    while(1)
+    for (;;) 
     {
         ov7725_get_img();                     //²É¼¯Í¼Ïñ
 #ifdef DEBUG

@@ -120,7 +120,7 @@ Register_Info ov7727_reg[] =
 	{BDMStep      ,0x03},
     {SDE          ,0x04},
     {BRIGHT       ,0x00},                              
-    {CNST         ,0x60},
+    {CNST         ,0xff},
     {SIGN         ,0x06},
     {UVADJ0       ,0x11},
     {UVADJ1       ,0x02},
