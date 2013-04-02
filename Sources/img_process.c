@@ -188,6 +188,7 @@ imgProcess(void)
     int err[IMG_H]={0};
     int slop, slop1, slop2, slop_add;
     imgResize(img_bin_buff);
+    imgFilter();
     imgGetMidLine();
     
     for (int cnt = 0; cnt < IMG_H-1; ++cnt) 
@@ -204,7 +205,7 @@ imgProcess(void)
         if (-5 <= slop_add && slop_add <= 5) 
         {
 //            control_steer = err[0];
-//            control_speed = 0;
+//            control_speed = 0;    
         }
     }
     else

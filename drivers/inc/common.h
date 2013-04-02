@@ -76,7 +76,7 @@ void set_irq_priority (int, int);
 #ifdef  TRUE
 #undef  TRUE
 #endif
-#define TRUE    (1)
+#define TRUE    (!FALSE)
 
 #ifdef  NULL
 #undef  NULL
@@ -95,6 +95,8 @@ void set_irq_priority (int, int);
 
 #define ERROR (0)
 #define SUCCESS (1)
+
+typedef enum {false = 0, true = !false} bool;
 
 /***********************************************************************/
 /*

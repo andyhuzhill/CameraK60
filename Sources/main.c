@@ -39,12 +39,15 @@
 
 #include "derivative.h" /* include peripheral declarations */
 #include "img_process.h"
+#include "controller.h"
 
 uint8 img_bin_buff[CAMERA_SIZE];
 
 int 
 main(void)
 {   
+    controllerInit();
+    
 #ifdef DEBUG
     Site_t site={0,0};                            //显示图像左上角位置
     Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
