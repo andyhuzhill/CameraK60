@@ -39,9 +39,13 @@
 #include "ov7725.h"
 #include "k60_gpio.h"
 #include "ftm.h"
+#include "nrf24l0.h"
 
 #include "lcd.h"
 #include "pit.h"
+
+#include "controller.h"
+#include "img_process.h"
 
 #define ABS(x)   ((x)>0 ? (x): (-x))
 #define MAX(x,y) ((x)>(y) ? (x) : (y))

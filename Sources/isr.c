@@ -83,3 +83,14 @@ PIT0_ISR(void)
     PIT_Flag_Clear(PIT0);
     EnableInterrupts;
 }
+
+
+void PORTE_ISR(void)
+{
+    if (PORTE_ISFR &(1 << 27))
+    {
+        PORTE_ISFR |= (1 << 27);        //清除中断标志
+        
+        NRF_Handler();
+    }
+}
