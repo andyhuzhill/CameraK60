@@ -59,7 +59,6 @@ controllerGetOutput(int16* steer, int16* motor)
     *motor = motorOutput;
 }
 
-
 void steerInit(void)
 {
     FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);

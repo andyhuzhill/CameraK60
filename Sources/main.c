@@ -19,6 +19,21 @@
 uint16   motor_cnt =0;
 //uint8   img_bin_buff[CAMERA_SIZE];
 
+void delay(void)
+{
+    volatile int x,y,z;
+    for (z = 0; z < 20; ++z) 
+    {
+        for (x = 0; x < 1500; ++x) 
+        {
+            for (y = 0; y < 1500; ++y) 
+            {
+                ;
+            }
+        } 
+    }
+}
+
 int 
 main(void)
 {   
@@ -31,7 +46,7 @@ main(void)
     NRF_Init();
     controllerInit();
     motorInit();
-    //    steerInit();
+    steerInit();
 
     EnableInterrupts;   //开全局中断
 
@@ -39,22 +54,16 @@ main(void)
     {
         h8 = motor_cnt / 256;
         l8 = motor_cnt % 256;
-        
-        txbuf[0] = h8;
-        txbuf[1] = l8;
-        txbuf[2] = duty;
-            
+
+        txbuf[2] = l8;
+        txbuf[1] = h8;
+        txbuf[0] = duty;
+
         NRF_ISR_Tx_Dat(txbuf, 3);
         do
         {
             status = NRF_ISR_Tx_State();
         }while(status == TX_ISR_SEND);
-        DELAY_MS(5000);
-        duty ++;
-        if (duty >100)
-        { 
-            duty = 0;
-        }
         FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, duty);
     }
 }

@@ -26,14 +26,14 @@ PORTA_ISR(void)         //场中断处理函数
         if(img_flag == IMG_START)                   //需要开始采集图像
         {
             img_flag = IMG_GATHER;                  //标记图像采集中
-            disable_irq(87);
+            disable_irq(PORTA_IRQn);                //关闭PTA的中断
 
             DMA_EN(CAMERA_DMA_CH);                  //使能通道CHn 硬件请求
             DMA_DADDR(CAMERA_DMA_CH) = (uint32)IMG_BUFF;    //恢复地址
         }
         else                                        //图像采集错误
         {
-            disable_irq(87);                        //关闭PTA的中断
+            disable_irq(PORTA_IRQn);                //关闭PTA的中断
             img_flag = IMG_FAIL;                    //标记图像采集失败
         }
         PORTA_ISFR  = ~0;                           //场中断里，全部都要清中断标志位

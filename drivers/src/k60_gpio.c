@@ -93,7 +93,6 @@ GPIO_get_pt_addr(GPIO_TypeDef port)
 //              外部接口函数实现
 ///////////////////////////////////////////////////////////////////////////////
 
-#if 1
 /*
  * @说明: 初始化GPIO口
  * @参数:  port: 端口名 PORT_A~PORT_E
@@ -155,7 +154,6 @@ gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
     }
     return 0;
 }
-#endif
 
 //
 //void gpio_init (PORTx portx, uint8 n, GPIO_CFG cfg, uint8 data)

@@ -30,11 +30,15 @@
 #undef  VECTOR_107     
 #define VECTOR_107    PORTE_ISR
 
-void PORTA_ISR(void);           //场中断服务函数
-void DMA0_ISR(void);            //DMA中断服务函数
-void PIT0_ISR(void);            //PIT0 中断服务函数
-void FTM2_ISR(void);            //编码器输入中断
-
-void PORTE_ISR(void);           //2401无线发送中断服务函数
+void PORTA_ISR(void);           
+    //场中断服务函数
+void DMA0_ISR(void);            
+    //DMA中断服务函数
+void PIT0_ISR(void);            
+    //PIT0 中断服务函数
+void FTM2_ISR(void);            
+    //编码器输入中断
+void PORTE_ISR(void);           
+    //2401无线发送中断服务函数
 
 #endif /* ISR_H_ */
