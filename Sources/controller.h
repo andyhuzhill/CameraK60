@@ -65,5 +65,4 @@ void motorInit(void);
  */
 void motorSetSpeed(uint32 speed, uint32 realspeed);
 
-
 #endif /* CONTROLLER_H_ */

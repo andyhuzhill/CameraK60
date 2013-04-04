@@ -14,7 +14,7 @@
 #ifndef _FTM_H_
 #define _FTM_H_
 
-//volatile struct FTM_MemMap *FTMx[3];
+extern volatile struct FTM_MemMap *FTMx[3];
 
 typedef enum FTMn
 {

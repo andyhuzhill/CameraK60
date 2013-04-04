@@ -24,8 +24,12 @@
 #undef  VECTOR_084 
 #define VECTOR_084    PIT0_ISR
 
-void PORTA_ISR();           //场中断服务函数
-void DMA0_ISR();            //DMA中断服务函数
-void PIT0_ISR();            // PIT0 中断服务函数
+#undef  VECTOR_080
+#define VECTOR_080    FTM2_ISR          
+
+void PORTA_ISR(void);           //场中断服务函数
+void DMA0_ISR(void);            //DMA中断服务函数
+void PIT0_ISR(void);            //PIT0 中断服务函数
+void FTM2_ISR(void);            //编码器输入中断
 
 #endif /* ISR_H_ */

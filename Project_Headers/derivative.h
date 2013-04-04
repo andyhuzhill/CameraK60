@@ -54,12 +54,12 @@
 
 #define MOTOR1_FTM              FTM1
 #define MOTOR1_CHN              CH0
-#define MOTOR1_FREQ             1000        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     0
+#define MOTOR1_FREQ             10000        //单位Hz
+#define MOTOR1_DEFAULT_DUTY     20
 
 #define MOTOR2_FTM              FTM1
 #define MOTOR2_CHN              CH1
-#define MOTOR2_FREQ             1000        //单位Hz
+#define MOTOR2_FREQ             10000        //单位Hz
 #define MOTOR2_DEFAULT_DUTY     0
 
 #define MOTOR_EN_PORT           PORT_C
@@ -67,13 +67,6 @@
 
 #define ENCODER_FTM             FTM2
 #define ENCODER_CHN             CH1
-
-
-//全局变量定义
-uint16  encoder_cnt =0;
-uint8 img_bin_buff[CAMERA_SIZE];
-
-
 
 #endif
 

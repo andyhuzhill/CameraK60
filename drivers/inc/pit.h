@@ -14,7 +14,7 @@
 #ifndef _PIT_H_
 #define _PIT_H_
 
-extern uint32 periph_clk_khz;
+extern uint32 bus_clk_khz;
 
 typedef enum PITn
 {
@@ -26,7 +26,7 @@ typedef enum PITn
 
 
 void        pit_init(PITn, uint32 cnt);                                               //初始化PITn，并设置定时时间(单位为bus时钟周期)
-#define     pit_init_ms(PITn,ms)          pit_init(PITn,ms * periph_clk_khz);         //初始化PITn，并设置定时时间(单位为 ms)
+#define     pit_init_ms(PITn,ms)          pit_init(PITn,ms * bus_clk_khz);         //初始化PITn，并设置定时时间(单位为 ms)
 
 #define     PIT_Flag_Clear(PITn)          PIT_TFLG(PITn)|=PIT_TFLG_TIF_MASK        //清中断标志
 
