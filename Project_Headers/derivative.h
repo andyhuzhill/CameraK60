@@ -59,7 +59,7 @@
 #define MOTOR1_FTM              FTM1
 #define MOTOR1_CHN              CH0
 #define MOTOR1_FREQ             10000        //µ¥Î»Hz
-#define MOTOR1_DEFAULT_DUTY     20
+#define MOTOR1_DEFAULT_DUTY     10
 
 #define MOTOR2_FTM              FTM1
 #define MOTOR2_CHN              CH1

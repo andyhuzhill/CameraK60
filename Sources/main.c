@@ -22,7 +22,6 @@ uint8   img_bin_buff[CAMERA_SIZE];
 int 
 main(void)
 {   
-    volatile uint32 i;
     uint8 h8,l8;
     uint8 status;       //用于判断接受/发送状态
     DisableInterrupts;  //关全局中断
