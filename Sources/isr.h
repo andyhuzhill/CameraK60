@@ -21,7 +21,11 @@
 #undef  VECTOR_016
 #define VECTOR_016    DMA0_ISR  
 
+#undef  VECTOR_084 
+#define VECTOR_084    PIT0_ISR
+
 void PORTA_ISR();           //场中断服务函数
 void DMA0_ISR();            //DMA中断服务函数
+void PIT0_ISR();            // PIT0 中断服务函数
 
 #endif /* ISR_H_ */

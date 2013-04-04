@@ -64,3 +64,16 @@ DMA0_ISR(void)
 
     img_flag = IMG_FINISH ; 
 }
+
+
+void 
+PIT0_ISR(void)
+{
+    DisableInterrupts;
+    
+    DEBUG_OUT("\n Get %d pluses\n", encoder_cnt);
+    encoder_cnt = 0;
+    
+    PIT_Flag_Clear(PIT0);
+    EnableInterrupts;
+}

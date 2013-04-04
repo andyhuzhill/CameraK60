@@ -59,3 +59,29 @@ controllerGetOutput(int16* steer, int16* motor)
     *steer = steerOutput;
     *motor = motorOutput;
 }
+
+
+void steerInit(void)
+{
+    FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);
+}
+
+void steerSetDuty(uint8 duty)
+{
+    FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
+}
+
+void motorInit(void)
+{
+    FTM_PWM_init(MOTOR1_PWM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
+    FTM_PWM_init(MOTOR2_PWM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
+    gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
+    
+    pit_init_ms(PIT0, 500);     //500ms 触发一次PIT中断
+}
+
+
+void motorSetSpeed(uint32 speed, uint32 realspeed)
+{
+    
+}

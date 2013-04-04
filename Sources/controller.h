@@ -15,6 +15,7 @@
 #define CONTROLLER_H_
 
 #include "common.h"
+#include "derivative.h"
 
 void controllerInit(void);
 
@@ -40,6 +41,29 @@ void controllerResetPID(void);
  */
 void controllerGetOutput(int16* steer, int16* motor);
 
+
+/*
+ * 舵机控制器初始化
+ */
+void steerInit(void);
+
+/*
+ * 舵机改变占空比
+ * duty 要达到的占空比
+ */
+void steerSetDuty(uint8 duty);
+
+/*
+ * 电机控制初始化
+ */
+void motorInit(void);
+
+/*
+ * 电机调速
+ * speed 想要达到的速度
+ * realspeed 实际的速度
+ */
+void motorSetSpeed(uint32 speed, uint32 realspeed);
 
 
 #endif /* CONTROLLER_H_ */
