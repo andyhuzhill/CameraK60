@@ -25,21 +25,21 @@ void ov7725_exti_init()
 
     port_init(PTA29,IRQ_RISING | PULLUP | PF);    //场中断，下拉，下降沿触发中断，带滤波
     
-    disable_irq(87); 						//关闭PTA的中断
+    disable_irq(PORTA_IRQn); 						//关闭PTA的中断
 }
 
 void ov7725_get_img()
 {
     img_flag = IMG_START;					//开始采集图像
     PORTA_ISFR=~0;							//写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
-    enable_irq(87); 						//允许PTA的中断
+    enable_irq(PORTA_IRQn);                 //允许PTA的中断
     while(img_flag != IMG_FINISH)           //等待图像采集完毕
     {
         if(img_flag == IMG_FAIL)            //假如图像采集错误，则重新开始采集
         {
             img_flag = IMG_START;			//开始采集图像
             PORTA_ISFR=~0;					//写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
-            enable_irq(87); 				//允许PTA的中断
+            enable_irq(PORTA_IRQn);         //允许PTA的中断
         }
     }
 }
@@ -78,7 +78,7 @@ Register_Info ov7727_reg[] =
 #elif (CAMERA_W == 320)  
     {HOutSize     ,0x50}, 
 #else
-    
+#error CAMERA_W is invalid!
 #endif
 
 #if (CAMERA_H == 60 )
@@ -90,7 +90,7 @@ Register_Info ov7727_reg[] =
 #elif (CAMERA_H == 240 )
     {VOutSize     ,0x78},
 #else
-    
+#error CAMERA_H is invalid!
 #endif 
     
     {EXHCH        ,0x00},
@@ -120,7 +120,7 @@ Register_Info ov7727_reg[] =
 	{BDMStep      ,0x03},
     {SDE          ,0x04},
     {BRIGHT       ,0x00},                              
-    {CNST         ,0x60},
+    {CNST         ,0xff},
     {SIGN         ,0x06},
     {UVADJ0       ,0x11},
     {UVADJ1       ,0x02},

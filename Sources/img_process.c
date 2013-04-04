@@ -11,34 +11,66 @@
  *     Version:
  * =========================================================================
 
-*/
+ */
 
 #include "img_process.h"
 
 static uint8 img[IMG_H][IMG_W];
 
+static int8 center[IMG_H] = {0};
+
+extern uint8 *img_bin_buff;
+
+/*
+ * ½«Ô­À´320X240µÄÊý×é´æÈë320X24µÄÊý×é£¨Ã¿ÐÐ40×Ö½Ú£¬¹²24ÐÐ£©
+ */
 void
-imgResize(const uint8 *srcImg)              //½«Ô­À´320X240µÄÊý×é±ä³É320X24µÄÊý×é£¨Ã¿ÐÐ40×Ö½Ú£¬¹²24ÐÐ£©
+imgResize(const uint8 *srcImg)              
 {
     for (int row = 0; row < (IMG_H); ++row)
     {
         for (int col = 0; col < (IMG_W); ++col)
         {
-            img[row][col] = srcImg[row*10*IMG_W + col];
+            img[row][col] = (srcImg[row*10*IMG_W + col] ? 1 : 0) ;
         }
     }
 
-#ifdef DEBUG
+#if 1
     for (int row = 0; row < (IMG_H); ++row)
     {
+        printf("Row %2d:",row);
         for (int col = 0; col < (IMG_W); ++col)
         {
-            printf("%d", img[row][col] ? 1 : 0);
+            printf("%d",img[row][col]);
         }
         printf("\n");
     }
 #endif
 }
+
+/*
+ * ÂË²¨ ½«¹ÂÁ¢µÄÔëÉùÈ¥µô
+ */
+void
+imgFilter(void)
+{
+    uint8 row, col;
+    for (row = 1; row < IMG_H-2; ++row) 
+    {
+        for (col = 1; col < IMG_W-2; ++col) 
+        {
+            if (img[row][col-1]==1 && img[row][col]==0 && img[row][col+1]==1) 
+            {
+                img[row][col] = 1;
+            }
+            if (img[row][col-1]==0 && img[row][col]==1 && img[row][col+1]==0) 
+            {
+                img[row][col] = 0;
+            }
+        }
+    }
+}
+
 
 /*
  * ËµÃ÷: ÌáÈ¡Í¼ÏñÖÐÏß
@@ -47,45 +79,140 @@ imgResize(const uint8 *srcImg)              //½«Ô­À´320X240µÄÊý×é±ä³É320X24µÄÊý×
 void
 imgGetMidLine(void)
 {
-    int8 blackLeft[IMG_H] = {0};
-    int8 center[IMG_H] = {0};
-    int8 blackRight[IMG_H]={0};
+    int8 leftBlack[IMG_H] = {0};
+    int8 rightBlack[IMG_H]={0};
 
     int8 row, col;
 
-    //¼ÆËãËùÓÐÐÐ×óÓÒ±ßÔµ
-    for (row = (IMG_H -1); row > 0; --row)              //ÏÈ¼ÆËã×ó±ß½ç
+    int8 leftStart, leftEnd, rightStart, rightEnd;  
+    int8 getLeftBlack=0, getRightBlack=0;             //±êÖ¾ÊÇ·ñÕÒµ½ºÚÏß
+    int8 leftLostRow=0, rightLostRow =0;              //×óÓÒ±ßÏß¶ªÊ§µÄÐÐÊý
+
+    for (row = IMG_H -1; row > (IMG_H -6); --row)       //ËÑË÷Ç°ÎåÐÐ
     {
-        for (col = (IMG_W/2-1); col > 2; --col)                 //´ÓÖÐ¼äÁÐ¿ªÊ¼²âÁ¿
+        for (col = (IMG_W /2); col > 2; --col)          //  ÏÈÕÒ×ó±ßºÚÏß
         {
-            if (((img[row][col]==0) && img[row][col-1] !=0)
-                    || ((img[row][col-2]!=0)&&(img[row][col-1]!=0)&&(img[row][col]!=0)))
+            if (img[row][col] != 0 && img[row][col-1] !=0)
             {
-                blackLeft[row] = col;
+                leftBlack[row] = col;       //¼ÇÂ¼ÏÂºÚÏßµÄÁÐÊý
+                DEBUG_OUT("leftBlack[%d] is : %d\n", row, leftBlack[row]);
                 break;
             }
         }
-        if (col ==0)
-        {
-            blackLeft[row] = 0;
+        if (col == 2)                       //  Ã»ÓÐ·¢ÏÖºÚÏß
+        {   
+            leftBlack[row] = 0; 
         }
-    }
 
-    for (row = (IMG_H-1) ; row > 0; --row )                  //ÔÙ¼ÆËãÓÒ±ß½ç
-    {
-        for (col = (IMG_W /2-1); col < IMG_W-2; ++col )              //´ÓÖÐ¼äÁÐ¿ªÊ¼²âÁ¿
+        for (col = (IMG_W /2); col < (IMG_W -2); ++col) // ÔÙÕÒÓÒ±ßºÚÏß
         {
-            if (((img[row][col]!=0) && (img[row][col+1]==0))
-                    || ((img[row][col]!=0)&&(img[row][col+1]!=0)&&(img[row][col+2]!=0)))
+            if (img[row][col] != 0 && img[row][col+1] != 0)   //·¢ÏÖºÚÏß
             {
-                blackRight[row] = col;
+                rightBlack[row] = col;   //¼ÇÂ¼ÏÂºÚÏßµÄÁÐÊý
+                DEBUG_OUT("rightBlack[%d] is : %d\n", row, rightBlack[row]);
                 break;
             }
         }
-        if(col == IMG_W)
+        if (col == IMG_W -2)            // Ã»ÓÐ·¢ÏÖºÚÏß
         {
-            blackRight[row] = IMG_W -1;
+            rightBlack[row] = IMG_W -1; 
         }
     }
 
+    leftStart = leftBlack[IMG_H -5];
+    leftEnd = leftBlack[IMG_H -5];
+    rightStart = rightBlack[IMG_H-5];
+    rightEnd = rightBlack[IMG_H-5];          
+    if (leftStart < 0) leftStart = 0;
+    if (leftEnd > IMG_W -1) leftEnd = IMG_W-1;
+    if (rightStart < 0) rightStart = 0;
+    if (rightEnd > IMG_W -1) rightEnd = IMG_W-1; //±ÜÃâÊý×é·ÃÎÊÔ½½ç
+
+    for (row = IMG_H -6; row > 0 ; --row) 
+    {
+        getLeftBlack = 0;
+        do {
+            leftStart -= 3;
+            leftEnd += 3;
+            if (leftStart < 0) leftStart = 0;
+            if (leftEnd > IMG_W -1) leftEnd = IMG_W-1;      //±ÜÃâÊý×é·ÃÎÊÔ½½ç
+
+            for (col = leftStart; col < leftEnd ; ++col) 
+            {
+                if (img[row][col] != 0 && img[row][col-1]!=0) 
+                {   
+                    leftBlack[row] = col;
+                    DEBUG_OUT("leftBlack[%d] is : %d\n", row, leftBlack[row]);
+                    getLeftBlack = 1;
+                    break;
+                }
+            }
+            if(leftStart ==0 && leftEnd== IMG_W-1)          
+                leftLostRow = row;
+        } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
+
+        getRightBlack = 0;
+        do{
+            rightStart -= 3;
+            rightEnd += 3;
+            if (rightStart < 0) rightStart = 0;
+            if (rightEnd > IMG_W -1) rightEnd = IMG_W-1;    //±ÜÃâÊý×é·ÃÎÊÔ½½ç
+
+            for (col = rightStart; col < rightEnd; ++col) 
+            {
+                if (img[row][col]!=0 && img[row][col+1]!=0) 
+                {
+                    rightBlack[row] = col;
+                    DEBUG_OUT("rightBlack[%d] is : %d\n", row, rightBlack[row]);
+                    getRightBlack = 1;
+                    break;
+                }
+            }
+            if (rightStart == 0 && rightEnd == IMG_W-1) 
+                rightLostRow = row; 
+        }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
+    }
+
+    DEBUG_OUT("leftLostRow:%2d, rightLostRow:%2d\n",leftLostRow, rightLostRow);
+    for (row = IMG_H-1; row > MIN(leftLostRow, rightLostRow); --row)  
+    {
+        center[row] = (leftBlack[row] + rightBlack[row]) /2;
+        DEBUG_OUT("center[%d] is :%d", row, center[row]);
+    }
+}
+
+
+int 
+imgProcess(void)
+{
+    int err[IMG_H]={0};
+    int slop, slop1, slop2, slop_add;
+    imgResize(img_bin_buff);
+    imgFilter();
+    imgGetMidLine();
+    
+    for (int cnt = 0; cnt < IMG_H-1; ++cnt) 
+    {
+        err[cnt] = center[cnt] - IMG_W/2;
+    }
+    slop = err[IMG_W-1] -err[0];
+    slop1 = center[IMG_H] - center[IMG_H/2];
+    slop2 = center[IMG_H/2] - center[0];
+    slop_add = slop1 + slop2;
+    
+    if (slop1 * slop2 < 0)  //ÍäµÀ
+    {
+        if (-5 <= slop_add && slop_add <= 5) 
+        {
+//            control_steer = err[0];
+//            control_speed = 0;    
+        }
+    }
+    else
+    {
+        if (-3 <= slop_add && slop_add <= 3)    //Ö±µÀ 
+        {
+//            control_steer = err[7];
+        }
+    }
 }

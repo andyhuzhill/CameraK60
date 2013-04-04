@@ -66,8 +66,8 @@ void wait (void)
 
 void write_vtor (int vtor)
 {
-        /* Write the VTOR with the new value */
-        SCB_VTOR = vtor;    
+    /* Write the VTOR with the new value */
+    SCB_VTOR = vtor;    
 }
 /***********************************************************************/
 /*
@@ -84,30 +84,30 @@ void write_vtor (int vtor)
 void enable_irq (int irq)
 {
     int div;
-    
+
     /* Make sure that the IRQ is an allowable number. Right now up to 91 is 
      * used.
      */
     if (irq > 91)
-        printf("\nERR! Invalid IRQ value passed to enable irq function!\n");
-    
+        DEBUG_OUT("\nERR! Invalid IRQ value passed to enable irq function!\n",0);
+
     /* Determine which of the NVICISERs corresponds to the irq */
     div = irq/32;
-    
+
     switch (div)
     {
-        case 0x0:
-              NVICICPR0 |= 1 << (irq%32);
-              NVICISER0 |= 1 << (irq%32);
-              break;
-        case 0x1:
-              NVICICPR1 |= 1 << (irq%32);
-              NVICISER1 |= 1 << (irq%32);
-              break;
-        case 0x2:
-              NVICICPR2 |= 1 << (irq%32);
-              NVICISER2 |= 1 << (irq%32);
-              break;
+    case 0x0:
+        NVICICPR0 |= 1 << (irq%32);
+        NVICISER0 |= 1 << (irq%32);
+        break;
+    case 0x1:
+        NVICICPR1 |= 1 << (irq%32);
+        NVICISER1 |= 1 << (irq%32);
+        break;
+    case 0x2:
+        NVICICPR2 |= 1 << (irq%32);
+        NVICISER2 |= 1 << (irq%32);
+        break;
     }              
 }
 /***********************************************************************/
@@ -125,27 +125,27 @@ void enable_irq (int irq)
 void disable_irq (int irq)
 {
     int div;
-    
+
     /* Make sure that the IRQ is an allowable number. Right now up to 91 is 
      * used.
      */
     if (irq > 91)
-        printf("\nERR! Invalid IRQ value passed to disable irq function!\n");
-    
+        DEBUG_OUT("\nERR! Invalid IRQ value passed to disable irq function!\n",0);
+
     /* Determine which of the NVICICERs corresponds to the irq */
     div = irq/32;
-    
+
     switch (div)
     {
-        case 0x0:
-               NVICICER0 |= 1 << (irq%32);
-              break;
-        case 0x1:
-              NVICICER1 |= 1 << (irq%32);
-              break;
-        case 0x2:
-              NVICICER2 |= 1 << (irq%32);
-              break;
+    case 0x0:
+        NVICICER0 |= 1 << (irq%32);
+        break;
+    case 0x1:
+        NVICICER1 |= 1 << (irq%32);
+        break;
+    case 0x2:
+        NVICICER2 |= 1 << (irq%32);
+        break;
     }              
 }
 /***********************************************************************/
@@ -165,16 +165,16 @@ void set_irq_priority (int irq, int prio)
 {
     /*irq priority pointer*/
     uint8 *prio_reg;
-    
+
     /* Make sure that the IRQ is an allowable number. Right now up to 91 is 
      * used.
      */
     if (irq > 91)
-        printf("\nERR! Invalid IRQ value passed to priority irq function!\n");
+        DEBUG_OUT("\nERR! Invalid IRQ value passed to priority irq function!\n",0);
 
     if (prio > 15)
-        printf("\nERR! Invalid priority value passed to priority irq function!\n");
-    
+        DEBUG_OUT("\nERR! Invalid priority value passed to priority irq function!\n",0);
+
     /* Determine which of the NVICIPx corresponds to the irq */
     prio_reg = (uint8 *)(((uint32)&NVICIP0) + irq);
     /* Assign priority to IRQ */

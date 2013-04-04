@@ -38,28 +38,72 @@
  */
 
 #include "derivative.h" /* include peripheral declarations */
-#include "img_process.h"
 
-uint8 img_bin_buff[CAMERA_SIZE];
+//全局变量定义
+uint16   motor_cnt =0;
+//uint8   img_bin_buff[CAMERA_SIZE];
+
+void delay(void)
+{
+    volatile int x,y,z;
+    for (z = 0; z < 20; ++z) 
+    {
+        for (x = 0; x < 1500; ++x) 
+        {
+            for (y = 0; y < 1500; ++y) 
+            {
+                ;
+            }
+        } 
+    }
+}
 
 int 
 main(void)
 {   
-#ifdef DEBUG
-    Site_t site={0,0};                            //显示图像左上角位置
-    Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
-    Size_t size={LCD_W,LCD_H};                  //显示区域图像大小 
+    uint8 h8,l8;
+    uint8 duty=0;
+    uint8 txbuf[3]={0};  //发送缓存区
+    uint8 status;       //用于判断接受/发送状态
+    DisableInterrupts;  //关全局中断
+    uint8 h8,l8;
+    uint8 duty=0;
+    uint8 txbuf[3]={0};  //发送缓存区
+    uint8 status;       //用于判断接受/发送状态
+    DisableInterrupts;  //关全局中断
 
-//    LCD_Init(RED);
-#endif
-    ov7725_init(img_bin_buff);
+    NRF_Init();
+    controllerInit();
+    motorInit();
+    steerInit();
 
-    while(1)
+
+    NRF_Init();
+    controllerInit();
+    motorInit();
+    steerInit();
+
+
+    EnableInterrupts;   //开全局中断
+
+    for (;;) 
     {
+
         ov7725_get_img();                     //采集图像
-#ifdef DEBUG
-//        LCD_Img_Binary_Z(site,size,(uint16 *)img_bin_buff,imgsize);    //显示图像
-//        imgResize(img_bin_buff);
-#endif
+
+        h8 = motor_cnt / 256;
+        l8 = motor_cnt % 256;
+
+        txbuf[2] = l8;
+        txbuf[1] = h8;
+        txbuf[0] = duty;
+
+        NRF_ISR_Tx_Dat(txbuf, 3);
+        do
+        {
+            status = NRF_ISR_Tx_State();
+        }while(status == TX_ISR_SEND);
+        FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, duty);
+
     }
 }
