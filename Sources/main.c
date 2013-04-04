@@ -65,32 +65,18 @@ main(void)
     uint8 duty=0;
     uint8 txbuf[3]={0};  //发送缓存区
     uint8 status;       //用于判断接受/发送状态
-    DisableInterrupts;  //关全局中断
-    uint8 h8,l8;
-    uint8 duty=0;
-    uint8 txbuf[3]={0};  //发送缓存区
-    uint8 status;       //用于判断接受/发送状态
+
     DisableInterrupts;  //关全局中断
 
     NRF_Init();
     controllerInit();
     motorInit();
     steerInit();
-
-
-    NRF_Init();
-    controllerInit();
-    motorInit();
-    steerInit();
-
 
     EnableInterrupts;   //开全局中断
 
     for (;;) 
     {
-
-        ov7725_get_img();                     //采集图像
-
         h8 = motor_cnt / 256;
         l8 = motor_cnt % 256;
 
