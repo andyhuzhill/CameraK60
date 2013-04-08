@@ -21,28 +21,20 @@ PidObject pidSteer;
 PidObject pidMotor;
 
 int16 steerOutput;
-int16 motorOutput;
+float motorOutput;
 
 void 
-controllerInit(void)
-{
-    pidInit(&pidSteer, 0, PID_STEER_KP, PID_MOTOR_KI, PID_MOTOR_KD);
-    pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
-    pidSetIntegralLimit(&pidSteer, PID_STEER_INTEGRATION_LIMIT);
-    pidSetIntegralLimit(&pidMotor, PID_MOTOR_INTEGRATION_LIMIT);
-}
-
-
-void 
-controllerUpdatePID(
-        float steerActual, float motorActual,
-        float steerDesired, float motorDesired)
+steerUpdatePID(float steerActual, float steerDesired)
 {
     pidSetDesired(&pidSteer, steerDesired);
     TRUNCATE_SINT16(steerOutput,  pidUpdate(&pidSteer, steerActual, true));
+}
 
+void
+motorUpdatePID(float motorActual, float motorDesired)
+{
     pidSetDesired(&pidMotor, motorDesired);
-    TRUNCATE_SINT16(motorOutput, pidUpdate(&pidMotor, motorActual, true));
+    motorOutput = pidUpdate(&pidMotor, motorActual, true);
 }
 
 void 
@@ -52,20 +44,17 @@ controllerResetPID(void)
     pidReset(&pidSteer);
 }
 
-void
-controllerGetOutput(int16* steer, int16* motor)
-{
-    *steer = steerOutput;
-    *motor = motorOutput;
-}
-
 void steerInit(void)
 {
     FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);
+    
+    pidInit(&pidSteer, 0, PID_STEER_KP, PID_MOTOR_KI, PID_MOTOR_KD);        //PID 控制器初始化
+    pidSetIntegralLimit(&pidSteer, PID_STEER_INTEGRATION_LIMIT);
 }
 
 void steerSetDuty(uint8 duty)
 {
+//    steerUpdatePID()
     FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
 }
 
@@ -75,13 +64,21 @@ void motorInit(void)
     FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
     gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
 
+    pidInit(&pidMotor, 10, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);      //PID 控制器初始化
+    pidSetIntegralLimit(&pidMotor, PID_MOTOR_INTEGRATION_LIMIT);
+
     FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
-    pit_init_ms(PIT0, 500);                             //500ms 触发一次PIT中断 进行测速
+    pit_init_ms(PIT0, 1000);                             //1s 触发一次PIT中断 进行测速
 }
 
-
-void motorSetSpeed(uint32 speed, uint32 realspeed)
+void motorSetSpeed(uint32 realspeed, uint32 speed)
 {
-    controllerUpdatePID(0,(float)realspeed, 0, (float)speed);
-    FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN,(uint32)motorOutput);
+    float duty;
+    float desired =0;
+    if (speed >= 5) desired= speed*738-3535;
+    motorUpdatePID((float)realspeed, desired);
+    
+    duty = (motorOutput+3535) / 738 ;
+   
+    FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)duty);
 }

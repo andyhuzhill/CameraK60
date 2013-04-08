@@ -17,30 +17,31 @@
 #include "common.h"
 #include "derivative.h"
 
-void controllerInit(void);
+typedef enum
+{
+    ROAD_LOST           = 0,
+    STRATIGHT           = 1,
+    ROUND               = 2,
+    STRATIGHT_TO_ROUND  = 3,
+    BIG_S               = 4,
+    SMALL_S             = 5,
+    CROSS               = 6
+}Road_type;
 
 /*
  *  更新控制器的值
  *  steerActual  舵机实际的控制输出量
- *  motorActual  电机实际的控制输出量
  *  steerDesired 舵机预期的控制输出量
- *  motorDesired 电机预期的控制输出量
  */
-void controllerUpdatePID(
-        float steerActual, float motorActual,
-        float steerDesired, float motorDesired);
+void steerUpdatePID(float steerActual, float steerDesired);
+
+
+void motorUpdataPID(float motorActual, float motorDesired);
 
 /*
  * 复位所有PID控制器
  */
 void controllerResetPID(void);
-
-
-/*
- * 得到控制器实际的输出值
- */
-void controllerGetOutput(int16* steer, int16* motor);
-
 
 /*
  * 舵机控制器初始化
@@ -63,6 +64,6 @@ void motorInit(void);
  * speed 想要达到的速度
  * realspeed 实际的速度
  */
-void motorSetSpeed(uint32 speed, uint32 realspeed);
+void motorSetSpeed(uint32 realspeed, uint32 speed);
 
 #endif /* CONTROLLER_H_ */

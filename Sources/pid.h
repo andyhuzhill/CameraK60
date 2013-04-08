@@ -56,9 +56,6 @@ typedef struct
   float kp;           //< proportional gain
   float ki;           //< integral gain
   float kd;           //< derivative gain
-  float outP;         //< proportional output (debugging)
-  float outI;         //< integral output (debugging)
-  float outD;         //< derivative output (debugging)
   float iLimit;      //< integral limit
 } PidObject;
 

@@ -30,8 +30,8 @@ CH7       PTD7       ×         ×
 ×表示没有
 */
 volatile struct FTM_MemMap *FTMx[3] = {FTM0_BASE_PTR, FTM1_BASE_PTR, FTM2_BASE_PTR}; //定义三个指针数组保存 FTMn 的地址
-extern uint32 bus_clk_khz;
 
+extern uint32 bus_clk_khz;
 
 /*************************************************************************
 *                             野火嵌入式开发工作室

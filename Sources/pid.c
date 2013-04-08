@@ -64,10 +64,6 @@ float pidUpdate(PidObject* pid, const float measured, const bool updateError)
 
   pid->deriv = (pid->error - pid->prevError) / IMU_UPDATE_DT;
 
-  pid->outP = pid->kp * pid->error;
-  pid->outI = pid->ki * pid->integ;
-  pid->outD = pid->kd * pid->deriv;
-
   output = (pid->kp * pid->error) +
            (pid->ki * pid->integ) +
            (pid->kd * pid->deriv);

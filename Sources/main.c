@@ -1,4 +1,4 @@
-/*
+/**ll
  * =====================================================
  * main.c
  *
@@ -16,7 +16,7 @@
 #include "derivative.h" /* include peripheral declarations */
 
 //全局变量定义
-uint16   motor_cnt =0;
+volatile uint16   speed_cnt =0;      // 编码器采集到的现在的速度值
 //uint8   img_bin_buff[CAMERA_SIZE];
 
 void delay(void)
@@ -43,27 +43,17 @@ main(void)
     uint8 status;       //用于判断接受/发送状态
     DisableInterrupts;  //关全局中断
 
-    NRF_Init();
-    controllerInit();
     motorInit();
-    steerInit();
+//    steerInit();
+//    
+//    FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
+//    FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
+//    gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
 
     EnableInterrupts;   //开全局中断
 
     for (;;) 
     {
-        h8 = motor_cnt / 256;
-        l8 = motor_cnt % 256;
-
-        txbuf[2] = l8;
-        txbuf[1] = h8;
-        txbuf[0] = duty;
-
-        NRF_ISR_Tx_Dat(txbuf, 3);
-        do
-        {
-            status = NRF_ISR_Tx_State();
-        }while(status == TX_ISR_SEND);
-        FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, duty);
+        motorSetSpeed(speed_cnt, 100);
     }
 }

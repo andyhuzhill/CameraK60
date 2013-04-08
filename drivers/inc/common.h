@@ -17,6 +17,7 @@
 #include "MK60DZ10.h"
 
 #define DEBUG               //切换调试输出的宏定义
+#define DEBUG_PRINT
 
 //存储器段的宏定义
 #if defined(__CWCC__)

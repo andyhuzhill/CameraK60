@@ -52,7 +52,7 @@ DMA0_ISR(void)
 }
 
 
-static uint16 encoder_cnt;
+static volatile uint16 encoder_cnt;
 
 void FTM2_ISR(void)
 {
@@ -70,14 +70,14 @@ void FTM2_ISR(void)
     }
 }
 
-extern uint16 motor_cnt;
+extern volatile uint16 speed_cnt;
 void 
 PIT0_ISR(void)
 {
     DisableInterrupts;
     
-    motor_cnt = encoder_cnt;
-    DEBUG_OUT("\n Get %d pluses\n", encoder_cnt);
+    speed_cnt = encoder_cnt;
+//    DEBUG_OUT("\n Get %d pluses\n", encoder_cnt);
     encoder_cnt = 0;
     
     PIT_Flag_Clear(PIT0);
