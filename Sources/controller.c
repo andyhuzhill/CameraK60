@@ -75,10 +75,15 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
 {
     float duty;
     float desired =0;
+
     if (speed >= 5) desired= speed*738-3535;
     motorUpdatePID((float)realspeed, desired);
     
     duty = (motorOutput+3535) / 738 ;
+    
+    uint8 *p = (unsigned char*)&duty;
+    
+    NRF_ISR_Tx_Dat(p, 4);
    
     FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)duty);
 }

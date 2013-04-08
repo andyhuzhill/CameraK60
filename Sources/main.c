@@ -43,12 +43,9 @@ main(void)
     uint8 status;       //用于判断接受/发送状态
     DisableInterrupts;  //关全局中断
 
+    NRF_Init();
     motorInit();
 //    steerInit();
-//    
-//    FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
-//    FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
-//    gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
 
     EnableInterrupts;   //开全局中断
 

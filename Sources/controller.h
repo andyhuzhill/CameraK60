@@ -14,7 +14,6 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "common.h"
 #include "derivative.h"
 
 typedef enum
