@@ -71,13 +71,15 @@ void FTM2_ISR(void)
 }
 
 extern volatile uint16 speed_cnt;
+extern volatile bool getEncoder;
 void 
 PIT0_ISR(void)
 {
     DisableInterrupts;
     
     speed_cnt = encoder_cnt;
-//    DEBUG_OUT("\n Get %d pluses\n", encoder_cnt);
+    
+    getEncoder = true;
     encoder_cnt = 0;
     
     PIT_Flag_Clear(PIT0);

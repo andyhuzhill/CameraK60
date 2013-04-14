@@ -27,20 +27,23 @@ typedef enum
     CROSS               = 6
 }Road_type;
 
-/*
- *  更新控制器的值
- *  steerActual  舵机实际的控制输出量
- *  steerDesired 舵机预期的控制输出量
- */
-void steerUpdatePID(float steerActual, float steerDesired);
+typedef struct
+{
+  float desired;      //< 设置要达到的值
+  float error;        //< 误差
+  float prevError;    //< 上一次的误差
+  float integ;        //< 积分和
+  float deriv;        //< 微分
+  float kp;           //< 比例系数
+  float ki;           //< 积分系数
+  float kd;           //< 微分系数
+  float iLimit;       //< 积分限
+} PidObject;
 
+float UpdataPID(PidObject *pid, const float measured);
 
-void motorUpdataPID(float motorActual, float motorDesired);
-
-/*
- * 复位所有PID控制器
- */
-void controllerResetPID(void);
+void pidInit(PidObject *pid, const float desired, const float kp,
+        const float ki, const float kd);
 
 /*
  * 舵机控制器初始化

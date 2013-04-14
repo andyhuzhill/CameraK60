@@ -12,51 +12,69 @@
  */
 
 #include "controller.h"
-#include "pid.h"
 
-//Fancier version
-#define TRUNCATE_SINT16(out, in) (out = (in<INT16_MIN)?INT16_MIN:((in>INT16_MAX)?INT16_MAX:in) )
+#define DEFAULT_PID_INTEGRATION_LIMIT  5000.0
 
 PidObject pidSteer;
 PidObject pidMotor;
 
-int16 steerOutput;
-float motorOutput;
-
-void 
-steerUpdatePID(float steerActual, float steerDesired)
+void pidInit(PidObject *pid, const float desired, const float kp,
+        const float ki, const float kd)
 {
-    pidSetDesired(&pidSteer, steerDesired);
-    TRUNCATE_SINT16(steerOutput,  pidUpdate(&pidSteer, steerActual, true));
+    pid->error = 0;
+    pid->prevError = 0;
+    pid->integ = 0;
+    pid->deriv = 0;
+    pid->desired = desired;
+    pid->kp = kp;
+    pid->ki = ki;
+    pid->kd = kd;
+
+    pid->iLimit = DEFAULT_PID_INTEGRATION_LIMIT;
 }
 
-void
-motorUpdatePID(float motorActual, float motorDesired)
+
+float UpdataPID(PidObject *pid, const float measured)
 {
-    pidSetDesired(&pidMotor, motorDesired);
-    motorOutput = pidUpdate(&pidMotor, motorActual, true);
+    float output;
+
+    pid->error = pid->desired - measured;       //计算误差
+
+    pid->integ += pid->error;                   //计算积分
+
+    if(pid->integ > pid->iLimit)                //避免积分和超过限制
+    {
+        pid->integ = pid->iLimit;
+    }
+    else if (pid->integ < - pid->iLimit)
+    {
+        pid->integ = -pid->iLimit;
+    }
+
+    pid->deriv = (pid->error - pid->prevError); //计算微分
+
+    //计算PID输出
+    output = pid->kp * pid->error + pid->ki*pid->integ + pid->kd *pid->deriv; 
+
+    pid->prevError = pid->error;
+
+    return output;
 }
 
-void 
-controllerResetPID(void)
-{
-    pidReset(&pidMotor);
-    pidReset(&pidSteer);
-}
 
 void steerInit(void)
 {
     FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);
-    
-    pidInit(&pidSteer, 0, PID_STEER_KP, PID_MOTOR_KI, PID_MOTOR_KD);        //PID 控制器初始化
-    pidSetIntegralLimit(&pidSteer, PID_STEER_INTEGRATION_LIMIT);
+
+    pidInit(&pidSteer, 50, PID_STEER_KP, PID_STEER_KI, PID_STEER_KD);
+    pidSteer.iLimit = PID_STEER_INTEGRATION_LIMIT;
 }
 
 void steerSetDuty(uint8 duty)
 {
-//    steerUpdatePID()
     FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
 }
+
 
 void motorInit(void)
 {
@@ -64,31 +82,31 @@ void motorInit(void)
     FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
     gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
 
-    pidInit(&pidMotor, 10, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);      //PID 控制器初始化
-    pidSetIntegralLimit(&pidMotor, PID_MOTOR_INTEGRATION_LIMIT);
+    pidInit(&pidMotor, 50, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
+    pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
     FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
-    pit_init_ms(PIT0, 1000);                             //1s 触发一次PIT中断 进行测速
+    pit_init_ms(PIT0, 100);                             //100ms 触发一次PIT中断 进行测速
 }
+
+
+volatile bool getEncoder= false;
 
 void motorSetSpeed(uint32 realspeed, uint32 speed)
 {
-    float duty;
-    float desired =0;
-    uint8 status;
+    static float duty;
+    int32 pwm;
+    
+    if(getEncoder)
+    {
+        pidMotor.desired = speed;
+        pwm = (int32)UpdataPID(&pidMotor, realspeed);
 
-    if (speed >= 5) desired= speed*738-3535;
-    motorUpdatePID((float)realspeed, desired);
-    
-    duty = (motorOutput+3535) / 738 ;
-    
-    uint8 *p = (unsigned char*)&duty;
-    
-    NRF_ISR_Tx_Dat(p, 4);
-    
-    do{
-        status = NRF_ISR_Tx_State();
-    }while(status == TX_ISR_SEND);
-   
-    FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)duty);
+        pwm = realspeed + pwm;
+
+        duty = PWM2DUTY(pwm);
+
+        FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)duty);
+        getEncoder = false;
+    }
 }

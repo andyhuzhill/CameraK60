@@ -54,17 +54,17 @@
 #define STEER_FTM               FTM0
 #define STEER_CHN               CH0
 #define STEER_FREQ              300         //单位Hz
-#define STEER_DEFAULT_DUTY      500         //单位 千分之一
+#define STEER_DEFAULT_DUTY      50          //单位 百分之一
 
 #define MOTOR1_FTM              FTM1
 #define MOTOR1_CHN              CH0
 #define MOTOR1_FREQ             10000        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     200          //单位 千分之一
+#define MOTOR1_DEFAULT_DUTY     0          //单位 百分之一
 
 #define MOTOR2_FTM              FTM1
 #define MOTOR2_CHN              CH1
 #define MOTOR2_FREQ             10000        //单位Hz
-#define MOTOR2_DEFAULT_DUTY     0            //单位千分之一
+#define MOTOR2_DEFAULT_DUTY     0            //单位百分之一
 
 #define MOTOR_EN_PORT           PORT_C
 #define MOTOR_EN_PIN            14
@@ -72,8 +72,26 @@
 #define ENCODER_FTM             FTM2
 #define ENCODER_CHN             CH1
 
-#define MAX_PWM_CNT             44655      
-    //当PWM占空比为100%时 编码器的输出值  用来将PID控制器的输出转换为PWM占空比
+//  定义舵机PID参数
+#define PID_STEER_KP  3.5
+#define PID_STEER_KI  2.0
+#define PID_STEER_KD  0.0
+#define PID_STEER_INTEGRATION_LIMIT    20.0
+
+//  定义电机PID参数
+#define PID_MOTOR_KP  2.0
+#define PID_MOTOR_KI  0.0
+#define PID_MOTOR_KD  0.0
+#define PID_MOTOR_INTEGRATION_LIMIT   20.0
+
+
+#ifdef DEBUG
+#define DUTY2PWM(duty)  (738*(duty)-3535)
+#define PWM2DUTY(pwm)   (((pwm)+3535)/738)
+#else
+#define DUTY2PWM(duty)  (441*(duty)-3546)
+#define PWM2DUTY(pwm)   (((pwm)+3546)/441)
+#endif 
 
 #endif
 
