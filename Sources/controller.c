@@ -33,7 +33,6 @@ void pidInit(PidObject *pid, const float desired, const float kp,
     pid->iLimit = DEFAULT_PID_INTEGRATION_LIMIT;
 }
 
-
 float UpdataPID(PidObject *pid, const float measured)
 {
     float output;
@@ -60,7 +59,6 @@ float UpdataPID(PidObject *pid, const float measured)
 
     return output;
 }
-
 
 void steerInit(void)
 {
@@ -102,9 +100,9 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         pidMotor.desired = speed;
         pwm = (int32)UpdataPID(&pidMotor, realspeed);
 
-        pwm = realspeed + pwm;
+//        pwm = realspeed + pwm;
 
-        duty = PWM2DUTY(pwm);
+        duty = duty + PWM2DUTY(pwm);
 
         FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)duty);
         getEncoder = false;

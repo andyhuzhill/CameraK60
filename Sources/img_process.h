@@ -25,7 +25,7 @@
  * 将原来320X240的数组存入320X24的数组（每行40字节，共24行）
  */
 void
-imgResize(const uint8 *srcImg);
+imgResize(void);
 
 /*
  * 滤波 将孤立的噪声去掉

@@ -19,7 +19,7 @@
 
 static int8 center[IMG_H] = {0};        //记录中线位置
 
-static vuint8 srcImg[CAMERA_SIZE];     //保存摄像头采集数据
+static uint8 srcImg[CAMERA_SIZE];     //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];        //将摄像头采集数据另存入此数组
 
 /*
@@ -87,7 +87,7 @@ imgGetMidLine(void)
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
     int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
-    //    int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
+    int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
     for (row = IMG_H -1; row > (IMG_H -6); --row)       //搜索前五行
     {
@@ -148,8 +148,8 @@ imgGetMidLine(void)
                     break;
                 }
             }
-            //            if(leftStart ==0 && leftEnd== IMG_W-1)          
-            //                leftLostRow = row;
+            if(leftStart ==0 && leftEnd== IMG_W-1)          
+                leftLostRow = row;
         } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
 
         getRightBlack = 0;
@@ -169,8 +169,8 @@ imgGetMidLine(void)
                     break;
                 }
             }
-            //            if (rightStart == 0 && rightEnd == IMG_W-1) 
-            //                rightLostRow = row; 
+            if (rightStart == 0 && rightEnd == IMG_W-1) 
+                rightLostRow = row; 
         }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
     }
 
@@ -188,6 +188,14 @@ imgInit(void)
     ov7725_init(srcImg);
 }
 
+
+Road_type
+judgeRoad(void)
+{
+    
+}
+
+extern IMG_STATE img_flag;
 int 
 imgProcess(void)
 {
@@ -197,21 +205,12 @@ imgProcess(void)
     if(IMG_FINISH == img_flag)
     {
         ov7725_get_img();
-        imgResize(img_bin_buff);
+        imgResize();
         imgFilter();
         imgGetMidLine();
-//        for (int cnt = 0; cnt < IMG_H-1; ++cnt) 
-//        {
-//            err[cnt] = center[cnt] - IMG_W/2;
-//        }
-//        slop = err[IMG_W-1] -err[0];
-//        slop1 = center[IMG_H] - center[IMG_H/2];
-//        slop2 = center[IMG_H/2] - center[0];
-//        slop_add = slop1 + slop2;
-        
-        
+
     }else   //图像一场未采集完
     {
-        return ; 
+        return -1; 
     }
 }
