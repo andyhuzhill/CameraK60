@@ -26,8 +26,10 @@ main(void)
     uint8 txbuf[3]={0};  //发送缓存区
     uint8 status;       //用于判断接受/发送状态
     DisableInterrupts;  //关全局中断
-
-    motorInit();
+    
+    imgInit();      //摄像头初始化
+    motorInit();    //电机控制初始化
+    steerInit();    //舵机控制初始化
 
     EnableInterrupts;   //开全局中断
 

@@ -33,7 +33,6 @@ imgResize(const uint8 *srcImg);
 void
 imgFilter(void);
 
-
 /*
  * 说明: 提取图像中线
  */
@@ -43,8 +42,5 @@ imgGetMidLine(void);
 
 int 
 imgProcess(void);
-
-
-
 
 #endif /* IMG_PROCESS_H_ */

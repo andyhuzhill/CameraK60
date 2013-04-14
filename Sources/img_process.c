@@ -15,17 +15,18 @@
 
 #include "img_process.h"
 
-static uint8 img[IMG_H][IMG_W];
 
-static int8 center[IMG_H] = {0};
 
-extern uint8 *img_bin_buff;
+static int8 center[IMG_H] = {0};        //记录中线位置
+
+static vuint8 srcImg[CAMERA_SIZE];     //保存摄像头采集数据
+static vuint8 img[IMG_H][IMG_W];        //将摄像头采集数据另存入此数组
 
 /*
  * 将原来320X240的数组存入320X24的数组（每行40字节，共24行）
  */
 void
-imgResize(const uint8 *srcImg)              
+imgResize(void)              
 {
     for (int row = 0; row < (IMG_H); ++row)
     {
@@ -35,7 +36,7 @@ imgResize(const uint8 *srcImg)
         }
     }
 
-#if 1
+#if 0
     for (int row = 0; row < (IMG_H); ++row)
     {
         printf("Row %2d:",row);
@@ -55,9 +56,9 @@ void
 imgFilter(void)
 {
     uint8 row, col;
-    for (row = 1; row < IMG_H-2; ++row) 
+    for (row = 1; row < IMG_H-1; ++row) 
     {
-        for (col = 1; col < IMG_W-2; ++col) 
+        for (col = 1; col < IMG_W-1; ++col) 
         {
             if (img[row][col-1]==1 && img[row][col]==0 && img[row][col+1]==1) 
             {
@@ -86,7 +87,7 @@ imgGetMidLine(void)
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
     int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
-    int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
+    //    int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
     for (row = IMG_H -1; row > (IMG_H -6); --row)       //搜索前五行
     {
@@ -147,8 +148,8 @@ imgGetMidLine(void)
                     break;
                 }
             }
-            if(leftStart ==0 && leftEnd== IMG_W-1)          
-                leftLostRow = row;
+            //            if(leftStart ==0 && leftEnd== IMG_W-1)          
+            //                leftLostRow = row;
         } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
 
         getRightBlack = 0;
@@ -168,8 +169,8 @@ imgGetMidLine(void)
                     break;
                 }
             }
-            if (rightStart == 0 && rightEnd == IMG_W-1) 
-                rightLostRow = row; 
+            //            if (rightStart == 0 && rightEnd == IMG_W-1) 
+            //                rightLostRow = row; 
         }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
     }
 
@@ -181,38 +182,36 @@ imgGetMidLine(void)
     }
 }
 
+int 
+imgInit(void)
+{
+    ov7725_init(srcImg);
+}
 
 int 
 imgProcess(void)
 {
     int err[IMG_H]={0};
     int slop, slop1, slop2, slop_add;
-    imgResize(img_bin_buff);
-    imgFilter();
-    imgGetMidLine();
-    
-    for (int cnt = 0; cnt < IMG_H-1; ++cnt) 
+
+    if(IMG_FINISH == img_flag)
     {
-        err[cnt] = center[cnt] - IMG_W/2;
-    }
-    slop = err[IMG_W-1] -err[0];
-    slop1 = center[IMG_H] - center[IMG_H/2];
-    slop2 = center[IMG_H/2] - center[0];
-    slop_add = slop1 + slop2;
-    
-    if (slop1 * slop2 < 0)  //弯道
+        ov7725_get_img();
+        imgResize(img_bin_buff);
+        imgFilter();
+        imgGetMidLine();
+//        for (int cnt = 0; cnt < IMG_H-1; ++cnt) 
+//        {
+//            err[cnt] = center[cnt] - IMG_W/2;
+//        }
+//        slop = err[IMG_W-1] -err[0];
+//        slop1 = center[IMG_H] - center[IMG_H/2];
+//        slop2 = center[IMG_H/2] - center[0];
+//        slop_add = slop1 + slop2;
+        
+        
+    }else   //图像一场未采集完
     {
-        if (-5 <= slop_add && slop_add <= 5) 
-        {
-//            control_steer = err[0];
-//            control_speed = 0;    
-        }
-    }
-    else
-    {
-        if (-3 <= slop_add && slop_add <= 3)    //直道 
-        {
-//            control_steer = err[7];
-        }
+        return ; 
     }
 }

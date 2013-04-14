@@ -66,7 +66,7 @@ void steerInit(void)
 {
     FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);
 
-    pidInit(&pidSteer, 50, PID_STEER_KP, PID_STEER_KI, PID_STEER_KD);
+    pidInit(&pidSteer, 0, PID_STEER_KP, PID_STEER_KI, PID_STEER_KD);
     pidSteer.iLimit = PID_STEER_INTEGRATION_LIMIT;
 }
 
@@ -82,7 +82,7 @@ void motorInit(void)
     FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
     gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
 
-    pidInit(&pidMotor, 50, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
+    pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
     FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速

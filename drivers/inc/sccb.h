@@ -13,7 +13,7 @@
 #define SDA_DDR_OUT()	DDRB11 = 1
 #define SDA_DDR_IN()	DDRB11 = 0
 
-#define ADDR_OV7725   0x42
+#define ADDR_OV7725     0x42
 
 #define SCCB_DELAY()	SCCB_delay(100)	
 

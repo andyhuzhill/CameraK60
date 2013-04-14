@@ -63,11 +63,11 @@ void set_irq_priority (int, int);
 #include "stdlib.h"
 #include "stdio.h"
 
+
+//  K60 管脚配置
 #include "k60_config.h"
 
-/*
- * Misc. Defines
- */
+
 #ifdef  FALSE
 #undef  FALSE
 #endif
@@ -98,6 +98,9 @@ void set_irq_priority (int, int);
 
 typedef enum {false = 0, true = !false} bool;
 
+/*
+ * 定义中断号
+ */
 typedef enum 
 {
     DMA0_IRQn       = 0,     
@@ -225,8 +228,6 @@ typedef volatile uint32     vuint32; /* 32 bits */
 #define BCLR(reg, bit) ((reg) &= ~(1 << bit))
 //读取寄存器reg bit位上的值
 #define BGET(reg, bit) ((reg) >> (bit) &1)
-
-
 
 //延时函数
 #include "lptmr.h"
