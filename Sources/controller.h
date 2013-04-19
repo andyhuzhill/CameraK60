@@ -43,7 +43,7 @@ typedef struct
 float UpdataPID(PidObject *pid, const float measured);
 
 void pidInit(PidObject *pid, const float desired, const float kp,
-        const float ki, const float kd);
+        const float ki, const float kd);we
 
 /*
  * 舵机控制器初始化

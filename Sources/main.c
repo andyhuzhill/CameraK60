@@ -29,7 +29,7 @@ main(void)
     
 //    imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
-    steerInit();    //舵机控制初始化
+//    steerInit();    //舵机控制初始化
 
     EnableInterrupts;   //开全局中断
 
