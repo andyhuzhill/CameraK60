@@ -84,7 +84,7 @@ void motorInit(void)
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
     FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
-    pit_init_ms(PIT0, 100);                             //100ms 触发一次PIT中断 进行测速
+    pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
 }
 
 
@@ -100,11 +100,12 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         pidMotor.desired = speed;
         pwm = (int32)UpdataPID(&pidMotor, realspeed);
 
-//        pwm = realspeed + pwm;
-
         duty = duty + PWM2DUTY(pwm);
+        if(duty>100) duty = 100;
+        if(duty<0) duty = 0;
 
-        FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)duty);
+        DEBUG_OUT("duty is %ld\n", (uint32)duty);
+        FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);
         getEncoder = false;
     }
 }

@@ -27,14 +27,14 @@ main(void)
     uint8 status;       //用于判断接受/发送状态
     DisableInterrupts;  //关全局中断
     
-//    imgInit();      //摄像头初始化
-    motorInit();    //电机控制初始化
-//    steerInit();    //舵机控制初始化
+    imgInit();      //摄像头初始化
+//    motorInit();    //电机控制初始化
+//    steerInit();    //舵机控制初始化 
 
     EnableInterrupts;   //开全局中断
-
     for (;;) 
     {
-        motorSetSpeed(speed_cnt, DUTY2PWM(10));
+//        motorSetSpeed(speed_cnt, DUTY2PWM(20));
+        imgProcess();
     }
 }

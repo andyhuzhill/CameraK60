@@ -79,13 +79,13 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  1.5
+#define PID_MOTOR_KP  10
 #define PID_MOTOR_KI  0.0
-#define PID_MOTOR_KD  0.5
+#define PID_MOTOR_KD  0.0
 #define PID_MOTOR_INTEGRATION_LIMIT     20.0
 
 
-#if  0
+#if  1
 #define DUTY2PWM(duty)  (738*(duty)-3535)
 #define PWM2DUTY(pwm)   (((pwm)+3535)/738)
 #else

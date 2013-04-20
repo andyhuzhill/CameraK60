@@ -36,7 +36,7 @@ imgResize(void)
         }
     }
 
-#if 0
+#if 1
     for (int row = 0; row < (IMG_H); ++row)
     {
         printf("Row %2d:",row);
@@ -199,15 +199,15 @@ extern IMG_STATE img_flag;
 int 
 imgProcess(void)
 {
-    int err[IMG_H]={0};
-    int slop, slop1, slop2, slop_add;
+//    int err[IMG_H]={0};
+//    int slop, slop1, slop2, slop_add;
 
     if(IMG_FINISH == img_flag)
     {
         ov7725_get_img();
         imgResize();
-        imgFilter();
-        imgGetMidLine();
+//        imgFilter();
+//        imgGetMidLine();
 
     }else   //图像一场未采集完
     {
