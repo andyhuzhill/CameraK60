@@ -1,4 +1,4 @@
-/*
+/**
  * =====================================================
  * isr.c
  *
@@ -20,7 +20,6 @@ volatile IMG_STATE img_flag;
 void 
 PORTA_ISR(void)         //场中断处理函数
 {
-    DisableInterrupts;
     if(PORTA_ISFR & (1 << 29))                       //PTA29触发中断
     {
         //场中断需要判断是场结束还是场开始
@@ -41,67 +40,60 @@ PORTA_ISR(void)         //场中断处理函数
         return;                                     //场中断触发了，就不需要处理行中断
     }
     PORTA_ISFR  = ~0;                   //写1清中断标志位
-    EnableInterrupts;
 }
 
 void 
 DMA0_ISR(void)
 {
-    DisableInterrupts;
-    DMA_DIS(CAMERA_DMA_CH);             //关闭通道CHn 硬件请求
+    DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
-
     img_flag = IMG_FINISH ; 
-    EnableInterrupts;
 }
 
 
 static volatile uint16 encoder_cnt;
 
-void FTM2_ISR(void)
+void 
+FTM2_ISR(void)
 {
     uint8 status = FTM2_STATUS;             //读取捕获与比较状态
 
-    DisableInterrupts;
-    
     FTM2_STATUS = 0x00;                     //清中断标志
-    
+
     if(status & (1 << ENCODER_CHN))
     {
         FTM_IRQ_DIS(ENCODER_FTM, ENCODER_CHN); //禁止输入捕获中断
-        
+
         encoder_cnt ++;
-        
+
         FTM_IRQ_EN(ENCODER_FTM, ENCODER_CHN);  //使能输入捕获中断
     }
-    EnableInterrupts;
 }
 
 extern volatile uint16 speed_cnt;
 extern volatile bool getEncoder;
 void 
-PIT0_ISR(void)
+PIT1_ISR(void)
 {
     DisableInterrupts;
-    
     speed_cnt = encoder_cnt;
-    
+
     getEncoder = true;
     encoder_cnt = 0;
-    
-    PIT_Flag_Clear(PIT0);
+
+    PIT_Flag_Clear(PIT1);
     EnableInterrupts;
 }
 
 
-void PORTE_ISR(void)
-{
-    DisableInterrupts;
-    if (PORTE_ISFR &(1 << 27))
-    {
-        PORTE_ISFR |= (1 << 27);        //清除中断标志
-        
-        NRF_Handler();
-    }
-    EnableInterrupts;
-}
+//void PORTE_ISR(void)
+//{
+//    DisableInterrupts;
+//    if (PORTE_ISFR &(1 << 27))
+//    {
+//        PORTE_ISFR |= (1 << 27);        //清除中断标志
+//        
+//        NRF_Handler();
+//    }
+//    EnableInterrupts;
+//}

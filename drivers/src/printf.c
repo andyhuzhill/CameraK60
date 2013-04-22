@@ -1,4 +1,4 @@
-/*
+/**
  * File:        printk.c
  * Purpose:     The standard C library routine printf(), but without
  *              all the baggage.

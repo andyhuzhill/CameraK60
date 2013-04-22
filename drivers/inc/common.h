@@ -240,7 +240,7 @@ typedef volatile uint32     vuint32; /* 32 bits */
 #include "assert.h"
 
 #ifdef  DEBUG 
-#define DEBUG_OUT(FORMAT,...)        do{printf("\r\n");printf(FORMAT,##__VA_ARGS__);printf("\r\n");}while(0)    /*无需打印调试信息时，请将宏内容注释掉*/
+#define DEBUG_OUT(FORMAT,...)        do{printf("DEBUG_OUT:\n");printf(FORMAT,##__VA_ARGS__);printf("\n");}while(0)    /*无需打印调试信息时，请将宏内容注释掉*/
 #else
 #define DEBUG_OUT(FORMAT,...)
 #endif

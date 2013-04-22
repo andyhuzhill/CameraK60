@@ -1,4 +1,4 @@
-/*
+/**
  * =================================================================================
  * controller.c
  *
@@ -83,8 +83,8 @@ void motorInit(void)
     pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
-    FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
-    pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
+//    FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
+    pit_init_ms(PIT1, 500);  //100ms 触发一次PIT中断 进行测速
 }
 
 
@@ -94,8 +94,12 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
 {
     static float duty;
     int32 pwm;
-    
-    if(getEncoder)
+
+    printf("getEncoder is %d\n",(getEncoder == true));
+    printf("duty is %ld\n", (uint32)duty);
+    printf("speed_cnt is %ld\n", realspeed);
+
+    if(true == getEncoder) 
     {
         pidMotor.desired = speed;
         pwm = (int32)UpdataPID(&pidMotor, realspeed);
@@ -104,7 +108,9 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         if(duty>100) duty = 100;
         if(duty<0) duty = 0;
 
-        DEBUG_OUT("duty is %ld\n", (uint32)duty);
+        printf("duty is %ld\n", (uint32)duty);
+        printf("speed_cnt is %ld\n", realspeed);
+        
         FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);
         getEncoder = false;
     }

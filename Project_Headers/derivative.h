@@ -1,4 +1,4 @@
-/*
+/**
  * Note: This file is recreated by the project wizard whenever the MCU is
  *       changed and should not be edited by hand
  */
@@ -79,7 +79,7 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  10
+#define PID_MOTOR_KP  1
 #define PID_MOTOR_KI  0.0
 #define PID_MOTOR_KD  0.0
 #define PID_MOTOR_INTEGRATION_LIMIT     20.0
