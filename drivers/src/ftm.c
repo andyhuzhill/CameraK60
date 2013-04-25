@@ -33,6 +33,7 @@ volatile struct FTM_MemMap *FTMx[3] = {FTM0_BASE_PTR, FTM1_BASE_PTR, FTM2_BASE_P
 
 extern uint32 bus_clk_khz;
 
+
 /*************************************************************************
 *                             野火嵌入式开发工作室
 *
@@ -50,7 +51,7 @@ void FTM_PWM_init(FTMn ftmn, CHn ch, uint32 freq, uint32 duty)
 {
     uint32 clk_hz = (bus_clk_khz * 1000) >> 1;       //bus频率/2
     uint16 mod;
-    uint8 sc_ps;
+    uint8  sc_ps;
     uint16 cv;
 
     ASSERT( (ftmn == FTM0) || ( (ftmn == FTM1 || ftmn == FTM2 ) && (ch <= CH1))   ); //检查传递进来的通道是否正确

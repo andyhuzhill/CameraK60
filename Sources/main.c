@@ -16,8 +16,8 @@
 #include "derivative.h" /* include peripheral declarations */
 
 //全局变量定义
-volatile uint16 speed_cnt;      // 编码器采集到的现在的速度值
-vuint16 encoder_cnt;
+volatile uint16 speed_cnt=0;      // 编码器采集到的现在的速度值
+vuint16 encoder_cnt=0;
 volatile bool getEncoder= false;
 
 int 
@@ -32,10 +32,7 @@ main(void)
 
     for (;;) 
     {
-        encoder_cnt = 0;
-        DELAY_MS(10);
-        speed_cnt = encoder_cnt;
-        getEncoder = true;
+        decoderSet();
         motorSetSpeed(speed_cnt, DUTY2PWM(20));
         imgProcess();
     }

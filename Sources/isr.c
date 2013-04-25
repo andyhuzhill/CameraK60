@@ -28,9 +28,9 @@ PORTA_ISR(void)         //场中断处理函数
         if(img_flag == IMG_START)                   //需要开始采集图像
         {
             img_flag = IMG_GATHER;                  //标记图像采集中
-            disable_irq(PORTA_IRQn);                //关闭PTA的中断
+//            disable_irq(PORTA_IRQn);                //关闭PTA的中断
             
-            DEBUG_OUT("++++++++++++++++++++++++++++++Start IMG+++++++++++++",0);
+//            DEBUG_OUT("++++++++++++++++++++++++++++++Start IMG+++++++++++++",0);
 
             DMA_EN(CAMERA_DMA_CH);                  //使能通道CHn 硬件请求
             DMA_DADDR(CAMERA_DMA_CH) = (uint32)IMG_BUFF;    //恢复地址
@@ -40,7 +40,7 @@ PORTA_ISR(void)         //场中断处理函数
             DEBUG_OUT("IMG is under gathering",0);
         }else //图像采集错误
         {
-            disable_irq(PORTA_IRQn);                //关闭PTA的中断
+//            disable_irq(PORTA_IRQn);                //关闭PTA的中断
             img_flag = IMG_FAIL;                    //标记图像采集失败
         }
         PORTA_ISFR  = ~0;                           //场中断里，全部都要清中断标志位
@@ -49,6 +49,7 @@ PORTA_ISR(void)         //场中断处理函数
     {               
         encoder_cnt ++;
         PORTA_ISFR = ~0;
+//        DEBUG_OUT("--------------------encoder_cnt ++ ------------",0);
         return ;
     }
     PORTA_ISFR  = ~0;                   //写1清中断标志位
@@ -57,6 +58,7 @@ PORTA_ISR(void)         //场中断处理函数
 void 
 DMA0_ISR(void)
 {
+    disable_irq(PORTA_IRQn);
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
@@ -64,30 +66,31 @@ DMA0_ISR(void)
 }
 
 
-extern vuint16 encoder_cnt;
-void 
-FTM2_ISR(void)
-{
-    uint8 status = FTM2_STATUS;             //读取捕获与比较状态
-
-    FTM2_STATUS = 0x00;                     //清中断标志
-
-    if(status & (1 << ENCODER_CHN))
-    {
-        FTM_IRQ_DIS(ENCODER_FTM, ENCODER_CHN); //禁止输入捕获中断
-
-        encoder_cnt ++;
-        DEBUG_OUT("==================encoder_cnt ++========================",0);
-        DEBUG_OUT("==================encoder_cnt ++========================",0);
-        FTM_IRQ_EN(ENCODER_FTM, ENCODER_CHN);  //使能输入捕获中断
-    }
-}
+//void 
+//FTM2_ISR(void)
+//{
+//    DisableInterrupts;
+//    uint8 status = FTM2_STATUS;             //读取捕获与比较状态
+//
+//    FTM2_STATUS = 0x00;                     //清中断标志
+//
+//    if(status & (1 << ENCODER_CHN))
+//    {
+//        FTM_IRQ_DIS(ENCODER_FTM, ENCODER_CHN); //禁止输入捕获中断
+//
+//        encoder_cnt ++;
+//        DEBUG_OUT("==================encoder_cnt ++========================",0);
+//        DEBUG_OUT("==================encoder_cnt ++========================",0);
+//        FTM_IRQ_EN(ENCODER_FTM, ENCODER_CHN);  //使能输入捕获中断
+//    }
+//    EnableInterrupts;
+//}
 
 
 extern volatile bool getEncoder;
 extern vint32  speed_cnt;
 void 
-PIT1_ISR(void)
+PIT0_ISR(void)
 {
     DisableInterrupts;
     speed_cnt = encoder_cnt;
@@ -95,10 +98,7 @@ PIT1_ISR(void)
     getEncoder = true;
     encoder_cnt = 0;
     
-    DEBUG_OUT("#######################Get into PIT ISR#####################",0);
-    DEBUG_OUT("#######################Get into PIT ISR#####################",0);
-
-    PIT_Flag_Clear(PIT1);
+    PIT_Flag_Clear(PIT0);
     EnableInterrupts;
 }
 

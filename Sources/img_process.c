@@ -36,7 +36,7 @@ imgResize(void)
         }
     }
 
-#if 1
+#if 0
     for (int row = 0; row < (IMG_H); ++row)
     {
         printf("Row %2d:",row);
@@ -192,7 +192,7 @@ imgInit(void)
 Road_type
 judgeRoad(void)
 {
-    
+
 }
 
 
@@ -201,26 +201,27 @@ extern IMG_STATE img_flag;
 void
 imgGetImg(void)
 {
-    img_flag = IMG_START;                   //开始采集图像
-    PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
-    enable_irq(PORTA_IRQn);                 //允许PTA的中断
+    if((IMG_FINISH == img_flag) || (IMG_FAIL == img_flag)){
+        img_flag = IMG_START;                   //开始采集图像
+        PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
+        enable_irq(PORTA_IRQn);                 //允许PTA的中断
+    }
 }
 
 extern IMG_STATE img_flag;
+
 int 
 imgProcess(void)
 {
-    if(IMG_FINISH == img_flag)
+    imgGetImg();
+    if(IMG_GATHER == img_flag){
+        return 1;
+    }else if(IMG_FINISH == img_flag)
     {
-//        printf("\t imgflag == IMG_FINISH\n");
-        imgGetImg();
         imgResize();
+        
         return 0;
     }else if(IMG_FAIL == img_flag){
-       imgGetImg();         //采集失败，重新采集
-    }else
-    { //图像一场未采集完
-//        printf("imgflag != IMG_FINISH\n");
-        return -1; 
+        imgGetImg();         //采集失败，重新采集
     }
 }
