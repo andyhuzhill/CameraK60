@@ -78,17 +78,17 @@ void motorInit(void)
 {
     FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
     FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
-    gpio_init(MOTOR_EN_PORT, MOTOR_EN_PIN, Mode_OUT, High);          //电机驱动芯片使能
 
     pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
 //    FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
-    pit_init_ms(PIT1, 500);  //100ms 触发一次PIT中断 进行测速
+    port_init(PTA11, IRQ_RISING | PULLUP);                 //编码器输入
+    pit_init_ms(PIT1, 100);  //100ms 触发一次PIT中断 进行测速
 }
 
 
-volatile bool getEncoder= false;
+extern bool getEncoder;
 
 void motorSetSpeed(uint32 realspeed, uint32 speed)
 {
@@ -98,7 +98,7 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
     printf("getEncoder is %d\n",(getEncoder == true));
     printf("duty is %ld\n", (uint32)duty);
     printf("speed_cnt is %ld\n", realspeed);
-
+   
     if(true == getEncoder) 
     {
         pidMotor.desired = speed;
@@ -109,6 +109,8 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         if(duty<0) duty = 0;
 
         printf("duty is %ld\n", (uint32)duty);
+        duty = 100 - duty;
+        
         printf("speed_cnt is %ld\n", realspeed);
         
         FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);

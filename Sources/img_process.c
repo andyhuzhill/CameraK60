@@ -36,7 +36,7 @@ imgResize(void)
         }
     }
 
-#if 0
+#if 1
     for (int row = 0; row < (IMG_H); ++row)
     {
         printf("Row %2d:",row);
@@ -212,7 +212,7 @@ imgProcess(void)
 {
     if(IMG_FINISH == img_flag)
     {
-        printf("\t imgflag == IMG_FINISH\n");
+//        printf("\t imgflag == IMG_FINISH\n");
         imgGetImg();
         imgResize();
         return 0;
@@ -220,7 +220,7 @@ imgProcess(void)
        imgGetImg();         //采集失败，重新采集
     }else
     { //图像一场未采集完
-        printf("imgflag != IMG_FINISH\n");
+//        printf("imgflag != IMG_FINISH\n");
         return -1; 
     }
 }

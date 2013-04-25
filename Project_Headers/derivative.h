@@ -6,28 +6,31 @@
 /* Include the derivative-specific header file */
 
 
-/*  
+/**  
  *   引脚分配:
- *   PTC14          电机控制使能
- *   PTA8           电机控制PWM1    FTM1 CH0
- *   PTA9           电机控制PWM2    FTM1 CH1
- *   PTC1           舵机控制PWM     FTM0 CH0
- *   PTA11          编码器捕获输入  FTM2 CH1
- *   
- *   PTB0~PTB7      摄像头数据端口
- *   PTB8           PCLK
- *   PTA29          场中断
- *   PTB10~PTB11    摄像头控制端口
- *   
- *   PTA14~PTA17    SPI-2.4G 控制端口
- *   PTE27~PTE28    ？？
- *   
- *   PTD0~PTD7      LCD数据端口
- *   PTC19          LCDRST
- *   PTC9~PTC12     LCD控制端口
- *   
- *   PTC18          SD-Check
- *   PTE0~PTE5      SDcard 接口
+ *
+ * Motor ： EN--5V
+ * PWM1--PTA8 FTM1-CH0
+ * PWM2--PTA9 FTM1-CH1
+ *
+ * S-D5 : PTC1--FTM0-CH0
+ *
+ * encoder : PTA11--FTM2--CH1
+ *           PTA10--FTM2--CH0
+ *
+ * Camera : SDA--PTB11 HREF--PTA28(行中断) D0~~~D7
+ *          SCL--PTB10 VSYN--PTA29(场中断) PTB0~~~~PTB7
+ *          PCLK--PTB8
+ *
+ * UART3 : RX-PTC16 TX-PTC17
+ *
+ * NRF-2401: SPI_PTA14-PCS0 PTA15-SCK PTA16-SOUT PTA17-SIN
+ *
+ * 三轴加速度：SPI2_ PTB20-PCS0 PTB21-SCK PTB22-SOUT PTB23-SIN
+ *
+ * 拨码开关：PTD12,PTD13,PTD14,PTD15
+ *
+ * 光电管 ：PTC11
  * 
  */
 
@@ -41,8 +44,9 @@
 #include "ftm.h"
 #include "nrf24l0.h"
 
-#include "lcd.h"
+//#include "lcd.h"
 #include "pit.h"
+#include "port.h"
 
 #include "controller.h"
 #include "img_process.h"
@@ -59,15 +63,15 @@
 #define MOTOR1_FTM              FTM1
 #define MOTOR1_CHN              CH0
 #define MOTOR1_FREQ             10000        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     0          //单位 百分之一
+#define MOTOR1_DEFAULT_DUTY     100          //单位 百分之一
 
 #define MOTOR2_FTM              FTM1
 #define MOTOR2_CHN              CH1
 #define MOTOR2_FREQ             10000        //单位Hz
-#define MOTOR2_DEFAULT_DUTY     0            //单位百分之一
+#define MOTOR2_DEFAULT_DUTY     80            //单位百分之一
 
-#define MOTOR_EN_PORT           PORT_C
-#define MOTOR_EN_PIN            14
+//#define MOTOR_EN_PORT           PORT_C
+//#define MOTOR_EN_PIN            14
 
 #define ENCODER_FTM             FTM2
 #define ENCODER_CHN             CH1
@@ -79,7 +83,7 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  1
+#define PID_MOTOR_KP  0.1
 #define PID_MOTOR_KI  0.0
 #define PID_MOTOR_KD  0.0
 #define PID_MOTOR_INTEGRATION_LIMIT     20.0
