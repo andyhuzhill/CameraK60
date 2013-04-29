@@ -17,6 +17,9 @@
 #include "MK60DZ10.h"
 
 #define DEBUG               //切换调试输出的宏定义
+#define DEBUG_PRINT
+
+#define CORE_CLK_MHZ PLL_100        //定义内核频率
 
 //存储器段的宏定义
 #if defined(__CWCC__)
@@ -62,11 +65,11 @@ void set_irq_priority (int, int);
 #include "stdlib.h"
 #include "stdio.h"
 
+
+//  K60 管脚配置
 #include "k60_config.h"
 
-/*
- * Misc. Defines
- */
+
 #ifdef  FALSE
 #undef  FALSE
 #endif
@@ -97,6 +100,9 @@ void set_irq_priority (int, int);
 
 typedef enum {false = 0, true = !false} bool;
 
+/*
+ * 定义中断号
+ */
 typedef enum 
 {
     DMA0_IRQn       = 0,     
@@ -225,8 +231,6 @@ typedef volatile uint32     vuint32; /* 32 bits */
 //读取寄存器reg bit位上的值
 #define BGET(reg, bit) ((reg) >> (bit) &1)
 
-
-
 //延时函数
 #include "lptmr.h"
 #define DELAY() 		time_delay_ms(500)
@@ -238,7 +242,7 @@ typedef volatile uint32     vuint32; /* 32 bits */
 #include "assert.h"
 
 #ifdef  DEBUG 
-#define DEBUG_OUT(FORMAT,...)        do{printf("\r\n");printf(FORMAT,##__VA_ARGS__);printf("\r\n");}while(0)    /*无需打印调试信息时，请将宏内容注释掉*/
+#define DEBUG_OUT(FORMAT,...)        do{printf("DEBUG_OUT:\n");printf(FORMAT,##__VA_ARGS__);printf("\n");}while(0)    /*无需打印调试信息时，请将宏内容注释掉*/
 #else
 #define DEBUG_OUT(FORMAT,...)
 #endif

@@ -1,4 +1,4 @@
-/*
+/**
  * =====================================================
  * main.c
  *
@@ -40,43 +40,36 @@
 #include "derivative.h" /* include peripheral declarations */
 
 //全局变量定义
-uint16   motor_cnt =0;
-//uint8   img_bin_buff[CAMERA_SIZE];
+volatile uint16 speed_cnt=0;      // 编码器采集到的现在的速度值
+vuint16 encoder_cnt=0;
+volatile bool getEncoder= false;
 
-void delay(void)
-{
-    volatile int x,y,z;
-    for (z = 0; z < 20; ++z) 
-    {
-        for (x = 0; x < 1500; ++x) 
-        {
-            for (y = 0; y < 1500; ++y) 
-            {
-                ;
-            }
-        } 
-    }
-}
+extern uint8 *srcImg;
 
 int 
 main(void)
 {   
-    uint8 h8,l8;
+
     uint8 duty=0;
     uint8 txbuf[3]={0};  //发送缓存区
     uint8 status;       //用于判断接受/发送状态
 
-    DisableInterrupts;  //关全局中断
+    Site_t site={0,0};                          //显示图像左上角位置
+    Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
+    Size_t size={LCD_W,LCD_H};                  //显示区域图像大小
 
-    NRF_Init();
-    controllerInit();
-    motorInit();
-    steerInit();
+    DisableInterrupts;  //关全局中断
+    
+    LCD_Init(RED);
+
+    imgInit();      //摄像头初始化
+    //    motorInit();    //电机控制初始化
 
     EnableInterrupts;   //开全局中断
 
     for (;;) 
     {
+
         h8 = motor_cnt / 256;
         l8 = motor_cnt % 256;
 
@@ -91,5 +84,9 @@ main(void)
         }while(status == TX_ISR_SEND);
         FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, duty);
 
+        //        decoderSet();
+        //        motorSetSpeed(speed_cnt, DUTY2PWM(20));
+        imgProcess();
+        LCD_Img_Binary_Z(site,size,(uint16 *)srcImg,imgsize);    //显示图像
     }
 }

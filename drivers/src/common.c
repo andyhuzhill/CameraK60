@@ -1,4 +1,4 @@
-/*
+/**
  * common.c
  *
  *  Created on: Nov 21, 2012

@@ -33,8 +33,23 @@ void __init_hardware()
 
 void isr_default(void)
 {
-  /* Write your interrupt code here ... */
+    GPIO_InitTypeDef initGPIO;
+    int i;
 
+    initGPIO.Pin  = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 |
+            GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+    initGPIO.MODE = Mode_OUT;
+    initGPIO.STATE = High;
+    initGPIO.IRQC = None_IRQ;
+    
+    GPIO_init(PORT_D, &initGPIO);
+    
+    for (i = 8; i < 16; ++i) 
+    {
+        GPIOD_PSOR = ~0x0; 
+        GPIOD_PCOR = (1<<i);
+        DELAY_MS(50);
+    } 
 }
 /* end of isr_default */
 

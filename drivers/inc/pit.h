@@ -30,11 +30,8 @@ void        pit_init(PITn, uint32 cnt);                                         
 
 #define     PIT_Flag_Clear(PITn)          PIT_TFLG(PITn)|=PIT_TFLG_TIF_MASK        //清中断标志
 
-
-
-
 void        pit_dma_init(PITn pitn, uint32 cnt);
-#define     pit_dma_init_ms(PITn,ms)     ASSERT( ((u64)(ms * bus_clk_khz)>>32)==0   );\
+#define     pit_dma_init_ms(PITn,ms)     ASSERT(((u64)(ms * bus_clk_khz)>>32)==0);\
         pit_dma_init(PITn,ms * bus_clk_khz)
 
 #endif  //_PIT_H_

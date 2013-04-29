@@ -14,33 +14,39 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "common.h"
 #include "derivative.h"
 
-void controllerInit(void);
+typedef enum
+{
+    ROAD_LOST           = 0,
+    STRATIGHT           = 1,
+    ROUND               = 2,
+    STRATIGHT_TO_ROUND  = 3,
+    BIG_S               = 4,
+    SMALL_S             = 5,
+    CROSS               = 6
+}Road_type;
 
-/*
- *  更新控制器的值
- *  steerActual  舵机实际的控制输出量
- *  motorActual  电机实际的控制输出量
- *  steerDesired 舵机预期的控制输出量
- *  motorDesired 电机预期的控制输出量
- */
-void controllerUpdatePID(
-        float steerActual, float motorActual,
-        float steerDesired, float motorDesired);
+typedef struct
+{
+  float desired;      //< 设置要达到的值
+  float error;        //< 误差
+  float prevError;    //< 上一次的误差
+  float integ;        //< 积分和
+  float deriv;        //< 微分
+  float kp;           //< 比例系数
+  float ki;           //< 积分系数
+  float kd;           //< 微分系数
+  float iLimit;       //< 积分限
+} PidObject;
 
-/*
- * 复位所有PID控制器
- */
-void controllerResetPID(void);
+float UpdataPID(PidObject *pid, const float measured);
 
+void pidInit(PidObject *pid, const float desired, const float kp,
+        const float ki, const float kd);
 
-/*
- * 得到控制器实际的输出值
- */
-void controllerGetOutput(int16* steer, int16* motor);
-
+void
+decoderSet(void);
 
 /*
  * 舵机控制器初始化
@@ -63,6 +69,6 @@ void motorInit(void);
  * speed 想要达到的速度
  * realspeed 实际的速度
  */
-void motorSetSpeed(uint32 speed, uint32 realspeed);
+void motorSetSpeed(uint32 realspeed, uint32 speed);
 
 #endif /* CONTROLLER_H_ */

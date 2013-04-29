@@ -13,14 +13,13 @@
 
 #define CAMERA_DMA_LINE     (CAMERA_H/CAMERA_INTERLACE)     //实际采集行数
 
-
 extern   uint8 *	    IMG_BUFF;       //图像缓冲区指针
-
 
 //定义图像采集状态
 typedef enum 
 {
     IMG_NOTINIT=0,
+    IMG_READY,              //准备采集图像
 	IMG_FINISH,			    //图像采集完毕
 	IMG_FAIL,				//图像采集失败(采集行数少了)
 	IMG_GATHER,				//图像采集中
@@ -35,15 +34,12 @@ typedef struct
 	uint8 Value;		           /*寄存器值*/
 }Register_Info;
 
-//extern 	uint8 Ov7725_vsync;
-
-
 extern	uint8   ov7725_init(uint8 *imgaddr);
 extern	void    ov7725_exti_init();
 extern	void    ov7725_get_img();
 
-extern	int  	ov7725_read_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
-extern	int  	ov7725_write_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
+//extern	int  	ov7725_read_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
+//extern	int  	ov7725_write_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
 
 #endif
 

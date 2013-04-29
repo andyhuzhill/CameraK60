@@ -16,8 +16,6 @@
 
 #include "common.h"
 
-#define CORE_CLK_MHZ PLL_100
-
 //全局变量声明
 uint32 core_clk_khz;    //芯片内核时钟频率，kHz
 uint32 bus_clk_khz;  //芯片总线时钟频率，kHz
