@@ -19,6 +19,8 @@
 #define DEBUG               //切换调试输出的宏定义
 #define DEBUG_PRINT
 
+#define CORE_CLK_MHZ PLL_100        //定义内核频率
+
 //存储器段的宏定义
 #if defined(__CWCC__)
 #pragma define_section relocate_code ".relocate_code" ".relocate_code" ".relocate_code" far_abs RX

@@ -15,7 +15,6 @@
 #define SYSINIT_H_
 
 #include "common.h"
-#include "derivative.h"
 
 //全局变量声明
 uint32 core_clk_khz;    //芯片内核时钟频率，kHz

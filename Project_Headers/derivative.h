@@ -51,7 +51,6 @@
 #include "controller.h"
 #include "img_process.h"
 
-#define CORE_CLK_MHZ PLL_100        //定义内核频率
 
 #define ABS(x)   ((x)>0 ? (x): (-x))
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
