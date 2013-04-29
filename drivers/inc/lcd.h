@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "bl144002.h"
-#include "lcd_ch.h"
+//#include "lcd_ch.h"
 
 
 /******³£ÓÃÑÕÉ«*****/

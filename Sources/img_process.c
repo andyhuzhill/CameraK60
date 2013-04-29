@@ -19,7 +19,7 @@
 
 static int8 center[IMG_H] = {0};        //记录中线位置
 
-static uint8 srcImg[CAMERA_SIZE];     //保存摄像头采集数据
+ uint8 srcImg[CAMERA_SIZE];     //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];        //将摄像头采集数据另存入此数组
 
 /*
@@ -36,7 +36,7 @@ imgResize(void)
         }
     }
 
-#if 1
+#if 0
     for (int row = 0; row < (IMG_H); ++row)
     {
         printf("Row %2d:",row);
