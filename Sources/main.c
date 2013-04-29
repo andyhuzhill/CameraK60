@@ -49,11 +49,6 @@ extern uint8 *srcImg;
 int 
 main(void)
 {   
-
-    uint8 duty=0;
-    uint8 txbuf[3]={0};  //发送缓存区
-    uint8 status;       //用于判断接受/发送状态
-
     Site_t site={0,0};                          //显示图像左上角位置
     Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
     Size_t size={LCD_W,LCD_H};                  //显示区域图像大小
@@ -70,22 +65,6 @@ main(void)
     for (;;) 
     {
 
-        h8 = motor_cnt / 256;
-        l8 = motor_cnt % 256;
-
-        txbuf[2] = l8;
-        txbuf[1] = h8;
-        txbuf[0] = duty;
-
-        NRF_ISR_Tx_Dat(txbuf, 3);
-        do
-        {
-            status = NRF_ISR_Tx_State();
-        }while(status == TX_ISR_SEND);
-        FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, duty);
-
-        //        decoderSet();
-        //        motorSetSpeed(speed_cnt, DUTY2PWM(20));
         imgProcess();
         LCD_Img_Binary_Z(site,size,(uint16 *)srcImg,imgsize);    //显示图像
     }
