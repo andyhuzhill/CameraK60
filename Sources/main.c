@@ -43,6 +43,6 @@ main(void)
         //        decoderSet();
         //        motorSetSpeed(speed_cnt, DUTY2PWM(20));
         imgProcess();
-        LCD_Img_Binary_Z(site,size,(u16 *)srcImg,imgsize);    //ÏÔÊ¾Í¼Ïñ
+        LCD_Img_Binary_Z(site,size,(uint16 *)srcImg,imgsize);    //ÏÔÊ¾Í¼Ïñ
     }
 }
