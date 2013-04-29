@@ -44,7 +44,7 @@
 #include "ftm.h"
 #include "nrf24l0.h"
 
-//#include "lcd.h"
+#include "lcd.h"
 #include "pit.h"
 #include "port.h"
 
