@@ -36,7 +36,7 @@ imgResize(void)
         }
     }
 
-#if 0
+#if 1
     for (int row = 0; row < (IMG_H); ++row)
     {
         printf("Row %2d:",row);
@@ -201,7 +201,7 @@ extern IMG_STATE img_flag;
 void
 imgGetImg(void)
 {
-    if((IMG_FINISH == img_flag) || (IMG_FAIL == img_flag)){
+    if((IMG_READY == img_flag) || (IMG_FAIL == img_flag)){
         img_flag = IMG_START;                   //开始采集图像
         PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
         enable_irq(PORTA_IRQn);                 //允许PTA的中断
@@ -214,14 +214,13 @@ int
 imgProcess(void)
 {
     imgGetImg();
-    if(IMG_GATHER == img_flag){
-        return 1;
-    }else if(IMG_FINISH == img_flag)
+
+    if(IMG_FINISH == img_flag)
     {
         imgResize();
+        imgFilter();
         
+        img_flag = IMG_READY;
         return 0;
-    }else if(IMG_FAIL == img_flag){
-        imgGetImg();         //采集失败，重新采集
     }
 }

@@ -76,8 +76,6 @@ void steerSetDuty(uint8 duty)
 void
 decoderSet(void)
 {
-//    FTM_Input_init(ENCODER_FTM, ENCODER_CHN, Rising);   //配置编码器输入测速
-    port_init(PTA11, IRQ_FALLING | PULLUP);                 //编码器输入
     pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
 }
 
@@ -89,9 +87,9 @@ void motorInit(void)
     pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
+    port_init(PTA11, IRQ_FALLING | PULLUP);                 //编码器输入
     decoderSet();
 }
-
 
 extern bool getEncoder;
 

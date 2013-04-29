@@ -72,9 +72,6 @@
 #define MOTOR2_FREQ             10000        //单位Hz
 #define MOTOR2_DEFAULT_DUTY     80            //单位百分之一
 
-//#define MOTOR_EN_PORT           PORT_C
-//#define MOTOR_EN_PIN            14
-
 #define ENCODER_FTM             FTM2
 #define ENCODER_CHN             CH1
 
@@ -85,7 +82,7 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  1
+#define PID_MOTOR_KP  0.1
 #define PID_MOTOR_KI  0.0
 #define PID_MOTOR_KD  0.0
 #define PID_MOTOR_INTEGRATION_LIMIT     20.0

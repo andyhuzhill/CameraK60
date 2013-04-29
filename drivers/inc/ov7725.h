@@ -18,6 +18,7 @@ extern   uint8 *	    IMG_BUFF;       //图像缓冲区指针
 typedef enum 
 {
     IMG_NOTINIT=0,
+    IMG_READY,              //准备采集图像
 	IMG_FINISH,			    //图像采集完毕
 	IMG_FAIL,				//图像采集失败(采集行数少了)
 	IMG_GATHER,				//图像采集中
