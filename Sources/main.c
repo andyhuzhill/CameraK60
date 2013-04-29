@@ -25,7 +25,6 @@ extern uint8 *srcImg;
 int 
 main(void)
 {   
-
     Site_t site={0,0};                          //显示图像左上角位置
     Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
     Size_t size={LCD_W,LCD_H};                  //显示区域图像大小
