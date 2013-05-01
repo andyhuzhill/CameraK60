@@ -50,8 +50,15 @@ imgFilter(void);
 void
 imgGetMidLine(void);
 
-void
-imgLesatsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b);
+
+/**
+ *  使用最小二乘法计算跑道方向
+ *  输入变量:  BaseLine起始行 FinalLine终止行
+ *  输出变量:  k, 斜率 b 常数项 (浮点型) 
+ *  返回值:  最小二乘法拟合的残差和
+ */
+float
+imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b);
 
 
 #endif /* IMG_PROCESS_H_ */

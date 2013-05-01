@@ -25,7 +25,7 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 //// 外部公共变量声明
 extern IMG_STATE img_flag;
 
-int 
+void
 imgInit(void)
 {
     ov7725_init(srcImg);
@@ -49,7 +49,7 @@ int
 imgProcess(void)
 {
     float k, b, e2sum;
-    int ret;
+    static int ret;
     
     imgGetImg();
 
@@ -58,7 +58,10 @@ imgProcess(void)
         img_flag = IMG_PROCESS;
         imgResize();
         imgFilter();
-        e2sum = imgLesatsq(3, 15, &k, &b);
+        imgGetMidLine();
+        e2sum = imgLeastsq(3, 15, &k, &b);
+        
+        DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
         
         if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
             ret = 50;
@@ -72,6 +75,7 @@ imgProcess(void)
         img_flag = IMG_READY;
         return ret;
     }
+    return ret;
 }
 
 
@@ -271,12 +275,12 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
         sumY += (i-averageX)*(i-averageX);
     }
     
-    k = sumX / sumY;
-    b = averageY - k*averageX;   
+    *k = (float) sumX / sumY;
+    *b = (float) averageY - *k*averageX;   
     
     for (i = BaseLine; i < FinalLine; ++i) 
     {
-        error += (k*i+b - middle[i])*(k*i+b-middle[i]);
+        error += (*k*i+*b - middle[i])*(*k*i+*b-middle[i]);
     }
     return error;
 }

@@ -29,7 +29,7 @@ main(void)
     DisableInterrupts;  //关全局中断
 
     imgInit();      //摄像头初始化
-    motorInit();    //电机控制初始化
+//    motorInit();    //电机控制初始化
     steerInit();
 
     EnableInterrupts;   //开全局中断
@@ -37,9 +37,11 @@ main(void)
     for (;;) 
     {
         decoderSet();
-        motorSetSpeed(speed_cnt, 20);
+//        motorSetSpeed(speed_cnt, 20);
         
         retval = imgProcess();
+        
+        printf("steer duty is %d\n",retval);
         
         steerSetDuty(retval);
     }
