@@ -43,25 +43,24 @@ PORTA_ISR(void)         //场中断处理函数
         default :
             break;
         }
-        PORTA_ISFR  = ~0;                           //场中断里，全部都要清中断标志位
+               
     }
 
     if (PORTA_ISFR & (1 << 11))                     //编码器引脚中断
     {               
         encoder_cnt ++;
-        PORTA_ISFR = ~0;
-        return ;
     }
+    PORTA_ISFR  = ~0;                              //场中断里，全部都要清中断标志位
 }
 
 void 
 DMA0_ISR(void)
 {
-    disable_irq(PORTA_IRQn);
+//    disable_irq(PORTA_IRQn);
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
-    DEBUG_OUT("************************IMG is FINISHED*********************",0);
+//    DEBUG_OUT("************************IMG is FINISHED*********************",0);
 }
 
 extern volatile bool getEncoder;

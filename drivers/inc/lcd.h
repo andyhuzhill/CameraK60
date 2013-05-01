@@ -47,9 +47,9 @@ void LCD_Init(uint16 colour);
 void LCD_Point		(Site_t site                            ,uint16 rgb565);   	//»­µã
 void LCD_Rectangle  (Site_t site,Size_t size             ,uint16 rgb565);   	    //»­¾ØĞÎ
 uint8   LCD_Char       (Site_t site,const uint8 ascii , uint16 Color ,uint16 bkColor);  	//ÏÔÊ¾8*16×Ö·û
-void LCD_Char_CH    (Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor);      //ÏÔÊ¾16*16ºº×Ö×Ö·û
+//void LCD_Char_CH    (Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor);      //ÏÔÊ¾16*16ºº×Ö×Ö·û
 void LCD_Str        (Site_t site,uint8 *Str        , uint16 Color ,uint16 bkColor);  	//ÏÔÊ¾8*16×Ö·û´®
-void LCD_Str_CH		(Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor); 		//ÏÔÊ¾16*16ºº×Ö×Ö·û´®
+//void LCD_Str_CH		(Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor); 		//ÏÔÊ¾16*16ºº×Ö×Ö·û´®
 void LCD_Str_R      (Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor);  	//ÏÔÊ¾×Ö·û´®£¨ÓÒ¶ÔÆë£©
 
 

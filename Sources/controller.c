@@ -69,7 +69,7 @@ void steerInit(void)
 }
 
 void steerSetDuty(uint8 duty)
-{
+{   
     FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
 }
 
@@ -79,7 +79,8 @@ decoderSet(void)
     pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
 }
 
-void motorInit(void)
+void 
+motorInit(void)
 {
     FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
     FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
@@ -87,7 +88,7 @@ void motorInit(void)
     pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
-    port_init(PTA11, IRQ_FALLING | PULLUP);                 //编码器输入
+    port_init(PTA11, IRQ_FALLING | PULLUP | PF);                 //编码器输入 下降沿中断 上拉 带滤波
     decoderSet();
 }
 
@@ -98,9 +99,9 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
     static float duty;
     int32 pwm;
 
-    printf("getEncoder is %d\n",(getEncoder == true));
-    printf("duty is %ld\n", (uint32)duty);
-    printf("speed_cnt is %ld\n", realspeed);
+//    printf("getEncoder is %d\n",(getEncoder == true));
+//    printf("duty is %ld\n", (uint32)duty);
+//    printf("speed_cnt is %ld\n", realspeed);
 
     if(true == getEncoder) 
     {
@@ -110,6 +111,8 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         duty = duty + PWM2DUTY(pwm);
         if(duty>100) duty = 100;
         if(duty<0) duty = 0;
+        
+//        duty = speed;
 
         printf("duty is %ld\n", (uint32)duty);
         duty = 100 - duty;

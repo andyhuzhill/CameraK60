@@ -119,7 +119,7 @@ void I2C_init(I2Cn i2cn)
 void I2C_StartTransmission (I2Cn i2cn, uint8 SlaveID, MSmode Mode)
 {
 
-    assert(Mode == MWSR || Mode == MRSW);         //使用断言，检测 Mode 是否为 读 或 写
+    ASSERT(Mode == MWSR || Mode == MRSW);         //使用断言，检测 Mode 是否为 读 或 写
 
     SlaveID = ( SlaveID << 1 ) | Mode ;            //确定写地址和读地址
 
