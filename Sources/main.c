@@ -67,6 +67,7 @@ main(void)
     LCD_Init(RED);
     ledInit();
 
+    NRF_Init();
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
     steerInit();

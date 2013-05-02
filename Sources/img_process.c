@@ -52,6 +52,7 @@ imgProcess(void)
 {    
     float k, b, e2sum;
     static int ret;
+    int32 txbuf[3] = {0};
 
     imgGetImg();
 
@@ -64,7 +65,12 @@ imgProcess(void)
         e2sum = imgLeastsq(3, 15, &k, &b);
 
         DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
+        
+        txbuf[0] = (int32)k;
+        txbuf[1] = (int32)b;
+        txbuf[2] = (int32)e2sum;
 
+        NRF_ISR_Tx_Dat((uint8 *)txbuf, sizeof(txbuf));
 
         if ((ABS(k)<5) && (ABS(b)< 30)) {           //直道
             if(middle[IMG_H/2] > IMG_W/2) {         //直道偏左

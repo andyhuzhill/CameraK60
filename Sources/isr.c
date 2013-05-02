@@ -73,3 +73,13 @@ PIT0_ISR(void)
     EnableInterrupts;
 }
 
+void
+PORTE_ISR(void)
+{
+    if (PORTE_ISFR & (1 << 27))
+    {
+        PORTE_ISFR |= (1 << 27);
+        
+        NRF_Handler();
+    }
+}

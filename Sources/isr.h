@@ -18,6 +18,9 @@
 #undef  VECTOR_103                       
 #define VECTOR_103    PORTA_ISR    
 
+#undef  VECTOR_107
+#define VECTOR_107    PORTE_ISR
+
 #undef  VECTOR_016
 #define VECTOR_016    DMA0_ISR  
 
@@ -31,5 +34,8 @@ void DMA0_ISR(void);
     //DMA中断服务函数
 void PIT0_ISR(void);            
     //PIT0 中断服务函数
+
+void PORTE_ISR(void);
+
 
 #endif /* ISR_H_ */
