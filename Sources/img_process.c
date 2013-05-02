@@ -25,6 +25,7 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
 
+
 void
 imgInit(void)
 {
@@ -48,6 +49,10 @@ imgGetImg(void)
 int
 imgProcess(void)
 {
+    Site_t site = {0,0};
+    Size_t imgsize = {CAMERA_W, CAMERA_H};
+    Size_t size = {LCD_W, LCD_H};
+    
     float k, b, e2sum;
     static int ret;
     
@@ -55,6 +60,7 @@ imgProcess(void)
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
     {
+//        LCD_Img_Binary_Z(site, size, (uint16 *) srcImg, imgsize);
         img_flag = IMG_PROCESS;
         imgResize();
         imgFilter();
