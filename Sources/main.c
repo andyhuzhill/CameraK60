@@ -45,16 +45,9 @@ vuint32  encoder_cnt=0;
 volatile bool getEncoder= false;
 
 
-int 
-main(void)
-{   
-    Site_t site={0,0};                          //显示图像左上角位置
-    Size_t imgsize={CAMERA_W,CAMERA_H};         //图像大小 
-    Size_t size={LCD_W,LCD_H};                  //显示区域图像大小
-
-    DisableInterrupts;  //关全局中断
-    
-    LCD_Init(RED);
+void 
+ledInit(void)
+{
     GPIO_InitTypeDef initGPIO;
 
     initGPIO.Pin  = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 |
@@ -62,25 +55,30 @@ main(void)
     initGPIO.MODE = Mode_OUT;
     initGPIO.STATE = High;
     initGPIO.IRQC = None_IRQ;
-    
-    GPIO_init(GPIO_D, &initGPIO);
 
-    int retval =0;
+    GPIO_init(GPIO_D, &initGPIO);
+}
+
+int 
+main(void)
+{   
     DisableInterrupts;  //关全局中断
 
     LCD_Init(RED);
+    ledInit();
+
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
     steerInit();
 
     EnableInterrupts;   //开全局中断
-    
+
     motorSetSpeed(encoder_cnt, 40);
 
     for (;;) 
     {
         imgProcess();
-        
+
         motorSetSpeed(encoder_cnt, 10);
     }
 }
