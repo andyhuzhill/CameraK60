@@ -48,11 +48,7 @@ imgGetImg(void)
 
 int
 imgProcess(void)
-{
-    Site_t site = {0,0};
-    Size_t imgsize = {CAMERA_W, CAMERA_H};
-    Size_t size = {LCD_W, LCD_H};
-    
+{    
     float k, b, e2sum;
     static int ret;
     
@@ -60,7 +56,6 @@ imgProcess(void)
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
     {
-//        LCD_Img_Binary_Z(site, size, (uint16 *) srcImg, imgsize);
         img_flag = IMG_PROCESS;
         imgResize();
         imgFilter();
@@ -69,24 +64,25 @@ imgProcess(void)
         
         DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
         
-        if(middle[IMG_H/2] > IMG_W/2)        //左偏
-        {
-            steerSetDuty(45);
-        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
-            steerSetDuty(55);
-        }else {
-            steerSetDuty(50);
+        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
+            if(middle[IMG_H/2] > IMG_W/2)                               //直道左偏
+            {
+                steerSetDuty(45);
+            }else if (middle[IMG_H/2] < IMG_W /2){                      //直道右偏
+                steerSetDuty(55);
+            }else {
+                steerSetDuty(50);
+            }
+        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
+            ret = 50 + k;
+            steerSetDuty(ret);
+        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
+            ret = 50 + 2*k;
+            steerSetDuty(ret);
+        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
+            ret = 50 + 0.5*k ;
+            steerSetDuty(ret);
         }
-//        
-//        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
-//            ret = 50;
-//        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
-//            ret = 50 + k;
-//        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
-//            ret = 50 + 2*k;
-//        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
-//            ret = 50 + 0.5*k ;
-//        }
         img_flag = IMG_READY;
         return ret;
     }

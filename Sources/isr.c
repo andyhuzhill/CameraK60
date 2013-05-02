@@ -55,11 +55,9 @@ PORTA_ISR(void)         //场中断处理函数
 void 
 DMA0_ISR(void)
 {
-//    disable_irq(PORTA_IRQn);
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
-//    DEBUG_OUT("************************IMG is FINISHED*********************",0);
 }
 
 extern volatile bool getEncoder;
