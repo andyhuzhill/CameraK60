@@ -1,6 +1,8 @@
+#ifndef _OV7725_REG_H_
+#define _OV7725_REG_H_
+
 #define GAIN      0x00
 #define BLUE      0x01
-#define RED       0x02
 #define RED       0x02
 #define GREEN     0x03
 #define BAVG      0x05
@@ -148,38 +150,4 @@
 #define SIGN      0xAB
 #define DSPAuto   0xAC
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif

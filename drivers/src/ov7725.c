@@ -8,10 +8,12 @@
 
 #define ov7725_delay_ms(time)  DELAY_MS(time)
 
+
+volatile IMG_STATE  img_flag = IMG_FINISH;      //图像状态
+
 #define OV7725_ID           0x21
 
 uint8 *	IMG_BUFF;
-volatile IMG_STATE	img_flag = IMG_FINISH;		//图像状态
 
 static uint8 ov7725_reg_init(void);
 
@@ -137,7 +139,6 @@ uint8 cfgnum = sizeof(ov7727_reg)/sizeof(ov7727_reg[0]);   /*结构体数组成员数目*
  * 函数名：Ov7725_Init
  * 描述  ：Sensor初始化
  * 输入  ：无
- * 输出  ：返回1成功，返回0失败
  * 注意  ：无
  ************************************************/
 uint8 ov7725_init(uint8 *imgaddr)

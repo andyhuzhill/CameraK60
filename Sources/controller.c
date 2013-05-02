@@ -112,7 +112,7 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         if(duty>100) duty = 100;
         if(duty<0) duty = 0;
         
-//        duty = speed;
+        duty = speed;
 
         printf("duty is %ld\n", (uint32)duty);
         duty = 100 - duty;

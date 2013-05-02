@@ -22,13 +22,15 @@ static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
-//// 外部公共变量声明
-extern IMG_STATE img_flag;
+////// 外部公共变量声明
+extern volatile IMG_STATE img_flag;
 
 void
 imgInit(void)
 {
     ov7725_init(srcImg);
+    PORTA_ISFR = ~0;                        //清中断
+    enable_irq(PORTA_IRQn);                 //允许PTA的中断
 }
 
 /**
@@ -40,10 +42,8 @@ imgGetImg(void)
     if((IMG_READY == img_flag) || (IMG_FAIL == img_flag)){
         img_flag = IMG_START;                   //开始采集图像
         PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
-        enable_irq(PORTA_IRQn);                 //允许PTA的中断
     }
 }
-
 
 int
 imgProcess(void)
@@ -63,15 +63,24 @@ imgProcess(void)
         
         DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
         
-        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
-            ret = 50;
-        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
-            ret = 50 + k;
-        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
-            ret = 50 + 2*k;
-        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
-            ret = 50 + 0.5*k ;
+        if(middle[IMG_H/2] > IMG_W/2)        //左偏
+        {
+            steerSetDuty(45);
+        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
+            steerSetDuty(55);
+        }else {
+            steerSetDuty(50);
         }
+//        
+//        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
+//            ret = 50;
+//        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
+//            ret = 50 + k;
+//        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
+//            ret = 50 + 2*k;
+//        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
+//            ret = 50 + 0.5*k ;
+//        }
         img_flag = IMG_READY;
         return ret;
     }
@@ -141,7 +150,7 @@ imgGetMidLine(void)
 {
     int8 leftBlack[IMG_H] = {0};
     int8 rightBlack[IMG_H]={0};
-
+    
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  

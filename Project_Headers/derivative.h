@@ -44,7 +44,7 @@
 #include "ftm.h"
 #include "nrf24l0.h"
 
-#include "lcd.h"
+//#include "lcd.h"
 #include "pit.h"
 #include "port.h"
 
@@ -54,7 +54,6 @@
 #define ABS(x)   ((x)>0 ? (x): (-x))
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
-#define SIGN(x)  ((x)>0 ? +:-)
 
 #define STEER_FTM               FTM0
 #define STEER_CHN               CH0
