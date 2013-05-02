@@ -24,7 +24,9 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
-
+/**
+ * 图像采集初始化
+ */
 void
 imgInit(void)
 {
@@ -44,10 +46,15 @@ imgGetImg(void)
     }
 }
 
+/**
+ * 图像处理主函数
+ * @return 
+ */
 int
 imgProcess(void)
 {    
-    float k, b, e2sum;
+    int32 k, b;
+    float e2sum;
     static int ret;
     
     imgGetImg();
@@ -58,26 +65,27 @@ imgProcess(void)
         imgResize();
         imgFilter();
         imgGetMidLine();
-        e2sum = imgLeastsq(3, 15, &k, &b);
+        e2sum = imgLeastsq(3, 22, &k, &b);
         
-        DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
+        DEBUG_OUT("k = %d, b = %d, e2sum=%d\n", k, b, (int32)e2sum);
         
-        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
-            if(middle[IMG_H/2] > IMG_W/2)                               //直道左偏
-            {
+        GPIO_write(GPIO_D, ((int8)k << 8));
+        
+        if ((ABS(k)<2) && (ABS(b)< 10)) {                               //直道
+            if(middle[IMG_H/2] > IMG_W/2) {                             //直道左偏
                 steerSetDuty(45);
-            }else if (middle[IMG_H/2] < IMG_W /2){                      //直道右偏
+            }else if (middle[IMG_H/2] < IMG_W /2) {                     //直道右偏
                 steerSetDuty(55);
             }else {
                 steerSetDuty(50);
             }
-        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
+        }else if (((ABS(k) > 2) && (ABS(k) <5))&&(ABS(b)<20)) {         //入弯
             ret = 50 + k;
             steerSetDuty(ret);
-        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
+        }else if ((ABS(k)>5) && (ABS(b)>10 && (ABS(b)<20))) {           //弯道
             ret = 50 + 2*k;
             steerSetDuty(ret);
-        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
+        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)) {
             ret = 50 + 0.5*k ;
             steerSetDuty(ret);
         }
@@ -86,7 +94,6 @@ imgProcess(void)
     }
     return ret;
 }
-
 
 /**
  * 将原来320X240的数组存入320X24的数组（每行40字节，共24行）
@@ -255,11 +262,11 @@ imgGetMidLine(void)
 /**
  *  使用最小二乘法计算跑道方向
  *  输入变量:  BaseLine起始行 FinalLine终止行
- *  输出变量:  k, 斜率 b 常数项 (浮点型) 
- *  返回值:  最小二乘法拟合的残差和
+ *  输出变量:  k, 斜率 b 常数项  
+ *  返回值:  最小二乘法拟合的偏差平方和
  */
 float
-imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
+imgLeastsq(uint8 BaseLine, uint8 FinalLine, int32 *k, int32 *b)
 {
     int32 sumX=0, sumY=0;   
     int32 averageX=0, averageY=0;     
@@ -283,15 +290,20 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
         sumX += (i-averageX)*(middle[i]-averageY);
         sumY += (i-averageX)*(i-averageX);
     }
-    
-    *k = (float) sumX / sumY;
-    *b = (float) averageY - *k*averageX;   
+    if (sumY == 0) 
+    {
+        *k =0;
+    } else 
+    {
+        *k = sumX / sumY;
+    }
+   
+    *b =  averageY - *k*averageX;   
     
     for (i = BaseLine; i < FinalLine; ++i) 
     {
+        // 计算偏差平方和
         error += (*k*i+*b - middle[i])*(*k*i+*b-middle[i]);
     }
     return error;
 }
-
-

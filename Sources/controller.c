@@ -107,10 +107,6 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
     static float duty;
     int32 pwm;
 
-//    printf("getEncoder is %d\n",(getEncoder == true));
-//    printf("duty is %ld\n", (uint32)duty);
-//    printf("speed_cnt is %ld\n", realspeed);
-
     if(true == getEncoder) 
     {
         pidMotor.desired = speed;

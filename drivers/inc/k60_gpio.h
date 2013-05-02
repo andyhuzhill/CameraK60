@@ -28,11 +28,11 @@ extern volatile struct PORT_MemMap *PORTX[5];
 ////////////////////////////////////////////////////////////////////////////////
 
 typedef enum{
-    PORT_A 	= 0,
-    PORT_B 	= 1,
-    PORT_C 	= 2,
-    PORT_D 	= 3,
-    PORT_E	= 4
+    GPIO_A 	= 0,
+    GPIO_B 	= 1,
+    GPIO_C 	= 2,
+    GPIO_D 	= 3,
+    GPIO_E	= 4
 }GPIO_TypeDef;
 
 typedef enum{
@@ -141,7 +141,7 @@ typedef enum GPIO_CFG
 
 /*
  * @说明: 初始化GPIO口
- * @参数:  port: 端口名 PORT_A~PORT_E
+ * @参数:  port: 端口名 GPIO_A~GPIO_E
  *          pin: 引脚 取值1 ~ 31
  *          dir: 输入输出方向 
  *        state: 初始状态
@@ -152,7 +152,7 @@ gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
 
 /*
  * @说明: 初始化GPIO口
- * @参数:  port: 端口名  PORT_A~PORT_E
+ * @参数:  port: 端口名  GPIO_A~GPIO_E
  *  	   init: 初始化配置结构体
  * @返回值: 0 正常返回， 其他值为异常
  */
@@ -161,7 +161,7 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct);
 
 /*
  * @说明: 设定指定端口引脚状态
- * @参数: port: 端口名 PORT_A~PORT_E
+ * @参数: port: 端口名 GPIO_A~GPIO_E
  * 		   pin: 引脚 取值 1~31
  * 		 state: 状态
  * @返回值: 无
@@ -171,7 +171,7 @@ GPIO_write_bit(GPIO_TypeDef port, uint8 pin, GPIOState_TypeDef state);
 
 /*
  * @说明: 设定指定端口状态
- * @参数: port: 端口名 PORT_A~PORT_E
+ * @参数: port: 端口名 GPIO_A~GPIO_E
  * 		  byte: 状态
  * @返回值: 无
  */
@@ -180,7 +180,7 @@ GPIO_write(GPIO_TypeDef port, uint32 byte);
 
 /*
  * @说明: 得到指定端口引脚状态
- * @参数: port:  端口名 PORT_A~PORT_E
+ * @参数: port:  端口名 GPIO_A~GPIO_E
  * 	       pin:  引脚  取值 1 ~31
  * @返回值 指定引脚状态 0 = 低电平 1 = 高电平
  */
@@ -189,7 +189,7 @@ GPIO_read_bit(GPIO_TypeDef port, uint8 pin);
 
 /*
  * @说明: 得到指定端口状态
- * @参数: port: 端口名 PORT_A~PORT_E
+ * @参数: port: 端口名 GPIO_A~GPIO_E
  * @返回值: 指定端口状态 32位无符号数
  */
 uint32

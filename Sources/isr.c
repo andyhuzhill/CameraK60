@@ -17,7 +17,7 @@
 extern 
 volatile IMG_STATE img_flag;
 
-extern vuint16 encoder_cnt;
+static vuint32 encoder_cnt;
 
 void 
 PORTA_ISR(void)         //场中断处理函数
@@ -67,7 +67,7 @@ PIT0_ISR(void)
     getEncoder = true;
     encoder_cnt = 0;
     
-    GPIOD_PTOR |= (1 << 10);
+//    GPIOD_PTOR |= (1 << 10);
 
     PIT_Flag_Clear(PIT0);
     EnableInterrupts;

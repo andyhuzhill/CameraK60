@@ -114,15 +114,15 @@ void NRF_Init(void)
     //配置NRF管脚复用
     spi_init(NRF_SPI,MASTER);               //初始化SPI,主机模式
     
-    gpio_init(PORT_E,28, Mode_OUT, Low);           //初始化CE，默认进入待机模式
+    gpio_init(GPIO_E,28, Mode_OUT, Low);           //初始化CE，默认进入待机模式
     //gpio_init(PORTE,27, GPI,LOW);           //初始化IRQ管脚为输入 
-    gpio_init(PORT_A,14, Mode_OUT, High);          //初始化PCSN管脚为输出，低电平选中  
+    gpio_init(GPIO_A,14, Mode_OUT, High);          //初始化PCSN管脚为输出，低电平选中  
     
 #if IS_USE_ISR
     //exti_init(PORTE,27, falling_up);        //初始化IRQ管脚为 :下降沿触发，内部上拉
     port_init(PTE27,IRQ_FALLING | PULLUP );
     
-    enable_irq(PORT_E + 87);                 //使能IRQ中断
+    enable_irq(GPIO_E + 87);                 //使能IRQ中断
 #else
     gpio_init(PORTE,27, GPI,LOW);           //初始化IRQ管脚为输入     
 #endif
