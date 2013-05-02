@@ -34,19 +34,19 @@ GPIO_get_port_addr(GPIO_TypeDef port)
     PORT_MemMapPtr p;
     switch(port)
     {
-    case GPIO_A:
+    case PORT_A:
         p = PORTA_BASE_PTR;
         break;
-    case GPIO_B:
+    case PORT_B:
         p = PORTB_BASE_PTR;
         break;
-    case GPIO_C:
+    case PORT_C:
         p = PORTC_BASE_PTR;
         break;
-    case GPIO_D:
+    case PORT_D:
         p = PORTD_BASE_PTR;
         break;
-    case GPIO_E:
+    case PORT_E:
         p = PORTE_BASE_PTR;
         break;
     default:
@@ -67,19 +67,19 @@ GPIO_get_pt_addr(GPIO_TypeDef port)
     
     switch(port)
     {
-    case GPIO_A:
+    case PORT_A:
         p = PTA_BASE_PTR;
         break;
-    case GPIO_B:
+    case PORT_B:
         p = PTB_BASE_PTR;
         break;
-    case GPIO_C:
+    case PORT_C:
         p = PTC_BASE_PTR;
         break;
-    case GPIO_D:
+    case PORT_D:
         p = PTD_BASE_PTR;
         break;
-    case GPIO_E:
+    case PORT_E:
         p = PTE_BASE_PTR;
         break;
     default:
@@ -95,7 +95,7 @@ GPIO_get_pt_addr(GPIO_TypeDef port)
 
 /*
  * @说明: 初始化GPIO口
- * @参数:  port: 端口名 PORT_A~GPIO_E
+ * @参数:  port: 端口名 PORT_A~PORT_E
  *  		pin: 引脚 取值1 ~ 31
  * 		    dir: 输入输出方向 
  * 		  state: 初始状态
@@ -113,19 +113,19 @@ gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
     //选择IO口时钟控制掩码
     switch(port)
     {
-    case GPIO_A:
+    case PORT_A:
         SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
         break;
-    case GPIO_B:
+    case PORT_B:
         SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
         break;
-    case GPIO_C:
+    case PORT_C:
         SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;
         break;
-    case GPIO_D:
+    case PORT_D:
         SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
         break;
-    case GPIO_E:
+    case PORT_E:
         SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
         break;
     default:
@@ -183,7 +183,7 @@ gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
 
 /*
  * @说明: ST风格初始化GPIO口 :)
- * @参数:  port: 端口名  PORT_A~GPIO_E
+ * @参数:  port: 端口名  PORT_A~PORT_E
  *  	   init: 初始化配置结构体
  * @返回值: 0 正常返回， 其他值为异常
  */
@@ -201,19 +201,19 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
     //选择IO口时钟控制掩码
     switch(port)
     {
-    case GPIO_A:
+    case PORT_A:
         SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
         break;
-    case GPIO_B:
+    case PORT_B:
         SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
         break;
-    case GPIO_C:
+    case PORT_C:
         SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;
         break;
-    case GPIO_D:
+    case PORT_D:
         SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
         break;
-    case GPIO_E:
+    case PORT_E:
         SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
         break;
     default:
@@ -265,7 +265,7 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
 
 /*
  * @说明: 设定指定端口引脚状态
- * @参数: port: 端口名 PORT_A~GPIO_E
+ * @参数: port: 端口名 PORT_A~PORT_E
  * 		   pin: 引脚
  * 		 state: 状态
  * @返回值: 无
@@ -283,7 +283,7 @@ GPIO_write_bit(GPIO_TypeDef port, uint8 pin, GPIOState_TypeDef state)
 
 /*
  * @说明: 设定指定端口状态
- * @参数: port: 端口名 PORT_A~GPIO_E
+ * @参数: port: 端口名 PORT_A~PORT_E
  * 		  byte: 状态
  * @返回值: 无
  */
@@ -297,7 +297,7 @@ GPIO_write(GPIO_TypeDef port, uint32 byte)
 
 /*
  * @说明: 得到指定端口引脚状态
- * @参数: port:  端口名 PORT_A~GPIO_E
+ * @参数: port:  端口名 PORT_A~PORT_E
  * 	       pin:  引脚 1~31
  * @返回值 指定引脚状态 0 = 低电平 1 = 高电平
  */
@@ -314,7 +314,7 @@ GPIO_read_bit(GPIO_TypeDef port, uint8 pin)
 
 /*
  * @说明: 得到指定端口状态
- * @参数: port: 端口名 PORT_A~GPIO_E
+ * @参数: port: 端口名 PORT_A~PORT_E
  * @返回值: 指定端口状态 32位无符号数
  */
 uint32
@@ -330,7 +330,7 @@ GPIO_read(GPIO_TypeDef port)
 
 /*
  * @说明: 端口指定引脚状态翻转
- * @参数: port: 端口名 PORT_A~GPIO_E
+ * @参数: port: 端口名 PORT_A~PORT_E
  * 		   pin: 引脚 1~31
  * @返回值: 无
  */
@@ -344,7 +344,7 @@ GPIO_toggle_bit(GPIO_TypeDef port, uint8 pin)
 
 /*
  * @说明: 端口状态翻转 port = ~port;
- * @参数: port: 端口名 PORT_A~GPIO_E
+ * @参数: port: 端口名 PORT_A~PORT_E
  * @返回值: 无
  */
 void

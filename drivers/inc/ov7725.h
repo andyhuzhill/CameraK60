@@ -1,7 +1,6 @@
 #ifndef __OV7725_H
 #define __OV7725_H 
 
-
 #define	CAMERA_DMA_CH 	    DMA_CH0		    //定义摄像头的DMA采集通道
 #define CAMERA_W            320           	//定义摄像头图像宽度
 #define CAMERA_H            240				//定义摄像头图像高度

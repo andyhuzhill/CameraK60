@@ -37,8 +37,8 @@ typedef enum
                                     //0表示不需要自动进入接收模式
 
 //中断接收和发送的配置
-#define IS_USE_ISR          1      //是否使用ISR中断发送和接收。0：不使用，1：使用
-#define RX_ISR_FIFO_PACKET  (20)    //中断接收的缓冲区可接收包的数目（包的大小由 MAX_ONCE_TX_NUM 决定）。一副图像的大小为80*60/8 = 18.75*32
+#define IS_USE_ISR           1      //是否使用ISR中断发送和接收。0：不使用，1：使用
+#define RX_ISR_FIFO_PACKET   (20)    //中断接收的缓冲区可接收包的数目（包的大小由 MAX_ONCE_TX_NUM 决定）。一副图像的大小为80*60/8 = 18.75*32
 //#define TX_ISR_NUM          10      //中断发送的缓冲区能同时有多少个发送请求.超过了则不处理。
 
 

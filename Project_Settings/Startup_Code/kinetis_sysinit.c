@@ -42,7 +42,7 @@ void isr_default(void)
     initGPIO.STATE = High;
     initGPIO.IRQC = None_IRQ;
     
-    GPIO_init(GPIO_D, &initGPIO);
+    GPIO_init(PORT_D, &initGPIO);
     
     for (i = 8; i < 16; ++i) 
     {

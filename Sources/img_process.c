@@ -30,7 +30,6 @@ void
 imgInit(void)
 {
     ov7725_init(srcImg);
-    img_flag = IMG_STOP;
     PORTA_ISFR = ~0;                        //清中断
     enable_irq(PORTA_IRQn);                 //允许PTA的中断
 }
@@ -49,44 +48,45 @@ imgGetImg(void)
 
 int
 imgProcess(void)
-{    
+{
+    Site_t site = {0,0};
+    Size_t imgsize = {CAMERA_W, CAMERA_H};
+    Size_t size = {LCD_W, LCD_H};
+    
     float k, b, e2sum;
     static int ret;
-    int32 txbuf[3] = {0};
-
+    
     imgGetImg();
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
     {
+//        LCD_Img_Binary_Z(site, size, (uint16 *) srcImg, imgsize);
         img_flag = IMG_PROCESS;
         imgResize();
         imgFilter();
         imgGetMidLine();
         e2sum = imgLeastsq(3, 15, &k, &b);
-
+        
         DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
         
-        txbuf[0] = (int32)k;
-        txbuf[1] = (int32)b;
-        txbuf[2] = (int32)e2sum;
-
-        NRF_ISR_Tx_Dat((uint8 *)txbuf, sizeof(txbuf));
-
-        if ((ABS(k)<5) && (ABS(b)< 30)) {           //直道
-            if(middle[IMG_H/2] > IMG_W/2) {         //直道偏左
-                steerSetDuty(48);
-            }else if (middle[IMG_H/2] < IMG_W /2){  //直道偏右
-                steerSetDuty(52);
-            }else {                                 //直道正中央
-                steerSetDuty(50);
-            }
-        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
-            ret = 50 + k;
-        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
-            ret = 50 + 2*k;
-        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
-            ret = 50 + 0.5*k ;
+        if(middle[IMG_H/2] > IMG_W/2)        //左偏
+        {
+            steerSetDuty(45);
+        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
+            steerSetDuty(55);
+        }else {
+            steerSetDuty(50);
         }
+//        
+//        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
+//            ret = 50;
+//        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
+//            ret = 50 + k;
+//        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
+//            ret = 50 + 2*k;
+//        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
+//            ret = 50 + 0.5*k ;
+//        }
         img_flag = IMG_READY;
         return ret;
     }
@@ -156,7 +156,7 @@ imgGetMidLine(void)
 {
     int8 leftBlack[IMG_H] = {0};
     int8 rightBlack[IMG_H]={0};
-
+    
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
@@ -272,16 +272,16 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
     uint8 i;
     uint8 availableLines = FinalLine - BaseLine;
     float error=0;
-
+    
     for (i = BaseLine; i < FinalLine; ++i) 
     {
-        sumX += i;
-        sumY += middle[i];
+      sumX += i;
+      sumY += middle[i];
     }
-
+    
     averageX = sumX / availableLines;
     averageY = sumY / availableLines;
-
+    
     sumX = 0;
     sumY = 0;
     for (i = BaseLine; i < FinalLine; ++i) 
@@ -289,10 +289,10 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
         sumX += (i-averageX)*(middle[i]-averageY);
         sumY += (i-averageX)*(i-averageX);
     }
-
+    
     *k = (float) sumX / sumY;
     *b = (float) averageY - *k*averageX;   
-
+    
     for (i = BaseLine; i < FinalLine; ++i) 
     {
         error += (*k*i+*b - middle[i])*(*k*i+*b-middle[i]);

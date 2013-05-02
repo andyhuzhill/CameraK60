@@ -76,7 +76,7 @@ void steerSetDuty(uint8 duty)
 void
 decoderSet(void)
 {
-    pit_init_ms(PIT0, 100);  //500ms 触发一次PIT中断 进行测速
+    pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
 }
 
 void 
@@ -99,6 +99,10 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
     static float duty;
     int32 pwm;
 
+//    printf("getEncoder is %d\n",(getEncoder == true));
+//    printf("duty is %ld\n", (uint32)duty);
+//    printf("speed_cnt is %ld\n", realspeed);
+
     if(true == getEncoder) 
     {
         pidMotor.desired = speed;
@@ -110,10 +114,10 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
         
         duty = speed;
 
-        DEBUG_OUT("duty is %ld\n", (uint32)duty);
+        printf("duty is %ld\n", (uint32)duty);
         duty = 100 - duty;
 
-        DEBUG_OUT("speed_cnt is %ld\n", realspeed);
+        printf("speed_cnt is %ld\n", realspeed);
 
         FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);
         getEncoder = false;

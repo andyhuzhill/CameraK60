@@ -9,7 +9,7 @@
 #define ov7725_delay_ms(time)  DELAY_MS(time)
 
 
-volatile IMG_STATE  img_flag = IMG_STOP;      //Í¼Ïñ×´Ì¬
+volatile IMG_STATE  img_flag = IMG_FINISH;      //Í¼Ïñ×´Ì¬
 
 #define OV7725_ID           0x21
 
