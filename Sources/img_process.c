@@ -15,15 +15,82 @@
 
 #include "img_process.h"
 
+//// 本模块公共变量声明
+
+static int8 middle[IMG_H] = {0};                         //记录中线位置
+static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
+static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
+static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
+
+////// 外部公共变量声明
+extern volatile IMG_STATE img_flag;
 
 
-static int8 center[IMG_H] = {0};        //记录中线位置
+void
+imgInit(void)
+{
+    ov7725_init(srcImg);
+    img_flag = IMG_STOP;
+    PORTA_ISFR = ~0;                        //清中断
+    enable_irq(PORTA_IRQn);                 //允许PTA的中断
+}
 
- uint8 srcImg[CAMERA_SIZE];     //保存摄像头采集数据
-static vuint8 img[IMG_H][IMG_W];        //将摄像头采集数据另存入此数组
+/**
+ *  获取图像
+ */
+void
+imgGetImg(void)
+{
+    if((IMG_READY == img_flag) || (IMG_FAIL == img_flag)){
+        img_flag = IMG_START;                   //开始采集图像
+        PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
+    }
+}
 
-/*
+int
+imgProcess(void)
+{    
+    float k, b, e2sum;
+    static int ret;
+
+    imgGetImg();
+
+    if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
+    {
+        img_flag = IMG_PROCESS;
+        imgResize();
+        imgFilter();
+        imgGetMidLine();
+        e2sum = imgLeastsq(3, 15, &k, &b);
+
+        DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
+
+
+        if ((ABS(k)<5) && (ABS(b)< 30)) {           //直道
+            if(middle[IMG_H/2] > IMG_W/2) {         //直道偏左
+                steerSetDuty(48);
+            }else if (middle[IMG_H/2] < IMG_W /2){  //直道偏右
+                steerSetDuty(52);
+            }else {                                 //直道正中央
+                steerSetDuty(50);
+            }
+        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
+            ret = 50 + k;
+        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
+            ret = 50 + 2*k;
+        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
+            ret = 50 + 0.5*k ;
+        }
+        img_flag = IMG_READY;
+        return ret;
+    }
+    return ret;
+}
+
+
+/**
  * 将原来320X240的数组存入320X24的数组（每行40字节，共24行）
+ * 影响到的变量 img[]
  */
 void
 imgResize(void)              
@@ -49,8 +116,9 @@ imgResize(void)
 #endif
 }
 
-/*
+/**
  * 滤波 将孤立的噪声去掉
+ * 影响到的变量: img[];
  */
 void
 imgFilter(void)
@@ -73,10 +141,10 @@ imgFilter(void)
 }
 
 
-/*
+/**
  * 说明: 提取图像中线
+ * 影响到的变量:  middle[];
  */
-
 void
 imgGetMidLine(void)
 {
@@ -87,11 +155,11 @@ imgGetMidLine(void)
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
     int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
-    int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
+
 
     for (row = IMG_H -1; row > (IMG_H -6); --row)       //搜索前五行
     {
-        for (col = (IMG_W /2); col > 2; --col)          //  先找左边黑线
+        for (col = (IMG_W /2); col > 1; --col)          //  先找左边黑线
         {
             if (img[row][col] != 0 && img[row][col-1] !=0)
             {
@@ -103,9 +171,10 @@ imgGetMidLine(void)
         if (col == 2)                       //  没有发现黑线
         {   
             leftBlack[row] = 0; 
+            leftLostRow = row;
         }
 
-        for (col = (IMG_W /2); col < (IMG_W -2); ++col) // 再找右边黑线
+        for (col = (IMG_W /2); col < (IMG_W -1); ++col) // 再找右边黑线
         {
             if (img[row][col] != 0 && img[row][col+1] != 0)   //发现黑线
             {
@@ -117,6 +186,7 @@ imgGetMidLine(void)
         if (col == IMG_W -2)            // 没有发现黑线
         {
             rightBlack[row] = IMG_W -1; 
+            rightLostRow = row;
         }
     }
 
@@ -148,7 +218,7 @@ imgGetMidLine(void)
                     break;
                 }
             }
-            if(leftStart ==0 && leftEnd== IMG_W-1)          
+            if(leftStart ==0)          
                 leftLostRow = row;
         } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
 
@@ -169,7 +239,7 @@ imgGetMidLine(void)
                     break;
                 }
             }
-            if (rightStart == 0 && rightEnd == IMG_W-1) 
+            if (rightEnd == IMG_W-1) 
                 rightLostRow = row; 
         }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
     }
@@ -177,50 +247,51 @@ imgGetMidLine(void)
     DEBUG_OUT("leftLostRow:%2d, rightLostRow:%2d\n",leftLostRow, rightLostRow);
     for (row = IMG_H-1; row > MIN(leftLostRow, rightLostRow); --row)  
     {
-        center[row] = (leftBlack[row] + rightBlack[row]) /2;
-        DEBUG_OUT("center[%d] is :%d", row, center[row]);
+        middle[row] = (leftBlack[row] + rightBlack[row]) /2;
+        DEBUG_OUT("middle[%d] is :%d", row, middle[row]);
     }
 }
 
-int 
-imgInit(void)
+/**
+ *  使用最小二乘法计算跑道方向
+ *  输入变量:  BaseLine起始行 FinalLine终止行
+ *  输出变量:  k, 斜率 b 常数项 (浮点型) 
+ *  返回值:  最小二乘法拟合的残差和
+ */
+float
+imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
 {
-    ov7725_init(srcImg);
-}
+    int32 sumX=0, sumY=0;   
+    int32 averageX=0, averageY=0;     
+    uint8 i;
+    uint8 availableLines = FinalLine - BaseLine;
+    float error=0;
 
-
-Road_type
-judgeRoad(void)
-{
-
-}
-
-
-extern IMG_STATE img_flag;
-
-void
-imgGetImg(void)
-{
-    if((IMG_READY == img_flag) || (IMG_FAIL == img_flag)){
-        img_flag = IMG_START;                   //开始采集图像
-        PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
-        enable_irq(PORTA_IRQn);                 //允许PTA的中断
-    }
-}
-
-extern IMG_STATE img_flag;
-
-int 
-imgProcess(void)
-{
-    imgGetImg();
-
-    if(IMG_FINISH == img_flag)
+    for (i = BaseLine; i < FinalLine; ++i) 
     {
-        imgResize();
-        imgFilter();
-        
-        img_flag = IMG_READY;
-        return 0;
+        sumX += i;
+        sumY += middle[i];
     }
+
+    averageX = sumX / availableLines;
+    averageY = sumY / availableLines;
+
+    sumX = 0;
+    sumY = 0;
+    for (i = BaseLine; i < FinalLine; ++i) 
+    {
+        sumX += (i-averageX)*(middle[i]-averageY);
+        sumY += (i-averageX)*(i-averageX);
+    }
+
+    *k = (float) sumX / sumY;
+    *b = (float) averageY - *k*averageX;   
+
+    for (i = BaseLine; i < FinalLine; ++i) 
+    {
+        error += (*k*i+*b - middle[i])*(*k*i+*b-middle[i]);
+    }
+    return error;
 }
+
+

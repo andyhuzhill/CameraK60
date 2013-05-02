@@ -51,7 +51,6 @@
 #include "controller.h"
 #include "img_process.h"
 
-
 #define ABS(x)   ((x)>0 ? (x): (-x))
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
@@ -81,7 +80,7 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  0.1
+#define PID_MOTOR_KP  30
 #define PID_MOTOR_KI  0.0
 #define PID_MOTOR_KD  0.0
 #define PID_MOTOR_INTEGRATION_LIMIT     20.0

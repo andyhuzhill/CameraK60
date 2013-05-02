@@ -25,7 +25,7 @@ typedef enum
 	IMG_GATHER,				//图像采集中
 	IMG_START,				//开始采集图像
 	IMG_STOP,				//禁止图像采集
-	
+	IMG_PROCESS,            //正在处理图像
 }IMG_STATE;
 
 typedef struct

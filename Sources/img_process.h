@@ -21,6 +21,17 @@
 #define IMG_H (CAMERA_H /10) //隔十行取图像
 #define IMG_W (CAMERA_W /8)  //图像一行字节数
 
+/** 图像采集初始化
+ */
+void
+imgInit(void);
+
+/**
+ * 图像处理主函数
+ */
+int 
+imgProcess(void);
+
 /*
  * 将原来320X240的数组存入320X24的数组（每行40字节，共24行）
  */
@@ -36,11 +47,18 @@ imgFilter(void);
 /*
  * 说明: 提取图像中线
  */
-
 void
 imgGetMidLine(void);
 
-int 
-imgProcess(void);
+
+/**
+ *  使用最小二乘法计算跑道方向
+ *  输入变量:  BaseLine起始行 FinalLine终止行
+ *  输出变量:  k, 斜率 b 常数项 (浮点型) 
+ *  返回值:  最小二乘法拟合的残差和
+ */
+float
+imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b);
+
 
 #endif /* IMG_PROCESS_H_ */

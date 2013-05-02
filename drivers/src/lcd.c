@@ -152,27 +152,27 @@ void LCD_Str(Site_t site,uint8 *Str, uint16 Color, uint16 bkColor)
 #undef MAX_CHAR_POSY   
 }
 
-void LCD_Str_CH(Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor) 		//显示16*16汉字字符串
-{
-    while(*str != '\0')
-    {
-        if(site.x>(LCD_W-16))
-        {	 
-            /*换行*/
-            site.x =0;
-            site.y +=16;
-        }
-        if(site.y >(LCD_H-16))
-        {
-            /*重新归零*/
-            site.y =0;
-            site.x =0;
-        }
-        LCD_Char_CH(site,str,Color,bkColor);      
-        str += 2 ;
-        site.x += 16 ;	
-    }
-}
+//void LCD_Str_CH(Site_t site,const uint8 *str  , uint16 Color ,uint16 bkColor) 		//显示16*16汉字字符串
+//{
+//    while(*str != '\0')
+//    {
+//        if(site.x>(LCD_W-16))
+//        {	 
+//            /*换行*/
+//            site.x =0;
+//            site.y +=16;
+//        }
+//        if(site.y >(LCD_H-16))
+//        {
+//            /*重新归零*/
+//            site.y =0;
+//            site.x =0;
+//        }
+//        LCD_Char_CH(site,str,Color,bkColor);      
+//        str += 2 ;
+//        site.x += 16 ;	
+//    }
+//}
 
 
 /************************************************************
@@ -447,39 +447,39 @@ void LCD_Img_Binary(Site_t site,Size_t size,uint16 *img)
  * 举例  ：	LCD_Char_CH(200,100,"好",0,0);
  * 注意	 ：如果输入大于1的汉字字符串，显示将会截断，只显示最前面一个汉字
  ************************************************************************/    
-void LCD_Char_CH(Site_t site,const uint8 *str,uint16 Color,uint16 bkColor)
-{
-
-#ifndef NO_CHNISEST_DISPLAY         /*如果汉字显示功能没有关闭*/
-    uint8 i,j;
-    uint8 buffer[32];
-    uint16 tmp_char=0;
-    Site_t tmpsite;
-    GetGBKCode_from_sd(buffer,str);  /* 取字模数据 */
-    tmpsite.y = site.y;
-
-    for (i=0;i<16;i++)
-    {
-        tmp_char=buffer[i*2];
-        tmp_char=(tmp_char<<8);
-        tmp_char|=buffer[2*i+1];
-
-        tmpsite.x = site.x;
-        for (j=0;j<16;j++)
-        {
-            if ( (tmp_char >> 15-j) & 0x01 == 0x01)
-            {
-
-                LCD_Point(tmpsite,Color);
-            }
-            else
-            {
-                LCD_Point(tmpsite,bkColor);
-            }
-            tmpsite.x++; 
-        }
-        tmpsite.y++;
-    }
-
-#endif
-}
+//void LCD_Char_CH(Site_t site,const uint8 *str,uint16 Color,uint16 bkColor)
+//{
+//
+//#ifndef NO_CHNISEST_DISPLAY         /*如果汉字显示功能没有关闭*/
+//    uint8 i,j;
+//    uint8 buffer[32];
+//    uint16 tmp_char=0;
+//    Site_t tmpsite;
+//    GetGBKCode_from_sd(buffer,str);  /* 取字模数据 */
+//    tmpsite.y = site.y;
+//
+//    for (i=0;i<16;i++)
+//    {
+//        tmp_char=buffer[i*2];
+//        tmp_char=(tmp_char<<8);
+//        tmp_char|=buffer[2*i+1];
+//
+//        tmpsite.x = site.x;
+//        for (j=0;j<16;j++)
+//        {
+//            if ( (tmp_char >> 15-j) & 0x01 == 0x01)
+//            {
+//
+//                LCD_Point(tmpsite,Color);
+//            }
+//            else
+//            {
+//                LCD_Point(tmpsite,bkColor);
+//            }
+//            tmpsite.x++; 
+//        }
+//        tmpsite.y++;
+//    }
+//
+//#endif
+//}
