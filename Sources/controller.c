@@ -76,7 +76,7 @@ void steerSetDuty(uint8 duty)
 void
 decoderSet(void)
 {
-    pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
+    pit_init_ms(PIT0, 100);  //500ms 触发一次PIT中断 进行测速
 }
 
 void 

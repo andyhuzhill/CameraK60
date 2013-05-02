@@ -147,7 +147,7 @@ extern unsigned int DMA_GetChannelStatus(void);
 //初始化DMA，使得PORT端口数据通过DMA传输到BUFF缓冲区
 extern void DMA_PORTx2BUFF_Init(DMA_CHn CHn, void *SADDR, void *DADDR, PTxn ptxn, DMA_BYTEn byten, uint32 count, uint32 cfg);
 
-extern void DMA_count_Init(DMA_CHn CHn, PTxn ptxn, uint32 count, uint32 cfg);
+extern void DMA_count_Init(DMA_CHn CHn, PTxn ptxn, uint32 count);
 extern uint32  DMA_count_get(DMA_CHn CHn);
 extern void DMA_count_reset(DMA_CHn CHn);
 

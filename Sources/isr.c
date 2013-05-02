@@ -32,13 +32,9 @@ PORTA_ISR(void)         //场中断处理函数
             DMA_EN(CAMERA_DMA_CH);                  //使能通道CHn 硬件请求
             DMA_DADDR(CAMERA_DMA_CH) = (uint32)IMG_BUFF;    //恢复地址
             break;
-        case IMG_GATHER:
-            break;
-        case IMG_READY:
-            break;
-        case IMG_FAIL:
-            break;
-        case IMG_STOP:
+        case IMG_GATHER:                            //如果进入这个状态说明DMA未结束就进入了场中断
+            img_flag = IMG_FAIL;
+            DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn DMA请求
             break;
         default :
             break;
@@ -55,11 +51,9 @@ PORTA_ISR(void)         //场中断处理函数
 void 
 DMA0_ISR(void)
 {
-//    disable_irq(PORTA_IRQn);
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
-//    DEBUG_OUT("************************IMG is FINISHED*********************",0);
 }
 
 extern volatile bool getEncoder;
@@ -68,10 +62,12 @@ void
 PIT0_ISR(void)
 {
     DisableInterrupts;
+    
     speed_cnt = encoder_cnt;
-
     getEncoder = true;
     encoder_cnt = 0;
+    
+    GPIOD_PTOR = (1 << 10);
 
     PIT_Flag_Clear(PIT0);
     EnableInterrupts;

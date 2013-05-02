@@ -148,7 +148,7 @@ void DMA_PORTx2BUFF_Init(DMA_CHn CHn, void *SADDR, void *DADDR, PTxn ptxn, DMA_B
 *  修改时间：2013-1-19
 *  备    注：注意，调用此函数后，还需要调用 port_init 配置管脚特性
 *************************************************************************/
-void DMA_count_Init(DMA_CHn CHn, PTxn ptxn, uint32 count,uint32 cfg)
+void DMA_count_Init(DMA_CHn CHn, PTxn ptxn, uint32 count)
 {
     uint8 byten = DMA_BYTE1;
     uint8 BYTEs = (byten == DMA_BYTE1 ? 1 : (byten == DMA_BYTE2 ? 2 : (byten == DMA_BYTE4 ? 4 : 16 ) ) ); //计算传输字节数
