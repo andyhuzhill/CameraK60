@@ -37,12 +37,5 @@ main(void)
     for (;;) 
     {
         imgProcess();
-        
-        //        for (int i = 40; i < 61; ++i) 
-        //        {
-        //            steerSetDuty(i);
-        //            DELAY_MS(500);
-        //        }  
-        
     }
 }

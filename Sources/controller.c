@@ -77,6 +77,7 @@ void
 decoderSet(void)
 {
     pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
+    enable_irq(PORTA_IRQn);
 }
 
 void 

@@ -15,7 +15,7 @@
 
 #include "img_process.h"
 
-//// 本模块公共变量声明
+//// 本模块内部公共变量声明
 
 static int8 middle[IMG_H] = {0};                         //记录中线位置
 static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
@@ -25,13 +25,11 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
 
-
 void
 imgInit(void)
 {
     ov7725_init(srcImg);
     PORTA_ISFR = ~0;                        //清中断
-    enable_irq(PORTA_IRQn);                 //允许PTA的中断
 }
 
 /**
