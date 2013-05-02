@@ -70,6 +70,13 @@ void steerInit(void)
 
 void steerSetDuty(uint8 duty)
 {   
+    if (duty < 40) 
+    {
+        duty = 40;
+    } else if ( duty > 60)
+    {
+        duty = 60;
+    }
     FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
 }
 
