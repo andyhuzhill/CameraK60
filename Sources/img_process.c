@@ -67,15 +67,15 @@ imgProcess(void)
         
         printf("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
         
-        buff[2] = e2sum;
+        buff[0] = e2sum;
         buff[1] = b;
-        buff[0] = k;
+        buff[2] = k;
         
-//        NRF_ISR_Tx_Dat((uint8*)buff, 3);
+        NRF_ISR_Tx_Dat((uint8*)buff, 3);
         
-//        do {
-//            status = NRF_ISR_Tx_State();
-//        } while (status == TX_ISR_SEND);
+        do {
+            status = NRF_ISR_Tx_State();
+        } while (status == TX_ISR_SEND);
         
         if(middle[IMG_H/2] > IMG_W/2)        //×óÆ«
         {
