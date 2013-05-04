@@ -37,9 +37,10 @@ PORTA_ISR(void)         //场中断处理函数
         }
     }
 
-    if (PORTA_ISFR & (1 << 11))                     //编码器引脚中断
+    if (PORTA_ISFR & (1 << 10))                     //编码器引脚中断
     {               
         encoder_cnt ++;
+//        GPIOD_PTOR |= ( 1 << 10);
     }
     PORTA_ISFR  = ~0;                              //场中断里，全部都要清中断标志位
 }
@@ -50,6 +51,7 @@ DMA0_ISR(void)
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
+    GPIOD_PTOR |= (1 << 9);
 }
 
 extern volatile bool getEncoder;
@@ -63,7 +65,7 @@ PIT0_ISR(void)
     getEncoder = true;
     encoder_cnt = 0;
     
-    GPIOD_PTOR |= (1 << 10);
+    GPIOD_PTOR |= (1 << 8);
 
     PIT_Flag_Clear(PIT0);
     EnableInterrupts;

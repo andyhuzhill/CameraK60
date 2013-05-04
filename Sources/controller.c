@@ -88,7 +88,7 @@ motorInit(void)
     pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
     pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
-    port_init(PTA11, IRQ_FALLING | PULLUP | PF);                 //编码器输入 下降沿中断 上拉 带滤波
+    port_init(PTA10, IRQ_FALLING | PULLUP | PF);                 //编码器输入 下降沿中断 上拉 带滤波
     decoderSet();
 }
 
