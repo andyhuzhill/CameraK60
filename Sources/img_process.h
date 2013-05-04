@@ -57,7 +57,7 @@ imgGetMidLine(void);
  *  输出变量:  k, 斜率 b 常数项 (浮点型) 
  *  返回值:  最小二乘法拟合的残差和
  */
-float
+int8
 imgLeastsq(uint8 BaseLine, uint8 FinalLine, int8 *k, int8 *b);
 
 

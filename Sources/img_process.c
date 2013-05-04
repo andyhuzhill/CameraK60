@@ -14,6 +14,7 @@
  */
 
 #include "img_process.h"
+#include "string.h"
 
 //// 本模块公共变量声明
 
@@ -53,7 +54,7 @@ imgProcess(void)
     static int ret;
     uint8 status = 0;
     
-    int8 buff[3];
+    int8 buff[3+IMG_H];
     
     imgGetImg();
 
@@ -65,13 +66,15 @@ imgProcess(void)
         imgGetMidLine();
         e2sum = imgLeastsq(3, 15, &k, &b);
         
-        printf("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
+        printf("k = %d, b = %d, e2sum=%d\n",k, b, e2sum);
         
         buff[0] = e2sum;
         buff[1] = b;
         buff[2] = k;
         
-        NRF_ISR_Tx_Dat((uint8*)buff, 3);
+        memcpy(&buff[3],middle, IMG_H);
+        
+        NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
         
         do {
             status = NRF_ISR_Tx_State();
@@ -272,7 +275,7 @@ imgGetMidLine(void)
  *  输出变量:  k, 斜率 b 常数项 
  *  返回值:  最小二乘法拟合的残差和
  */
-float
+int8
 imgLeastsq(uint8 BaseLine, uint8 FinalLine, int8 *k, int8 *b)
 {
     int32 sumX=0, sumY=0;   
