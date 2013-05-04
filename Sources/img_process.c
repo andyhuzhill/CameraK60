@@ -54,9 +54,9 @@ imgProcess(void)
     int8 k, b, e2sum;
     static int ret;
     uint8 status = 0;
-    
+
     int8 buff[3+IMG_H]={0};
-    
+
     imgGetImg();
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
@@ -65,50 +65,49 @@ imgProcess(void)
         imgResize();
         imgFilter();
         imgGetMidLine();
-        e2sum = imgLeastsq(1, IMG_H, &k, &b);
-        
+        e2sum = imgLeastsq(8, 18, &k, &b);
+
         printf("k = %d, b = %d, e2sum=%d\n",k, b, e2sum);
-        
+
         buff[0] = e2sum;
         buff[1] = b;
         buff[2] = k;
-        
+
         memcpy(&buff[3],middle, IMG_H);
-//        memcpy(&buff[3+IMG_H], leftBlack, IMG_H);
-//        memcpy(&buff[3+IMG_H*2], rightBlack, IMG_H);
-//        
+        //        memcpy(&buff[3+IMG_H], leftBlack, IMG_H);
+        //        memcpy(&buff[3+IMG_H*2], rightBlack, IMG_H);
+        //        
         for (int i = 0; i < IMG_H; ++i) 
         {
-//            printf("%5d,", leftBlack[i]);
+            //            printf("%5d,", leftBlack[i]);
             printf("%6d,%5d\n",i,middle[i]);
-//            printf("%5d\n",rightBlack[i]);
+            //            printf("%5d\n",rightBlack[i]);
         }
-//        printf("\n");
-        
+        //        printf("\n");
+
         NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
-        
+
         do {
             status = NRF_ISR_Tx_State();
         } while (status == TX_ISR_SEND);
-        
-        if(middle[IMG_H/2] > IMG_W/2)        //左偏
-        {
-            steerSetDuty(45);
-        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
-            steerSetDuty(55);
-        }else {
-            steerSetDuty(50);
+
+
+        if ((ABS(k)<5)) {                               //直道
+            if(middle[IMG_H/2] > IMG_W/2)        //左偏
+            {
+                steerSetDuty(45);
+            }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
+                steerSetDuty(55);
+            }else {
+                steerSetDuty(50);
+            }
+        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
+            ret = 50 + k;
+        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
+            ret = 50 + 2*k;
+        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
+            ret = 50 + 0.5*k ;
         }
-//        
-//        if ((ABS(k)<5) && (ABS(b)< 30)) {                               //直道
-//            ret = 50;
-//        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
-//            ret = 50 + k;
-//        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
-//            ret = 50 + 2*k;
-//        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
-//            ret = 50 + 0.5*k ;
-//        }
         img_flag = IMG_READY;
         return ret;
     }
@@ -177,7 +176,7 @@ void
 imgGetMidLine(void)
 {
 
-    
+
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
@@ -293,16 +292,16 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, int8 *k, int8 *b)
     uint8 i;
     uint8 availableLines = FinalLine - BaseLine;
     float error=0;
-    
+
     for (i = BaseLine; i < FinalLine; ++i) 
     {
-      sumX += i;
-      sumY += middle[i];
+        sumX += i;
+        sumY += middle[i];
     }
-    
+
     averageX = sumX / availableLines;
     averageY = sumY / availableLines;
-    
+
     sumX = 0;
     sumY = 0;
     for (i = BaseLine; i < FinalLine; ++i) 
@@ -310,10 +309,10 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, int8 *k, int8 *b)
         sumX += (i-averageX)*(middle[i]-averageY);
         sumY += (i-averageX)*(i-averageX);
     }
-    
+
     *k =  sumX / sumY;
     *b =  averageY - *k*averageX;   
-    
+
     for (i = BaseLine; i < FinalLine; ++i) 
     {
         error += (*k*i+*b - middle[i])*(*k*i+*b-middle[i]);
