@@ -25,7 +25,7 @@ void lcd_io_init()
     GpioInit.MODE = Mode_OUT;
     GpioInit.STATE = Low;
     GpioInit.IRQC = None_IRQ;
-    GPIO_init(PORT_D, &GpioInit);
+    GPIO_init(GPIO_D, &GpioInit);
     
     GpioInit.Pin =( 0 |
             GPIO_Pin_9 |
@@ -37,7 +37,7 @@ void lcd_io_init()
     GpioInit.STATE = Low;
     GpioInit.IRQC = None_IRQ;
 
-    GPIO_init(PORT_C, &GpioInit);
+    GPIO_init(GPIO_C, &GpioInit);
 }
 
 

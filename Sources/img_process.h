@@ -58,7 +58,7 @@ imgGetMidLine(void);
  *  返回值:  最小二乘法拟合的残差和
  */
 float
-imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b);
+imgLeastsq(uint8 BaseLine, uint8 FinalLine, int8 *k, int8 *b);
 
 
 #endif /* IMG_PROCESS_H_ */

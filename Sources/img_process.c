@@ -49,25 +49,33 @@ imgGetImg(void)
 int
 imgProcess(void)
 {
-    Site_t site = {0,0};
-    Size_t imgsize = {CAMERA_W, CAMERA_H};
-    Size_t size = {LCD_W, LCD_H};
-    
-    float k, b, e2sum;
+    int8 k, b, e2sum;
     static int ret;
+    uint8 status = 0;
+    
+    int8 buff[3];
     
     imgGetImg();
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
     {
-//        LCD_Img_Binary_Z(site, size, (uint16 *) srcImg, imgsize);
         img_flag = IMG_PROCESS;
         imgResize();
         imgFilter();
         imgGetMidLine();
         e2sum = imgLeastsq(3, 15, &k, &b);
         
-        DEBUG_OUT("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
+        printf("k = %d, b = %d, e2sum=%d\n",(int32)k, (int32)b, (int32)e2sum);
+        
+        buff[2] = e2sum;
+        buff[1] = b;
+        buff[0] = k;
+        
+//        NRF_ISR_Tx_Dat((uint8*)buff, 3);
+        
+//        do {
+//            status = NRF_ISR_Tx_State();
+//        } while (status == TX_ISR_SEND);
         
         if(middle[IMG_H/2] > IMG_W/2)        //左偏
         {
@@ -261,11 +269,11 @@ imgGetMidLine(void)
 /**
  *  使用最小二乘法计算跑道方向
  *  输入变量:  BaseLine起始行 FinalLine终止行
- *  输出变量:  k, 斜率 b 常数项 (浮点型) 
+ *  输出变量:  k, 斜率 b 常数项 
  *  返回值:  最小二乘法拟合的残差和
  */
 float
-imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
+imgLeastsq(uint8 BaseLine, uint8 FinalLine, int8 *k, int8 *b)
 {
     int32 sumX=0, sumY=0;   
     int32 averageX=0, averageY=0;     
@@ -290,8 +298,8 @@ imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b)
         sumY += (i-averageX)*(i-averageX);
     }
     
-    *k = (float) sumX / sumY;
-    *b = (float) averageY - *k*averageX;   
+    *k =  sumX / sumY;
+    *b =  averageY - *k*averageX;   
     
     for (i = BaseLine; i < FinalLine; ++i) 
     {

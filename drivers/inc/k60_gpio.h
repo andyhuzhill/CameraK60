@@ -28,11 +28,11 @@ extern volatile struct PORT_MemMap *PORTX[5];
 ////////////////////////////////////////////////////////////////////////////////
 
 typedef enum{
-    PORT_A 	= 0,
-    PORT_B 	= 1,
-    PORT_C 	= 2,
-    PORT_D 	= 3,
-    PORT_E	= 4
+    GPIO_A 	= 0,
+    GPIO_B 	= 1,
+    GPIO_C 	= 2,
+    GPIO_D 	= 3,
+    GPIO_E	= 4
 }GPIO_TypeDef;
 
 typedef enum{

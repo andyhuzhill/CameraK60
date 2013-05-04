@@ -17,7 +17,7 @@
 extern 
 volatile IMG_STATE img_flag;
 
-extern vuint16 encoder_cnt;
+static vuint32 encoder_cnt;
 
 void 
 PORTA_ISR(void)         //场中断处理函数
@@ -31,14 +31,6 @@ PORTA_ISR(void)         //场中断处理函数
 
             DMA_EN(CAMERA_DMA_CH);                  //使能通道CHn 硬件请求
             DMA_DADDR(CAMERA_DMA_CH) = (uint32)IMG_BUFF;    //恢复地址
-            break;
-        case IMG_GATHER:
-            break;
-        case IMG_READY:
-            break;
-        case IMG_FAIL:
-            break;
-        case IMG_STOP:
             break;
         default :
             break;
@@ -55,11 +47,9 @@ PORTA_ISR(void)         //场中断处理函数
 void 
 DMA0_ISR(void)
 {
-//    disable_irq(PORTA_IRQn);
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
-//    DEBUG_OUT("************************IMG is FINISHED*********************",0);
 }
 
 extern volatile bool getEncoder;
@@ -72,8 +62,20 @@ PIT0_ISR(void)
 
     getEncoder = true;
     encoder_cnt = 0;
+    
+    GPIOD_PTOR |= (1 << 10);
 
     PIT_Flag_Clear(PIT0);
     EnableInterrupts;
 }
 
+
+void
+PORTE_ISR(void)
+{
+    if (PORTE_ISFR & (1 << 27)) 
+    {
+        NRF_Handler();
+    }
+    PORTE_ISFR = ~0;
+}

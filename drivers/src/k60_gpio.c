@@ -34,19 +34,19 @@ GPIO_get_port_addr(GPIO_TypeDef port)
     PORT_MemMapPtr p;
     switch(port)
     {
-    case PORT_A:
+    case GPIO_A:
         p = PORTA_BASE_PTR;
         break;
-    case PORT_B:
+    case GPIO_B:
         p = PORTB_BASE_PTR;
         break;
-    case PORT_C:
+    case GPIO_C:
         p = PORTC_BASE_PTR;
         break;
-    case PORT_D:
+    case GPIO_D:
         p = PORTD_BASE_PTR;
         break;
-    case PORT_E:
+    case GPIO_E:
         p = PORTE_BASE_PTR;
         break;
     default:
@@ -67,19 +67,19 @@ GPIO_get_pt_addr(GPIO_TypeDef port)
     
     switch(port)
     {
-    case PORT_A:
+    case GPIO_A:
         p = PTA_BASE_PTR;
         break;
-    case PORT_B:
+    case GPIO_B:
         p = PTB_BASE_PTR;
         break;
-    case PORT_C:
+    case GPIO_C:
         p = PTC_BASE_PTR;
         break;
-    case PORT_D:
+    case GPIO_D:
         p = PTD_BASE_PTR;
         break;
-    case PORT_E:
+    case GPIO_E:
         p = PTE_BASE_PTR;
         break;
     default:
@@ -113,19 +113,19 @@ gpio_init(GPIO_TypeDef port, uint8 pin, GPIOMode_TypeDef dir, GPIOState_TypeDef 
     //选择IO口时钟控制掩码
     switch(port)
     {
-    case PORT_A:
+    case GPIO_A:
         SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
         break;
-    case PORT_B:
+    case GPIO_B:
         SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
         break;
-    case PORT_C:
+    case GPIO_C:
         SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;
         break;
-    case PORT_D:
+    case GPIO_D:
         SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
         break;
-    case PORT_E:
+    case GPIO_E:
         SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
         break;
     default:
@@ -201,19 +201,19 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
     //选择IO口时钟控制掩码
     switch(port)
     {
-    case PORT_A:
+    case GPIO_A:
         SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
         break;
-    case PORT_B:
+    case GPIO_B:
         SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
         break;
-    case PORT_C:
+    case GPIO_C:
         SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;
         break;
-    case PORT_D:
+    case GPIO_D:
         SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
         break;
-    case PORT_E:
+    case GPIO_E:
         SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
         break;
     default:
