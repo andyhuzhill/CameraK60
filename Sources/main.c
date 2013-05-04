@@ -50,6 +50,8 @@ main(void)
     EnableInterrupts;   //开全局中断
     
     motorSetSpeed(speed_cnt, 30);
+    
+    printf("Start Work\n");
 
     for (;;) 
     {

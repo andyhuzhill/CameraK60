@@ -17,7 +17,8 @@
 #include "string.h"
 
 //// 本模块公共变量声明
-
+static int8 leftBlack[IMG_H] = {0};
+static int8 rightBlack[IMG_H]={0};
 static int8 middle[IMG_H] = {0};                         //记录中线位置
 static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
@@ -54,7 +55,7 @@ imgProcess(void)
     static int ret;
     uint8 status = 0;
     
-    int8 buff[3+IMG_H];
+    int8 buff[3+IMG_H*3];
     
     imgGetImg();
 
@@ -73,6 +74,16 @@ imgProcess(void)
         buff[2] = k;
         
         memcpy(&buff[3],middle, IMG_H);
+        memcpy(&buff[3+IMG_H], leftBlack, IMG_H);
+        memcpy(&buff[3+IMG_H*2], rightBlack, IMG_H);
+        
+        for (int i = 0; i < IMG_H; ++i) 
+        {
+            printf("%5d,", leftBlack[i]);
+            printf("%5d,", middle[i]);
+            printf("%5d\n",rightBlack[i]);
+        }
+        printf("\n");
         
         NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
         
@@ -165,8 +176,7 @@ imgFilter(void)
 void
 imgGetMidLine(void)
 {
-    int8 leftBlack[IMG_H] = {0};
-    int8 rightBlack[IMG_H]={0};
+
     
     int8 row, col;
 
