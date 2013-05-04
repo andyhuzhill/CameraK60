@@ -64,7 +64,7 @@ imgProcess(void)
         imgResize();
         imgFilter();
         imgGetMidLine();
-        e2sum = imgLeastsq(3, 15, &k, &b);
+        e2sum = imgLeastsq(1, IMG_H, &k, &b);
         
         printf("k = %d, b = %d, e2sum=%d\n",k, b, e2sum);
         
