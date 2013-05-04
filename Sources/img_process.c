@@ -55,7 +55,7 @@ imgProcess(void)
     static int ret;
     uint8 status = 0;
     
-    int8 buff[3];
+    int8 buff[3+IMG_H]={0};
     
     imgGetImg();
 
@@ -73,16 +73,16 @@ imgProcess(void)
         buff[1] = b;
         buff[2] = k;
         
-//        memcpy(&buff[3],middle, IMG_H);
+        memcpy(&buff[3],middle, IMG_H);
 //        memcpy(&buff[3+IMG_H], leftBlack, IMG_H);
 //        memcpy(&buff[3+IMG_H*2], rightBlack, IMG_H);
 //        
-//        for (int i = 0; i < IMG_H; ++i) 
-//        {
+        for (int i = 0; i < IMG_H; ++i) 
+        {
 //            printf("%5d,", leftBlack[i]);
-//            printf("%5d,", middle[i]);
+            printf("%6d,%5d\n",i,middle[i]);
 //            printf("%5d\n",rightBlack[i]);
-//        }
+        }
 //        printf("\n");
         
         NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
