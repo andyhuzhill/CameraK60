@@ -64,7 +64,6 @@ imgProcess(void)
     
     imgGetImg();
 
-
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
     {
         img_flag = IMG_PROCESS;
@@ -106,18 +105,21 @@ imgProcess(void)
         if ((ABS(k)<2)) {                               //直道
             if(middle[IMG_H/2] > IMG_W/2)        //左偏
             {
-                steerSetDuty(45);
+                steerSetDuty(40);
             }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
-                steerSetDuty(55);
+                steerSetDuty(60);
             }else {
                 steerSetDuty(50);
             }
         }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
             ret = 50 + k;
+            steerSetDuty(ret);
         }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
             ret = 50 + 2*k;
+            steerSetDuty(ret);
         }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
             ret = 50 + 0.5*k ;
+            steerSetDuty(ret);
         }
         img_flag = IMG_READY;
         return ret;
