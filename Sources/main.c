@@ -37,6 +37,7 @@ ledInit(void)
 
 int 
 main(void)
+
 {   
     DisableInterrupts;  //关全局中断
     
@@ -44,13 +45,12 @@ main(void)
     steerInit();    //舵机控制初始化
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
-
     
     NRF_Init();
 
     EnableInterrupts;   //开全局中断
     
-    motorSetSpeed(speed_cnt, 40);
+    motorSetSpeed(speed_cnt,50);
     
     printf("Start Work\n");
 

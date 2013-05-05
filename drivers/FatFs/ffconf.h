@@ -25,7 +25,7 @@
 // f_mkdir、f_chmod、f_rename、f_truncate和f_getfree不可用；
 
 
-#define _FS_MINIMIZE	0	/* 0 to 3 */
+#define _FS_MINIMIZE	2 /* 0 to 3 */
 //裁剪文件系统的功能，默认为全部功能(0)，若为1、2则会移除大部分链接、目录等功能；
 /* The _FS_MINIMIZE option defines minimization level to remove some functions.
 /
@@ -61,7 +61,7 @@
 / Locale and Namespace Configurations
 /----------------------------------------------------------------------------*/
 
-#define _CODE_PAGE	936
+#define _CODE_PAGE	437
 //指定目标系统使用的OEM代码页，默认为日语(932)，改为936简体中文；
 //OEM是什么意思呢？在OS编码中，unicode是一种双字节字符编码，无论中文还是英文，
 //或者其他语言统一到2个字节，它与现有的任何编码（ASCII，GB等）都不兼容。
@@ -100,7 +100,7 @@
 */
 
 
-#define	_USE_LFN	1		/* 0 to 3 */  //LFN ：Long File Name 长名字
+#define	_USE_LFN	0		/* 0 to 3 */  //LFN ：Long File Name 长名字
 #define	_MAX_LFN	255		/* Maximum LFN length to handle (12 to 255) */
 /* The _USE_LFN option switches the LFN support.
 /

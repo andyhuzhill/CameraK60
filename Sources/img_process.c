@@ -57,7 +57,15 @@ imgProcess(void)
 
     int8 buff[3+IMG_H]={0};
 
+    int res;
+    int size;
+
+    FATFS fatfs;
+    FIL  file;
+
     imgGetImg();
+
+
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
     {
@@ -67,27 +75,62 @@ imgProcess(void)
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
 
-        printf("k = %d, b = %d, e2sum=%d\n",k, b, e2sum);
+        f_mount(0, &fatfs);
 
-        buff[0] = e2sum;
-        buff[1] = b;
-        buff[2] = k;
+        res = f_open(&file, "0:/img2.txt", FA_OPEN_ALWAYS | FA_WRITE);
 
-        memcpy(&buff[3],middle, IMG_H);
-
-        for (int i = 0; i < IMG_H; ++i) 
+        if (res == FR_DISK_ERR) 
         {
-            printf("%6d,%5d\n",i,middle[i]);
+            printf("no sd card inserted\n");
+            GPIOD_PTOR |= (1 << 10);
+            return ;
+        }else{
+//            return ;
         }
+     
+        size = f_size(&file);
 
-        NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
+        f_lseek(&file, size);
 
-        do {
-            status = NRF_ISR_Tx_State();
-        } while (status == TX_ISR_SEND);
+        for (int row = 0; row < IMG_H; ++row) 
+        {
+            for (int col = 0; col < IMG_W ; ++col) 
+            {
+                f_printf(&file, "%d,",img[row][col]);
+            }
+            f_printf(&file, "\n");
+        }
+        
+        f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
+        
+        f_printf(&file, "\n\n\n");
+        
+        GPIOD_PTOR |= (1 << 15);
+
+        f_close(&file);
 
 
-        if ((ABS(k)<5)) {                               //直道
+//        printf("k = %d, b = %d, e2sum=%d\n",k, b, e2sum);
+//
+//        buff[0] = e2sum;
+//        buff[1] = b;
+//        buff[2] = k;
+
+//        memcpy(&buff[3],middle, IMG_H);
+//
+//        for (int i = 0; i < IMG_H; ++i) 
+//        {
+//            printf("%6d,%5d\n",i,middle[i]);
+//        }
+
+        //        NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
+        //
+        //        do {
+        //            status = NRF_ISR_Tx_State();
+        //        } while (status == TX_ISR_SEND);
+
+
+        if ((ABS(k)<2)) {                               //直道
             if(middle[IMG_H/2] > IMG_W/2)        //左偏
             {
                 steerSetDuty(45);

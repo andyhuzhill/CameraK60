@@ -22,6 +22,8 @@ static vuint32 encoder_cnt;
 void 
 PORTA_ISR(void)         //场中断处理函数
 {
+    DisableInterrupts;
+    
     if(PORTA_ISFR & (1 << 29))                       //PTA29触发中断
     {
         switch(img_flag)
@@ -42,16 +44,22 @@ PORTA_ISR(void)         //场中断处理函数
         encoder_cnt ++;
 //        GPIOD_PTOR |= ( 1 << 10);
     }
-    PORTA_ISFR  = ~0;                              //场中断里，全部都要清中断标志位
+    PORTA_ISFR  = ~0;       //场中断里，全部都要清中断标志位
+    
+    EnableInterrupts;
 }
 
 void 
 DMA0_ISR(void)
 {
+    DisableInterrupts;
+    
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     img_flag = IMG_FINISH ; 
-    GPIOD_PTOR |= (1 << 9);
+    GPIOD_PTOR |= (1 << 13);
+    
+    EnableInterrupts;
 }
 
 extern volatile bool getEncoder;
@@ -60,6 +68,7 @@ void
 PIT0_ISR(void)
 {
     DisableInterrupts;
+    
     speed_cnt = encoder_cnt;
 
     getEncoder = true;
@@ -68,6 +77,7 @@ PIT0_ISR(void)
     GPIOD_PTOR |= (1 << 8);
 
     PIT_Flag_Clear(PIT0);
+    
     EnableInterrupts;
 }
 
