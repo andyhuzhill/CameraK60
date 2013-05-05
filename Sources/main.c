@@ -34,7 +34,6 @@ ledInit(void)
     GPIO_init(GPIO_D, &initGPIO);
 }
 
-
 int 
 main(void)
 
@@ -46,17 +45,12 @@ main(void)
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
     
-    NRF_Init();
-
     EnableInterrupts;   //开全局中断
     
     motorSetSpeed(speed_cnt,50);
-    
-    printf("Start Work\n");
 
     for (;;) 
     {
         imgProcess();
-        
     }
 }

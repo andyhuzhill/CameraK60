@@ -27,7 +27,6 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
 
-
 void
 imgInit(void)
 {
@@ -55,16 +54,15 @@ imgProcess(void)
     static int ret;
     uint8 status = 0;
 
-    int8 buff[3+IMG_H]={0};
-
+#ifdef DEBUG
     int res;
     int size;
 
     FATFS fatfs;
     FIL  file;
-
+#endif 
+    
     imgGetImg();
-
 
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
@@ -74,7 +72,8 @@ imgProcess(void)
         imgFilter();
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
-
+#ifdef DEBUG
+        
         f_mount(0, &fatfs);
 
         res = f_open(&file, "0:/img2.txt", FA_OPEN_ALWAYS | FA_WRITE);
@@ -84,51 +83,25 @@ imgProcess(void)
             printf("no sd card inserted\n");
             GPIOD_PTOR |= (1 << 10);
             return ;
-        }else{
-//            return ;
-        }
-     
-        size = f_size(&file);
+        }else if (res == FR_OK){
+            size = f_size(&file);
 
-        f_lseek(&file, size);
+            f_lseek(&file, size);
 
-        for (int row = 0; row < IMG_H; ++row) 
-        {
-            for (int col = 0; col < IMG_W ; ++col) 
+            for (int row = 0; row < IMG_H; ++row) 
             {
-                f_printf(&file, "%d,",img[row][col]);
+                for (int col = 0; col < IMG_W ; ++col) 
+                {
+                    f_printf(&file, "%d,",img[row][col]);
+                }
+                f_printf(&file, "\n");
             }
-            f_printf(&file, "\n");
+
+            f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
+
+            f_close(&file);
         }
-        
-        f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
-        
-        f_printf(&file, "\n\n\n");
-        
-        GPIOD_PTOR |= (1 << 15);
-
-        f_close(&file);
-
-
-//        printf("k = %d, b = %d, e2sum=%d\n",k, b, e2sum);
-//
-//        buff[0] = e2sum;
-//        buff[1] = b;
-//        buff[2] = k;
-
-//        memcpy(&buff[3],middle, IMG_H);
-//
-//        for (int i = 0; i < IMG_H; ++i) 
-//        {
-//            printf("%6d,%5d\n",i,middle[i]);
-//        }
-
-        //        NRF_ISR_Tx_Dat((uint8*)buff, sizeof(buff));
-        //
-        //        do {
-        //            status = NRF_ISR_Tx_State();
-        //        } while (status == TX_ISR_SEND);
-
+#endif
 
         if ((ABS(k)<2)) {                               //直道
             if(middle[IMG_H/2] > IMG_W/2)        //左偏
@@ -160,14 +133,28 @@ imgProcess(void)
 void
 imgResize(void)              
 {
-    for (int row = 0; row < (IMG_H); ++row)
+    uint32 temp, tempY;
+    uint16 col,row;    
+    uint16 X,Y; 
+
+    for(row=0; row < IMG_H; row++)
     {
-        for (int col = 0; col < (IMG_W); ++col)
+        Y = ( (  row * CAMERA_H  + (IMG_H >> 1)) / IMG_H) ;
+        tempY = Y * CAMERA_W ;
+
+        for(col=0;col<IMG_W;col++)
         {
-            img[row][col] = (srcImg[row*10*IMG_W + col] ? 1 : 0) ;
+            X = (( col * CAMERA_W  + (IMG_W >> 1)) / IMG_W) ;
+            temp = tempY + X;
+            if( (srcImg[temp>>3] & (1<<(7- (temp & 0x07))) ) == 0){
+                img[row][col] = 0;
+            }
+            else
+            {
+                img[row][col] = 1;
+            }
         }
     }
-
 #if 0
     for (int row = 0; row < (IMG_H); ++row)
     {
