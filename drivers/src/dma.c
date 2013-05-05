@@ -32,7 +32,7 @@ void DMA_PORTx2BUFF_Init(DMA_CHn CHn, void *SADDR, void *DADDR, PTxn ptxn, DMA_B
 {
     uint8 n, i, tmp;
 
-    ASSERT(                                             //用断言检测 源地址和每次传输字节数是否正确
+    ASSERT(                                                    //用断言检测 源地址和每次传输字节数是否正确
         (   (byten == DMA_BYTE1)                    //传输一个字节
             && ( (SADDR >= &PTA_BYTE0_IN) && (SADDR <= ( &PTE_BYTE3_IN )))
         )
@@ -45,7 +45,7 @@ void DMA_PORTx2BUFF_Init(DMA_CHn CHn, void *SADDR, void *DADDR, PTxn ptxn, DMA_B
 
         || (   (byten == DMA_BYTE4)                   //传输四个字节
                && ((SADDR >= &PTA_BYTE0_IN) && (SADDR <= ( &PTE_BYTE0_IN )))
-               && (((uint32)SADDR & 0x03) == 0x00)           //保证不跨端口
+               && (((uint32)SADDR & 0x03) == 0x00)            //保证不跨端口
            )
     );
 

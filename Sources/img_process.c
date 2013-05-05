@@ -30,8 +30,8 @@ void
 imgInit(void)
 {
     ov7725_init(srcImg);
-    img_flag = IMG_STOP;
-    PORTA_ISFR = ~0;                        //清中断
+    img_flag = IMG_STOP;              
+    PORTA_ISFR = ~0;                            //清中断
     enable_irq(PORTA_IRQn);                 //允许PTA的中断
 }
 
@@ -41,7 +41,8 @@ imgInit(void)
 void
 imgGetImg(void)
 {
-    if((IMG_READY == img_flag) || (IMG_FAIL == img_flag)){
+    if((IMG_READY == img_flag) || (IMG_FAIL == img_flag))
+    {
         img_flag = IMG_START;                   //开始采集图像
         PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
     }
@@ -55,7 +56,7 @@ imgProcess(void)
 
     imgGetImg();
 
-    if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
+    if(IMG_FINISH == img_flag)           // 当图像采集完毕 开始处理图像
     {
         img_flag = IMG_PROCESS;
         imgResize();

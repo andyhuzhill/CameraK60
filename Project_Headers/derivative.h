@@ -10,27 +10,27 @@
  *   引脚分配:
  *
  * Motor ： EN--5V
- * PWM1--PTA8 FTM1-CH0
- * PWM2--PTA9 FTM1-CH1
+ *                 PWM1--PTA8 FTM1-CH0
+ *                 PWM2--PTA9 FTM1-CH1
  *
- * S-D5 : PTC1--FTM0-CH0
+ * S-D5 :      PTC1--FTM0-CH0
  *
  * encoder : PTA11--FTM2--CH1
- *           PTA10--FTM2--CH0
+ *                 PTA10--FTM2--CH0
  *
- * Camera : SDA--PTB11 HREF--PTA28(行中断) D0~~~D7
- *          SCL--PTB10 VSYN--PTA29(场中断) PTB0~~~~PTB7
- *          PCLK--PTB8
+ * Camera :  SDA--PTB11            HREF--PTA28(行中断)                 D0~~~D7
+ *                 SCL--PTB10             VSYN--PTA29(场中断)                 PTB0~~~~PTB7
+ *                 PCLK--PTB8
  *
- * UART3 : RX-PTC16 TX-PTC17
+ * UART3 :   RX-PTC16 TX-PTC17
  *
- * NRF-2401: SPI_PTA14-PCS0 PTA15-SCK PTA16-SOUT PTA17-SIN
+ * 2401:       SPI_PTA14-PCS0 PTA15-SCK PTA16-SOUT PTA17-SIN
  *
- * 三轴加速度：SPI2_ PTB20-PCS0 PTB21-SCK PTB22-SOUT PTB23-SIN
+ * 加速度：   SPI2_ PTB20-PCS0 PTB21-SCK PTB22-SOUT PTB23-SIN
  *
  * 拨码开关：PTD12,PTD13,PTD14,PTD15
  *
- * 光电管 ：PTC11
+ * 光电管 ：   PTC11
  * 
  */
 

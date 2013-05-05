@@ -32,7 +32,7 @@ typedef enum{
     GPIO_B 	= 1,
     GPIO_C 	= 2,
     GPIO_D 	= 3,
-    GPIO_E	= 4
+    GPIO_E  	= 4
 }GPIO_TypeDef;
 
 typedef enum{
@@ -44,20 +44,20 @@ typedef enum{
 typedef enum{
     Low 	=0,
     High	=1,
-    PullDown = 2, //输入时，下拉电阻使能
-    PullUp = 3,   //输入时，上拉电阻使能
-    NoPull = 4,   //输入时，无上下拉电阻
+    PullDown = 2,                       //输入时，下拉电阻使能
+    PullUp = 3,                           //输入时，上拉电阻使能
+    NoPull = 4                           //输入时，无上下拉电阻
 }GPIOState_TypeDef;
 
 typedef enum{
-	None_IRQ = 0,     // 关闭中断和DMA请求
-	DMA_onRising = 1,  // 上升沿DMA请求
-	DMA_onFalling = 2, // 下降沿DMA请求
-	DMA_onEither = 3,  // 上下沿DMA请求
-	IRQ_Zero = 8,    // 零电平中断
-	IRQ_Rising = 9,  // 上升沿中断
-	IRQ_Both = 10, // 上下沿都触发中断
-	IRQ_One = 11     // 一电平中断
+	None_IRQ         = 0,             // 关闭中断和DMA请求
+	DMA_onRising  = 1,            // 上升沿DMA请求
+	DMA_onFalling = 2,            // 下降沿DMA请求
+	DMA_onEither  = 3,            // 上下沿DMA请求
+	IRQ_Zero          = 8,            // 零电平中断
+	IRQ_Rising        = 9,            // 上升沿中断
+	IRQ_Both          = 10,          // 上下沿都触发中断
+	IRQ_One           = 11           // 一电平中断
 }GPIOIRQ_TypeDef;
 
 /*
@@ -106,9 +106,9 @@ typedef struct {
     uint32 Pin;
     GPIOMode_TypeDef MODE;
     GPIOState_TypeDef STATE; //输出状态时 可选 State_High State_Low
-    					     //输入状态时，可选 NoPull, State_PullUp,\
-    										State_PullDown
-    GPIOIRQ_TypeDef IRQC;  //中断类型
+    					                      //输入状态时，可选 NoPull, State_PullUp,\
+    										     State_PullDown
+    GPIOIRQ_TypeDef IRQC;   //中断类型
 }GPIO_InitTypeDef;
 
 
@@ -116,7 +116,7 @@ typedef struct {
 typedef enum GPIO_CFG
 {
     //这里的值不能改！！！
-    GPI         = 0,                          //定义管脚输入方向      GPIOx_PDDRn里，0表示输入，1表示输出
+    GPI           = 0,                          //定义管脚输入方向      GPIOx_PDDRn里，0表示输入，1表示输出
     GPO         = 1,                          //定义管脚输出方向
 
     GPI_DOWN    = 0x02,                       //输入下拉              PORTx_PCRn需要PE=1，PS=0

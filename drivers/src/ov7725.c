@@ -19,7 +19,7 @@ static uint8 ov7725_reg_init(void);
 
 void ov7725_exti_init()
 {
-    //DMA通道0初始化，PTB8上升沿触发DMA传输，源地址为PTD_BYTE0_IN，目的地址为：BUFF ，每次传输1Byte，传输CAMERA_SIZE次后停止传输
+    //DMA通道0初始化，PTB8上升沿触发DMA传输，源地址为PTDB_BYTE0_IN，目的地址为：BUFF ，每次传输1Byte，传输CAMERA_SIZE次后停止传输
     DMA_PORTx2BUFF_Init(CAMERA_DMA_CH, (void *)&PTB_BYTE0_IN, (void *)IMG_BUFF, PTB8, DMA_BYTE1, CAMERA_SIZE , KEEPON);
     port_init(PTB8, DMA_RISING | PULLUP );    //PCLK
 
@@ -27,22 +27,22 @@ void ov7725_exti_init()
 
     port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，下降沿触发中断，带滤波
 
-    disable_irq(PORTA_IRQn); 					   //关闭PTA的中断
+    disable_irq(PORTA_IRQn); 					        //关闭PTA的中断
 }
 
 void ov7725_get_img()
 {
-    img_flag = IMG_START;					//开始采集图像
-    PORTA_ISFR=~0;							//写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
-    enable_irq(PORTA_IRQn);                 //允许PTA的中断
-    while(img_flag != IMG_FINISH)           //等待图像采集完毕
+    img_flag = IMG_START;					 //开始采集图像
+    PORTA_ISFR=~0;							     //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
+    enable_irq(PORTA_IRQn);                  //允许PTA的中断
+    while(img_flag != IMG_FINISH)        //等待图像采集完毕
     {
         DEBUG_OUT("img_flag != IMG_FINISH\n",0);
 
         if(img_flag == IMG_FAIL)            //假如图像采集错误，则重新开始采集
         {
             img_flag = IMG_START;			//开始采集图像
-            PORTA_ISFR=~0;					//写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
+            PORTA_ISFR=~0;					    //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
             enable_irq(PORTA_IRQn);         //允许PTA的中断
         }
     }

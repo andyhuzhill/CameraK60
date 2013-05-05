@@ -91,7 +91,7 @@ typedef enum
 
 } DMA_cfg;
 
-typedef enum DMA_BYTEn      //DMA每次传输字节数
+typedef enum DMA_BYTEn            //DMA每次传输字节数
 {
     DMA_BYTE1 = 0,
     DMA_BYTE2 = 1,

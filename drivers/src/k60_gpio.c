@@ -12,7 +12,7 @@
  * 
  */
 
-#include "k60_gpio.h"
+#include  "k60_gpio.h"
 
 
 volatile struct GPIO_MemMap *GPIOx[5] = {PTA_BASE_PTR, PTB_BASE_PTR, PTC_BASE_PTR, PTD_BASE_PTR, PTE_BASE_PTR}; //定义五个指针数组保存 GPIOx 的地址
@@ -216,7 +216,7 @@ GPIO_init(GPIO_TypeDef port, GPIO_InitTypeDef *InitStruct)
     case GPIO_E:
         SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
         break;
-    default:
+        default:
         return -1;
         break;
     }
