@@ -36,7 +36,6 @@ ledInit(void)
 
 int 
 main(void)
-
 {   
     DisableInterrupts;  //关全局中断
     
