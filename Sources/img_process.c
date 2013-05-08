@@ -71,6 +71,21 @@ imgProcess(void)
         imgFilter();
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
+        
+        printf("\x0");
+        printf("\xff");
+        printf("\x1");
+        printf("\x0");
+        
+        for (int i = 0; i < IMG_H; ++i) 
+        {
+            for (int j = 0; j < IMG_W; ++j) 
+            {
+                uart_putchar(TERM_PORT, img[i][j]);
+            }
+        }
+        
+        
 #ifdef DEBUG
         
         f_mount(0, &fatfs);
