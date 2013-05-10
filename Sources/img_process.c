@@ -10,7 +10,6 @@
  *
  *     Version:
  * =========================================================================
-
  */
 
 #include "img_process.h"
@@ -52,16 +51,14 @@ imgProcess(void)
 {
     int8 k, b, e2sum;
     static int ret;
-    uint8 status = 0;
 
-#ifdef DEBUG
+#if 1
     int res;
     int size;
 
     FATFS fatfs;
     FIL  file;
 #endif 
-    
     imgGetImg();
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
@@ -71,52 +68,29 @@ imgProcess(void)
         imgFilter();
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
-        
-        printf("\x0");
-        printf("\xff");
-        printf("\x1");
-        printf("\x0");
-        
-        for (int i = 0; i < IMG_H; ++i) 
-        {
-            for (int j = 0; j < IMG_W; ++j) 
-            {
-                uart_putchar(TERM_PORT, img[i][j]);
-            }
-        }
-        
-        
-#ifdef DEBUG
-        
+
+#if 1
         f_mount(0, &fatfs);
 
-        res = f_open(&file, "0:/img2.txt", FA_OPEN_ALWAYS | FA_WRITE);
+        res = f_open(&file, "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE);
 
-        if (res == FR_DISK_ERR) 
+        size = f_size(&file);
+
+        f_lseek(&file, size);
+
+        for (int row = 0; row < IMG_H; ++row) 
         {
-            printf("no sd card inserted\n");
-            GPIOD_PTOR |= (1 << 10);
-            return ;
-        }else if (res == FR_OK){
-            size = f_size(&file);
-
-            f_lseek(&file, size);
-
-            for (int row = 0; row < IMG_H; ++row) 
+            for (int col = 0; col < IMG_W ; ++col) 
             {
-                for (int col = 0; col < IMG_W ; ++col) 
-                {
-                    f_printf(&file, "%d,",img[row][col]);
-                }
-                f_printf(&file, "\n");
+                f_printf(&file, "%d,",img[row][col]);
             }
-
-            f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
-
-            f_close(&file);
+            f_printf(&file, "\n");
         }
-#endif
 
+        f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
+
+        f_close(&file);
+#endif
         if ((ABS(k)<2)) {                               //直道
             if(middle[IMG_H/2] > IMG_W/2)        //左偏
             {
@@ -137,7 +111,6 @@ imgProcess(void)
             steerSetDuty(ret);
         }
         img_flag = IMG_READY;
-        return ret;
     }
     return ret;
 }
