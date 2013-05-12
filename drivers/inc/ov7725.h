@@ -17,20 +17,21 @@ extern   uint8 *	    IMG_BUFF;       //图像缓冲区指针
 //定义图像采集状态
 typedef enum 
 {
-    IMG_NOTINIT=0,
-    IMG_READY,              //准备采集图像
-	IMG_FINISH,			    //图像采集完毕
-	IMG_FAIL,				//图像采集失败(采集行数少了)
-	IMG_GATHER,				//图像采集中
-	IMG_START,				//开始采集图像
-	IMG_STOP,				//禁止图像采集
-	IMG_PROCESS,            //正在处理图像
+    IMG_NOTINIT =0,
+    IMG_READY   =1,              //准备采集图像
+    IMG_START   =2,               //开始采集图像
+    IMG_GATHER  =3,             //图像采集中
+    IMG_FINISH  =4,			//图像采集完毕
+    IMG_PROCESS =5,            //正在处理图像
+    IMG_FAIL    =6,  				//图像采集失败(采集行数少了)
+    IMG_STOP    =7,				//禁止图像采集
+
 }IMG_STATE;
 
 typedef struct
 {
-	uint8 Address;			       /*寄存器地址*/
-	uint8 Value;		           /*寄存器值*/
+    uint8 Address;			       /*寄存器地址*/
+    uint8 Value;		           /*寄存器值*/
 }Register_Info;
 
 extern	uint8   ov7725_init(uint8 *imgaddr);

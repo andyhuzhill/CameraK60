@@ -53,13 +53,11 @@ imgProcess(void)
     int8 k, b, e2sum;
     static int ret;
 
-#if 1
     int res;
     int size;
 
     FATFS fatfs;
     FIL  file;
-#endif 
     imgGetImg();
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
@@ -69,35 +67,33 @@ imgProcess(void)
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
 
-#if 1
         f_mount(0, &fatfs);
 
         res = f_open(&file, "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE);
 
-        if(res == FA__ERROR){
-            GPIOD_PSOR |= (0x55);
-            DELAY_MS(100);
-            GPIOD_PSOR |= (0xaa);
-            DELAY_MS(100);
-        }else{
+        size = f_size(&file);
 
-            size = f_size(&file);
+        f_lseek(&file, size);
 
-            f_lseek(&file, size);
-
-            for (int row = 0; row < IMG_H; ++row) 
-            {
-                for (int col = 0; col < IMG_W ; ++col) 
-                {
-                    f_printf(&file, "%d,",img[row][col]);
-                }
-                f_printf(&file, "\n");
-            }
-
-            f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
+        f_printf(&file, "srcImg is :\n");
+        for(int i=0;i<CAMERA_SIZE;++i)
+        {
+            f_printf(&file, "%d,", srcImg[i]);
         }
+        f_printf(&file, "\n\n");
+
+        for (int row = 0; row < IMG_H; ++row) 
+        {
+            for (int col = 0; col < IMG_W ; ++col) 
+            {
+                f_printf(&file, "%d,",img[row][col]);
+            }
+            f_printf(&file, "\n");
+        }
+
+        f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
         f_close(&file);
-#endif
+
         if ((ABS(k)<2)) {                               //直道
             if(middle[IMG_H/2] > IMG_W/2)        //左偏
             {
