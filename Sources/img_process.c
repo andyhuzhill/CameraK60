@@ -95,9 +95,8 @@ imgProcess(void)
             }
 
             f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
-
-            f_close(&file);
         }
+        f_close(&file);
 #endif
         if ((ABS(k)<2)) {                               //Ö±µÀ
             if(middle[IMG_H/2] > IMG_W/2)        //×óÆ«
