@@ -32,6 +32,7 @@ imgInit(void)
     ov7725_init(srcImg);
     PORTA_ISFR = ~0;                        //清中断
     enable_irq(PORTA_IRQn);                 //允许PTA的中断
+    img_flag = IMG_READY;
 }
 
 /**
@@ -40,7 +41,7 @@ imgInit(void)
 void
 imgGetImg(void)
 {
-    if((IMG_READY == img_flag) || (IMG_FAIL == img_flag)){
+    if(IMG_READY == img_flag){
         img_flag = IMG_START;                   //开始采集图像
         PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
     }
@@ -65,7 +66,6 @@ imgProcess(void)
     {
         img_flag = IMG_PROCESS;
         imgResize();
-        imgFilter();
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
 
@@ -195,7 +195,7 @@ imgGetMidLine(void)
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
-    int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
+    int8 getLeftBlack=0, getRightBlack=0;               //标志是否找到黑线
 
 
     for (row = IMG_H -1; row > (IMG_H -6); --row)       //搜索前五行
@@ -209,7 +209,7 @@ imgGetMidLine(void)
                 break;
             }
         }
-        if (col == 2)                       //  没有发现黑线
+        if (col == 1)                       //  没有发现黑线
         {   
             leftBlack[row] = 0; 
             leftLostRow = row;
@@ -224,7 +224,7 @@ imgGetMidLine(void)
                 break;
             }
         }
-        if (col == IMG_W -2)            // 没有发现黑线
+        if (col == IMG_W -1)            // 没有发现黑线
         {
             rightBlack[row] = IMG_W -1; 
             rightLostRow = row;
@@ -261,7 +261,7 @@ imgGetMidLine(void)
             }
             if(leftStart ==0)          
                 leftLostRow = row;
-        } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
+        } while((leftStart != 0 || leftEnd != (IMG_W -1)) && (getLeftBlack !=1));
 
         getRightBlack = 0;
         do{
@@ -282,7 +282,7 @@ imgGetMidLine(void)
             }
             if (rightEnd == IMG_W-1) 
                 rightLostRow = row; 
-        }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
+        } while(((rightStart!=0) || (rightEnd != IMG_W-1)) && (getRightBlack !=1));
     }
 
     DEBUG_OUT("leftLostRow:%2d, rightLostRow:%2d\n",leftLostRow, rightLostRow);
