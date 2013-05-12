@@ -74,22 +74,30 @@ imgProcess(void)
 
         res = f_open(&file, "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE);
 
-        size = f_size(&file);
+        if(res == FA__ERROR){
+            GPIOD_PSOR |= (0x55);
+            DELAY_MS(100);
+            GPIOD_PSOR |= (0xaa);
+            DELAY_MS(100);
+        }else{
 
-        f_lseek(&file, size);
+            size = f_size(&file);
 
-        for (int row = 0; row < IMG_H; ++row) 
-        {
-            for (int col = 0; col < IMG_W ; ++col) 
+            f_lseek(&file, size);
+
+            for (int row = 0; row < IMG_H; ++row) 
             {
-                f_printf(&file, "%d,",img[row][col]);
+                for (int col = 0; col < IMG_W ; ++col) 
+                {
+                    f_printf(&file, "%d,",img[row][col]);
+                }
+                f_printf(&file, "\n");
             }
-            f_printf(&file, "\n");
+
+            f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
+
+            f_close(&file);
         }
-
-        f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
-
-        f_close(&file);
 #endif
         if ((ABS(k)<2)) {                               //Ö±µÀ
             if(middle[IMG_H/2] > IMG_W/2)        //×óÆ«
