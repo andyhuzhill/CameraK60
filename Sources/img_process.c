@@ -10,6 +10,7 @@
  *
  *     Version:
  * =========================================================================
+
  */
 
 #include "img_process.h"
@@ -41,7 +42,7 @@ imgInit(void)
 void
 imgGetImg(void)
 {
-    if(IMG_READY == img_flag){
+    if( (IMG_READY == img_flag) ){
         img_flag = IMG_START;                   //开始采集图像
         PORTA_ISFR=~0;                          //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
     }
@@ -52,12 +53,11 @@ imgProcess(void)
 {
     int8 k, b, e2sum;
     static int ret;
+    uint32 filesize;
 
-    int res;
-    int size;
+    FIL file;
+    FATFS fs;
 
-    FATFS fatfs;
-    FIL  file;
     imgGetImg();
 
     if(IMG_FINISH == img_flag)      // 当图像采集完毕 开始处理图像
@@ -67,20 +67,24 @@ imgProcess(void)
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
 
-        f_mount(0, &fatfs);
+        f_mount(0, &fs);
 
-        res = f_open(&file, "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE);
+        f_open(&file, "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
 
-        size = f_size(&file);
+        filesize = f_size(&file);
 
-        f_lseek(&file, size);
-
-        f_printf(&file, "srcImg is :\n");
-        for(int i=0;i<CAMERA_SIZE;++i)
+        f_lseek(&file, filesize);
+        
+        
+        f_printf(&file, "srcImg is:\n");
+        
+        for(int i=0; i< CAMERA_SIZE; ++i)
         {
-            f_printf(&file, "%d,", srcImg[i]);
+            f_printf(&file, "%d,",srcImg[i]);
         }
         f_printf(&file, "\n\n");
+        
+        f_printf(&file, "img is:\n");
 
         for (int row = 0; row < IMG_H; ++row) 
         {
@@ -90,30 +94,41 @@ imgProcess(void)
             }
             f_printf(&file, "\n");
         }
-
-        f_printf(&file, "k= %d, b= %d, e2sum = %d\n",k,b,e2sum);
+        
+        f_printf(&file, "\n");
+        
+        f_printf(&file, "leftBlack is:\n");
+        for(int i=0; i< IMG_H; ++i)
+        {
+            f_printf(&file, "%d,",leftBlack[i]);
+        }
+        f_printf(&file, "\n");
+        
+        f_printf(&file, "rightBlack is:\n");
+        for(int i=0; i< IMG_H; ++i)
+        {
+            f_printf(&file, "%d,",rightBlack[i]);
+        }
+        f_printf(&file, "\n");
+        
+        f_printf(&file, "middle is:\n");
+        for(int i=0; i< IMG_H; ++i)
+        {
+            f_printf(&file, "%d,",middle[i]);
+        }
+        f_printf(&file, "\n");
         f_close(&file);
 
-        if ((ABS(k)<2)) {                               //直道
-            if(middle[IMG_H/2] > IMG_W/2)        //左偏
-            {
-                steerSetDuty(40);
-            }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
-                steerSetDuty(60);
-            }else {
-                steerSetDuty(50);
-            }
-        }else if (((ABS(k) > 5) && (ABS(k) <10))&&(ABS(b)<30)){         //入弯
-            ret = 50 + k;
-            steerSetDuty(ret);
-        }else if ((ABS(k)>10) && (ABS(b)>20 && (ABS(b)<40))){            //弯道
-            ret = 50 + 2*k;
-            steerSetDuty(ret);
-        }else if (((ABS(k)<10) && (ABS(b) <30)) && (e2sum > 200)){
-            ret = 50 + 0.5*k ;
-            steerSetDuty(ret);
+        if(middle[IMG_H/2] > IMG_W/2)        //左偏
+        {
+            steerSetDuty(45);
+        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
+            steerSetDuty(55);
+        }else {
+            steerSetDuty(50);
         }
         img_flag = IMG_READY;
+        return ret;
     }
     return ret;
 }
@@ -127,27 +142,29 @@ void
 imgResize(void)              
 {
     uint32 temp, tempY;
-    uint16 col,row;    
+    uint16 x,y;    
     uint16 X,Y; 
 
-    for(row=0; row < IMG_H; row++)
+    for(y=0; y < IMG_H; y++)
     {
-        Y = ( (  row * CAMERA_H  + (IMG_H >> 1)) / IMG_H) ;
+        Y = ( (  y * CAMERA_H  + (IMG_H >> 1)) / IMG_H) ;
         tempY = Y * CAMERA_W ;
 
-        for(col=0;col<IMG_W;col++)
+        for(x=0;x<IMG_W;x++)
         {
-            X = (( col * CAMERA_W  + (IMG_W >> 1)) / IMG_W) ;
+            X = (( x * CAMERA_W  + (IMG_W >> 1)) / IMG_W) ;
             temp = tempY + X;
-            if( (srcImg[temp>>3] & (1<<(7- (temp & 0x07))) ) == 0){
-                img[row][col] = 0;
+            if( (srcImg[temp>>3] & (1<<(7- (temp & 0x07))) ) == 0  ) 
+            {
+                img[y][x] = 0;
             }
             else
             {
-                img[row][col] = 1;
+                img[y][x] = 1;
             }
         }
     }
+
 #if 0
     for (int row = 0; row < (IMG_H); ++row)
     {
@@ -198,7 +215,7 @@ imgGetMidLine(void)
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
-    int8 getLeftBlack=0, getRightBlack=0;               //标志是否找到黑线
+    int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
 
 
     for (row = IMG_H -1; row > (IMG_H -6); --row)       //搜索前五行
@@ -212,7 +229,7 @@ imgGetMidLine(void)
                 break;
             }
         }
-        if (col == 1)                       //  没有发现黑线
+        if (col == 2)                       //  没有发现黑线
         {   
             leftBlack[row] = 0; 
             leftLostRow = row;
@@ -227,7 +244,7 @@ imgGetMidLine(void)
                 break;
             }
         }
-        if (col == IMG_W -1)            // 没有发现黑线
+        if (col == IMG_W -2)            // 没有发现黑线
         {
             rightBlack[row] = IMG_W -1; 
             rightLostRow = row;
@@ -264,7 +281,7 @@ imgGetMidLine(void)
             }
             if(leftStart ==0)          
                 leftLostRow = row;
-        } while((leftStart != 0 || leftEnd != (IMG_W -1)) && (getLeftBlack !=1));
+        } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
 
         getRightBlack = 0;
         do{
@@ -285,7 +302,7 @@ imgGetMidLine(void)
             }
             if (rightEnd == IMG_W-1) 
                 rightLostRow = row; 
-        } while(((rightStart!=0) || (rightEnd != IMG_W-1)) && (getRightBlack !=1));
+        }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
     }
 
     DEBUG_OUT("leftLostRow:%2d, rightLostRow:%2d\n",leftLostRow, rightLostRow);
