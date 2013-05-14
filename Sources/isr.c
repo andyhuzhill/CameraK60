@@ -37,12 +37,11 @@ PORTA_ISR(void)         //场中断处理函数
         }
     }
 
-    if (PORTA_ISFR & (1 << 10))                     //编码器引脚中断
+    if (PORTA_ISFR & (1 << 10))                     // TAGS: 编码器引脚PTA10中断 
     {               
         encoder_cnt ++;
     }
     PORTA_ISFR  = ~0;       //场中断里，全部都要清中断标志位
-    
 }
 
 void 

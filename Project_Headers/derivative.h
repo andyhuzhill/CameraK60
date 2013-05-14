@@ -71,8 +71,6 @@
 #define MOTOR2_FREQ             10000        //单位Hz
 #define MOTOR2_DEFAULT_DUTY     80            //单位百分之一
 
-#define ENCODER_FTM             FTM2
-#define ENCODER_CHN             CH1
 
 //  定义舵机PID参数
 #define PID_STEER_KP  3.5

@@ -21,12 +21,12 @@ void ov7725_exti_init()
 {
     //DMA通道0初始化，PTB8上升沿触发DMA传输，源地址为PTD_BYTE0_IN，目的地址为：BUFF ，每次传输1Byte，传输CAMERA_SIZE次后停止传输
     DMA_PORTx2BUFF_Init(CAMERA_DMA_CH, (void *)&PTB_BYTE0_IN, (void *)IMG_BUFF, PTB8, DMA_BYTE1, CAMERA_SIZE , KEEPON);
-    port_init(PTB8, DMA_RISING | PULLUP );    //PCLK
+    port_init(PTB8, DMA_RISING | PULLUP );              //PCLK
 
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);
     DMA_IRQ_EN(CAMERA_DMA_CH);                           //DMA通道使能
 
-    port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，下降沿触发中断，带滤波
+    port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，上升沿触发中断，带滤波
 
     disable_irq(PORTA_IRQn); 					   //关闭PTA的中断
 }

@@ -38,9 +38,6 @@ extern	uint8   ov7725_init(uint8 *imgaddr);
 extern	void    ov7725_exti_init();
 extern	void    ov7725_get_img();
 
-//extern	int  	ov7725_read_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
-//extern	int  	ov7725_write_reg(uint8 LCD_Reg,uint16 LCD_RegValue);
-
 #endif
 
 

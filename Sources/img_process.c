@@ -74,16 +74,16 @@ imgProcess(void)
         filesize = f_size(&file);
 
         f_lseek(&file, filesize);
-        
-        
+
+
         f_printf(&file, "srcImg is:\n");
-        
+
         for(int i=0; i< CAMERA_SIZE; ++i)
         {
             f_printf(&file, "%d,",srcImg[i]);
         }
         f_printf(&file, "\n\n");
-        
+
         f_printf(&file, "img is:\n");
 
         for (int row = 0; row < IMG_H; ++row) 
@@ -94,23 +94,23 @@ imgProcess(void)
             }
             f_printf(&file, "\n");
         }
-        
+
         f_printf(&file, "\n");
-        
+
         f_printf(&file, "leftBlack is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
             f_printf(&file, "%d,",leftBlack[i]);
         }
         f_printf(&file, "\n");
-        
+
         f_printf(&file, "rightBlack is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
             f_printf(&file, "%d,",rightBlack[i]);
         }
         f_printf(&file, "\n");
-        
+
         f_printf(&file, "middle is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
@@ -135,7 +135,6 @@ imgProcess(void)
 
 
 /**
- * 将原来320X240的数组存入320X24的数组（每行40字节，共24行）
  * 影响到的变量 img[]
  */
 void
@@ -164,18 +163,6 @@ imgResize(void)
             }
         }
     }
-
-#if 0
-    for (int row = 0; row < (IMG_H); ++row)
-    {
-        printf("Row %2d:",row);
-        for (int col = 0; col < (IMG_W); ++col)
-        {
-            printf("%d",img[row][col]);
-        }
-        printf("\n");
-    }
-#endif
 }
 
 /**
@@ -210,13 +197,10 @@ imgFilter(void)
 void
 imgGetMidLine(void)
 {
-
-
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
     int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
-
 
     for (row = IMG_H -1; row > (IMG_H -6); --row)       //搜索前五行
     {
