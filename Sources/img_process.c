@@ -55,8 +55,8 @@ imgProcess(void)
     static int ret;
     uint32 filesize;
 
-    FIL file;
-    FATFS fs;
+    //    FIL file;
+    //    FATFS fs;
 
     imgGetImg();
 
@@ -67,57 +67,56 @@ imgProcess(void)
         imgGetMidLine();
         e2sum = imgLeastsq(8, 18, &k, &b);
 
-        f_mount(0, &fs);
+        //        f_mount(0, &fs);
+        //
+        //        f_open( "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+        //
+        //        filesize = f_size(&file);
+        //
+        //        f_lseek( filesize);
+        //
+        //        printf( "srcImg is:\n");
+        //
+        //        for(int i=0; i< CAMERA_SIZE; ++i)
+        //        {
+        //            printf( "%d,",srcImg[i]);
+        //        }
+        //        printf( "\n\n");
 
-        f_open(&file, "0:/img.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
-
-        filesize = f_size(&file);
-
-        f_lseek(&file, filesize);
-
-
-        f_printf(&file, "srcImg is:\n");
-
-        for(int i=0; i< CAMERA_SIZE; ++i)
-        {
-            f_printf(&file, "%d,",srcImg[i]);
-        }
-        f_printf(&file, "\n\n");
-
-        f_printf(&file, "img is:\n");
+        //        printf( "img is:\n");
 
         for (int row = 0; row < IMG_H; ++row) 
         {
             for (int col = 0; col < IMG_W ; ++col) 
             {
-                f_printf(&file, "%d,",img[row][col]);
+                printf( "%d,",img[row][col]);
             }
-            f_printf(&file, "\n");
+            printf("\n");
         }
 
-        f_printf(&file, "\n");
+        printf("\n");
 
-        f_printf(&file, "leftBlack is:\n");
+        printf("leftBlack is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
-            f_printf(&file, "%d,",leftBlack[i]);
+            printf( "%d,",leftBlack[i]);
         }
-        f_printf(&file, "\n");
+        printf( "\n");
 
-        f_printf(&file, "rightBlack is:\n");
+        printf( "rightBlack is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
-            f_printf(&file, "%d,",rightBlack[i]);
+            printf( "%d,",rightBlack[i]);
         }
-        f_printf(&file, "\n");
+        printf( "\n");
 
-        f_printf(&file, "middle is:\n");
+        printf( "middle is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
-            f_printf(&file, "%d,",middle[i]);
+            printf( "%d,",middle[i]);
         }
-        f_printf(&file, "\n");
-        f_close(&file);
+        printf( "\n");
+        //        f_close(&file);
 
         if(middle[IMG_H/2] > IMG_W/2)        //左偏
         {
@@ -213,7 +212,7 @@ imgGetMidLine(void)
                 break;
             }
         }
-        if (col == 2)                       //  没有发现黑线
+        if (col == 1)                       //  没有发现黑线
         {   
             leftBlack[row] = 0; 
             leftLostRow = row;
@@ -228,7 +227,7 @@ imgGetMidLine(void)
                 break;
             }
         }
-        if (col == IMG_W -2)            // 没有发现黑线
+        if (col == IMG_W -1)            // 没有发现黑线
         {
             rightBlack[row] = IMG_W -1; 
             rightLostRow = row;
@@ -290,6 +289,7 @@ imgGetMidLine(void)
     }
 
     DEBUG_OUT("leftLostRow:%2d, rightLostRow:%2d\n",leftLostRow, rightLostRow);
+
     for (row = IMG_H-1; row > MIN(leftLostRow, rightLostRow); --row)  
     {
         middle[row] = (leftBlack[row] + rightBlack[row]) /2;
