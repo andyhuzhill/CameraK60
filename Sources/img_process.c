@@ -28,7 +28,6 @@ static const int8 jiaozheng[IMG_H] = {6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 12,
         12, 13, 13, 14, 14, 15, 15, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21,
         22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 28};
 
-
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
 
@@ -58,7 +57,7 @@ imgProcess(void)
 {
     int8 k, b, e2sum;
     static int ret;
-    uint32 filesize;
+    //    uint32 filesize;
 
     //    FIL file;
     //    FATFS fs;
@@ -69,8 +68,9 @@ imgProcess(void)
     {
         img_flag = IMG_PROCESS;
         imgResize();
+        imgFindLine();
         imgGetMidLine();
-        e2sum = imgLeastsq(8, 18, &k, &b);
+        e2sum = imgLeastsq(8, 24, &k, &b);
 
         //        f_mount(0, &fs);
         //
@@ -99,7 +99,6 @@ imgProcess(void)
             }
             printf("\n");
         }
-
         printf("\n");
 
         printf("leftBlack is:\n");
@@ -120,18 +119,21 @@ imgProcess(void)
         {
             printf( "%3d,",middle[i]);
         }
+        
+        printf("\n");
+        printf("k=%d, b = %d, e2sum=%d\n",k,b,e2sum);
 
-        printf("\n\n");
+        printf("\n");
 #endif
 
-        if(middle[IMG_H/2] > IMG_W/2)        //左偏
-        {
-            steerSetDuty(45);
-        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
-            steerSetDuty(55);
-        }else {
-            steerSetDuty(50);
-        }
+//        if(middle[IMG_H/2] > IMG_W/2)        //左偏
+//        {
+//            steerSetDuty(45);
+//        }else if (middle[IMG_H/2] < IMG_W /2){  //右偏
+//            steerSetDuty(55);
+//        }else {
+//            steerSetDuty(50);
+//        }
         img_flag = IMG_READY;
         return ret;
     }
@@ -196,19 +198,19 @@ imgFilter(void)
     }
 }
 
-
-/**
- * 说明: 提取图像中线
- * 影响到的变量:  middle[];
+/*
+ * 找两边黑线
+ * 影响到的变量 leftBlack[] 和 rightBlack[]
  */
+
 void
-imgGetMidLine(void)
+imgFindLine(void)
 {
     int8 row, col;
 
     int8 leftStart, leftEnd, rightStart, rightEnd;  
     int8 getLeftBlack=0, getRightBlack=0;             //标志是否找到黑线
-    
+
     memset(leftBlack, 0, sizeof(leftBlack));          //初始化三个数组的值
     memset(rightBlack, 0, sizeof(rightBlack));
     memset(middle, 0, sizeof(middle));  
@@ -217,7 +219,7 @@ imgGetMidLine(void)
     {
         for (col = (IMG_W /2); col > 1; --col)          //  先找左边黑线
         {
-            if (img[row][col] != 0 && img[row][col-1] !=0)
+            if (img[row][col] != 0 )
             {
                 leftBlack[row] = col;       //记录下黑线的列数
                 break;
@@ -234,9 +236,9 @@ imgGetMidLine(void)
 
         for (col = (IMG_W /2); col < (IMG_W -1); ++col) // 再找右边黑线
         {
-            if (img[row][col] != 0 && img[row][col+1] != 0)   //发现黑线
+            if (img[row][col] != 0 )   //发现黑线
             {
-                rightBlack[row] = col;   //记录下黑线的列数
+                rightBlack[row] = col;   //     记录下黑线的列数
                 break;
             }
         }
@@ -270,17 +272,33 @@ imgGetMidLine(void)
 
             for (col = leftStart; col < leftEnd ; ++col) 
             {
-                if (img[row][col] != 0 && img[row][col-1]!=0) 
+                if (img[row][col] != 0 ) 
                 {   
                     leftBlack[row] = col;
+                    if(leftBlack[row -1] == 0 && leftBlack[row -2] != 0){
+                        leftBlack[row-1] = (leftBlack[row]+leftBlack[row-2])/2;
+                    }
+                    if(leftBlack[row-1] == 0 && leftBlack[row-2] ==0 && leftBlack[row-3] != 0){
+                        leftBlack[row-2] = leftBlack[row-3] + (leftBlack[row]-leftBlack[row-3])/3;
+                        leftBlack[row-1] = leftBlack[row-2] + (leftBlack[row]-leftBlack[row-3])/3;
+                    }
                     getLeftBlack = 1;
-                    break;
+                    leftStart = col -3;
+                    leftEnd = col +3;
+                    if (leftStart < 0) leftStart = 0;
+                    if (leftEnd > IMG_W -1) leftEnd = IMG_W-1;      //避免数组访问越界
+                    break;      //跳出for循环
                 }
             }
-            if(leftStart ==0)          
+            if(leftStart == 0 || leftEnd == IMG_W -1 ){          
                 leftLostRow = row;
+                break;  //跳出while循环
+            }
         } while ((leftStart != 0 || leftEnd != (IMG_W -1))&&(getLeftBlack !=1));
+    }
 
+    for(row = IMG_H-11; row >0 ; --row)
+    {
         getRightBlack = 0;
         do{                                    // 查找右边黑线
             rightStart -= 3;
@@ -290,22 +308,68 @@ imgGetMidLine(void)
 
             for (col = rightStart; col < rightEnd; ++col) 
             {
-                if (img[row][col]!=0 && img[row][col+1]!=0) 
+                if (img[row][col]!=0 ) 
                 {
-                    rightBlack[row] = col;
+                    rightBlack[row] = col;  
+                    if(rightBlack[row -1] == 0 && rightBlack[row -2] != 0){
+                        rightBlack[row-1] = (rightBlack[row]+rightBlack[row-2])/2;
+                    }
+                    if(rightBlack[row-1] == 0 && rightBlack[row-2] ==0 && rightBlack[row-3] != 0){
+                        rightBlack[row-2] = rightBlack[row-3] + (rightBlack[row]-rightBlack[row-3])/3;
+                        rightBlack[row-1] = rightBlack[row-2] + (rightBlack[row]-rightBlack[row-3])/3;
+                    }
                     getRightBlack = 1;
-                    break;
+                    rightStart = col -3;
+                    rightEnd = col +3;
+                    if (rightStart < 0) rightStart = 0;
+                    if (rightEnd > IMG_W -1) rightEnd = IMG_W-1;      //避免数组访问越界
+                    break;          //跳出for循环
                 }
             }
-            if (rightEnd == IMG_W-1) 
+            if (rightEnd == IMG_W-1 || rightStart == 0){ 
                 rightLostRow = row; 
-        }while(((rightStart!=0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
+                break;          //跳出while循环
+            }
+        }while(((rightStart != 0) || (rightEnd != IMG_W-1))&&(getRightBlack !=1));
     }
+}
 
 
+/**
+ * 说明: 提取图像中线
+ * 影响到的变量:  middle[];
+ */
+void
+imgGetMidLine(void)
+{
+    int row=0;
     for (row = IMG_H-6; row > MIN(leftLostRow, rightLostRow); --row)  
     {
-        middle[row] = (leftBlack[row] + rightBlack[row]) /2;
+        if(leftBlack[row] ==0 && rightBlack[row] != IMG_W-1){     //丢失左线
+            middle[row] = rightBlack[row] - jiaozheng[row];
+            break;
+        }
+        if(leftBlack[row] !=0 && rightBlack[row] == IMG_W-1){     //丢失右线
+            middle[row] = leftBlack[row] + jiaozheng[row];
+            break;
+        }
+        if(leftBlack[row] == rightBlack[row])
+        {
+            if(leftBlack[row] < (IMG_W/2)){             //如果丢失右线
+                middle[row] = leftBlack[row] + jiaozheng[row];
+                break;
+            }else if(rightBlack[row] > (IMG_W/2)) {     //如果丢失左线
+                middle[row] = rightBlack[row] - jiaozheng[row];
+                break;
+            }
+        }else{
+            middle[row] = (leftBlack[row] + rightBlack[row]) /2;
+        }
+    }
+
+    for (row = IMG_H-2; row > 1; --row)       //平滑中线
+    {
+        middle[row] = (middle[row-1] +middle[row+1])/2;
     }
 }
 
