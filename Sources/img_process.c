@@ -24,6 +24,7 @@ static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
+
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
 
@@ -99,24 +100,24 @@ imgProcess(void)
         printf("leftBlack is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
-            printf( "%d,",leftBlack[i]);
+            printf( "%3d,",leftBlack[i]);
         }
-        printf( "\n");
+        printf("\n");
+        
 
         printf( "rightBlack is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
-            printf( "%d,",rightBlack[i]);
+            printf( "%3d,",rightBlack[i]);
         }
-        printf( "\n");
-
+        printf("\n");
         printf( "middle is:\n");
         for(int i=0; i< IMG_H; ++i)
         {
-            printf( "%d,",middle[i]);
+            printf( "%3d,",middle[i]);
         }
-        printf( "\n");
-        //        f_close(&file);
+        
+        printf("\n\n");
 
         if(middle[IMG_H/2] > IMG_W/2)        //左偏
         {
@@ -139,26 +140,27 @@ imgProcess(void)
 void
 imgResize(void)              
 {
-    uint32 temp, tempY;
-    uint16 x,y;    
-    uint16 X,Y; 
+    uint32 tmpIndex, tmpRow;
+    uint16 col,row;    
+    uint16 oldCol,oldRow; 
 
-    for(y=0; y < IMG_H; y++)
+    for(row=0; row < IMG_H; row++)
     {
-        Y = ( (  y * CAMERA_H  + (IMG_H >> 1)) / IMG_H) ;
-        tempY = Y * CAMERA_W ;
+        oldRow = ((row * CAMERA_H  + (IMG_H >> 1) ) / IMG_H);
+        //注释：row = (oldRow - 1/2)*(IH/CH)
+        tmpRow = oldRow * CAMERA_W ;
 
-        for(x=0;x<IMG_W;x++)
+        for(col=0;col<IMG_W;col++)
         {
-            X = (( x * CAMERA_W  + (IMG_W >> 1)) / IMG_W) ;
-            temp = tempY + X;
-            if( (srcImg[temp>>3] & (1<<(7- (temp & 0x07))) ) == 0  ) 
+            oldCol = ((col * CAMERA_W  + (IMG_W >> 1) ) / IMG_W);
+            tmpIndex = tmpRow + oldCol;
+            if( (srcImg[tmpIndex>>3] & (1<<(7- (tmpIndex & 0x07))) ) == 0  ) 
             {
-                img[y][x] = 0;
+                img[row][col] = 0;
             }
             else
             {
-                img[y][x] = 1;
+                img[row][col] = 1;
             }
         }
     }
