@@ -59,7 +59,6 @@ void
 PIT0_ISR(void)
 {
     DisableInterrupts;
-    
     speed_cnt = encoder_cnt;
     getEncoder = true;
     encoder_cnt = 0;

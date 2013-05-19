@@ -92,8 +92,8 @@ void motorSetSpeed(uint32 realspeed, uint32 speed)
     static float duty;
     int32 pwm;
     
-
-    FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, speed);
+    pwm = FTM_PRECISON - speed;
+    FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, pwm);
     
 //
 //    if(true == getEncoder)  {

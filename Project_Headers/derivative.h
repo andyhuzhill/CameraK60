@@ -58,17 +58,17 @@
 #define STEER_FTM               FTM0
 #define STEER_CHN               CH0
 #define STEER_FREQ              300         //单位Hz
-#define STEER_DEFAULT_DUTY      50          //单位 百分之一
+#define STEER_DEFAULT_DUTY      FTM_PRECISON /2          //单位 千分之一
 
 #define MOTOR1_FTM              FTM1
 #define MOTOR1_CHN              CH0
 #define MOTOR1_FREQ             10000        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     100          //单位 百分之一
+#define MOTOR1_DEFAULT_DUTY     1000          //单位 千分之一
 
 #define MOTOR2_FTM              FTM1
 #define MOTOR2_CHN              CH1
 #define MOTOR2_FREQ             10000        //单位Hz
-#define MOTOR2_DEFAULT_DUTY     80            //单位百分之一
+#define MOTOR2_DEFAULT_DUTY     800            //单位千分之一
 
 #define ENCODER_FTM             FTM2
 #define ENCODER_CHN             CH1

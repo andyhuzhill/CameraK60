@@ -74,7 +74,7 @@ imgProcess(void)
         e2sum = imgLeastsq(C, A, &k, &b);
         qulv = imgArea(A,B,C,&area);
 
-#if 0
+#if 1
         for (int row = 0; row < IMG_H; ++row) {
             for (int col = 0; col < IMG_W ; ++col)  {
                 printf( "%d,",img[row][col]);
@@ -83,66 +83,22 @@ imgProcess(void)
         }
         printf("\n");
 
-        //        printf("leftBlack is:\n");
-        //        for(int i=0; i< IMG_H; ++i) {
-        //            printf("%3d,",leftBlack[i]);
-        //        }
-        //        printf("\n");
-        //
-        //        printf( "rightBlack is:\n");
-        //        for(int i=0; i< IMG_H; ++i){
-        //            printf( "%3d,",rightBlack[i]);
-        //        }
-        //
-        //        printf("\n");
-        //        printf( "middle is:\n");
-        //
-        //        for(int i=0; i< IMG_H; ++i) {
-        //            printf( "%3d,",middle[i]);
-        //        }
-        //        printf("\n");
-        //
-        //        printf("leftLostRow=%d, rightLostRow=%d\n",leftLostRow, rightLostRow);
-        //        printf("k=%d, b = %d, e2sum=%d\n",k,b,e2sum);
-        //
-        //        printf("row[%d]:%d,row[%d]:%d,row[%d]:%d\n",A,middle[A], B,middle[B], C, middle[C]);
-        //        printf("qulv =%d, area=%d\n",qulv, area);
-
         printf("img\n");
 #endif
 
 #if 1
         if ((leftBlack[20] == -1 || leftBlack[20] == 0) && (rightBlack[20] != -1)){
-            steerSetDuty(60);
+            steerSetDuty(600);
         }else if((leftBlack[20]!= -1) &&(rightBlack[20] == -1 || rightBlack[20] ==0)){
-            steerSetDuty(40);
+            steerSetDuty(400);
         }else if(middle[20] < 18){
-            steerSetDuty(40);
+            steerSetDuty(400);
         }else if(middle[20] > 32){
-            steerSetDuty(60);
+            steerSetDuty(600);
         }else{
-            steerSetDuty(50);
+            steerSetDuty(500);
         }
 
-        //        if(ABS(area) < 40){
-        //            if(leftLostRow < rightLostRow){
-        //                ret = 50 - ABS(area)/8;
-        //                steerSetDuty(ret);
-        //            }else if (leftLostRow > rightLostRow){
-        //                ret = 50 + ABS(area)/8;
-        //                steerSetDuty(ret);
-        //            }else {
-        //                steerSetDuty(50);
-        //            }
-        //        }else if(area <0){          //Ïò×óÆ«
-        //            ret = (ABS(area)-40) /8;
-        //            ret = 50 + ret;
-        //            steerSetDuty(ret);
-        //        }else if(area >0){          //ÏòÓÒÆ«
-        //            ret = (ABS(area)-40) /8;
-        //            ret = 50 - ret;
-        //            steerSetDuty(ret);
-        //        }
 #endif
         img_flag = IMG_READY;
         return ret;

@@ -46,7 +46,7 @@ main(void)
 
     EnableInterrupts;   //开全局中断
 
-    motorSetSpeed(speed_cnt, 500);
+    motorSetSpeed(speed_cnt, 250);
     
     for (;;) 
     {

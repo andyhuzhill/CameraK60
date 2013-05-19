@@ -21,11 +21,11 @@ void ov7725_exti_init()
 {
     //DMA通道0初始化，PTB8上升沿触发DMA传输，源地址为PTD_BYTE0_IN，目的地址为：BUFF ，每次传输1Byte，传输CAMERA_SIZE次后停止传输
     DMA_PORTx2BUFF_Init(CAMERA_DMA_CH, (void *)&PTB_BYTE0_IN, (void *)IMG_BUFF, PTB8, DMA_BYTE1, CAMERA_SIZE , KEEPON);
-    port_init(PTB8, DMA_RISING | PULLUP );    //PCLK
+    port_init(PTB8, DMA_RISING | PULLUP );          //PCLK
 
     DMA_IRQ_EN(DMA_CH0);                           //DMA通道使能
 
-    port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，下降沿触发中断，带滤波
+    port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，上升沿触发中断，带滤波
 
     disable_irq(PORTA_IRQn); 					   //关闭PTA的中断
 }
@@ -37,8 +37,6 @@ void ov7725_get_img()
     enable_irq(PORTA_IRQn);                 //允许PTA的中断
     while(img_flag != IMG_FINISH)           //等待图像采集完毕
     {
-        DEBUG_OUT("img_flag != IMG_FINISH\n",0);
-
         if(img_flag == IMG_FAIL)            //假如图像采集错误，则重新开始采集
         {
             img_flag = IMG_START;			//开始采集图像
@@ -54,7 +52,7 @@ Register_Info ov7727_reg[] =
 {
 
         //寄存器，寄存器值次
-        {COM4         ,0x81},
+        {COM4         ,0x41},
         {CLKRC        ,0x00}, 
         {COM2         ,0x03}, 
         {COM3         ,0xD0}, 
@@ -144,7 +142,9 @@ uint8 cfgnum = sizeof(ov7727_reg)/sizeof(ov7727_reg[0]);   /*结构体数组成员数目*
 uint8 ov7725_init(uint8 *imgaddr)
 {
     IMG_BUFF = imgaddr;
-    while(ov7725_reg_init() == 0);
+    while(ov7725_reg_init() == 0){
+        GPIOD_PTOR = (0xff << 8);
+    }
     ov7725_exti_init();
     return 0;
 }
