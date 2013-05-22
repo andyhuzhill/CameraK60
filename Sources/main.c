@@ -21,15 +21,14 @@ vuint32  encoder_cnt=0;
 volatile bool getEncoder= false;
 
 
-extern uint8 *srcImg;
-
 int 
 main(void)
 {   
+
     int retval =0;
-//    char duty;
     DisableInterrupts;  //关全局中断
 
+    LCD_Init(RED);
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
     steerInit();
@@ -41,10 +40,12 @@ main(void)
     for (;;) 
     {
         imgProcess();
+        
         //        for (int i = 40; i < 61; ++i) 
         //        {
         //            steerSetDuty(i);
         //            DELAY_MS(500);
         //        }  
+        
     }
 }
