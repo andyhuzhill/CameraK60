@@ -20,18 +20,30 @@ vuint32 speed_cnt=0;      // 编码器采集到的现在的速度值
 vuint32  encoder_cnt=0;
 volatile bool getEncoder= false;
 
+void
+ledInit(void)
+{
+	GPIO_InitTypeDef initGPIO;
+
+	initGPIO.Pin  = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 |
+			GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+	initGPIO.MODE = Mode_OUT;
+	initGPIO.STATE = High;
+	initGPIO.IRQC = None_IRQ;
+
+	GPIO_init(PORT_D, &initGPIO);
+}
 
 int 
 main(void)
 {   
-
-    int retval =0;
     DisableInterrupts;  //关全局中断
 
-    LCD_Init(RED);
+ 	ledInit();
+    steerInit();
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
-    steerInit();
+
 
     EnableInterrupts;   //开全局中断
     
@@ -40,12 +52,5 @@ main(void)
     for (;;) 
     {
         imgProcess();
-        
-        //        for (int i = 40; i < 61; ++i) 
-        //        {
-        //            steerSetDuty(i);
-        //            DELAY_MS(500);
-        //        }  
-        
     }
 }
