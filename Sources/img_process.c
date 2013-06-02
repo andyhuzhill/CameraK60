@@ -28,13 +28,8 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
 static int8 lostRow;
 
-//static const int8 jiaozheng[IMG_H] = {6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 12, 
-//		12, 13, 13, 14, 14, 15, 15, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21,
-//		22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 28};
-
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
-
 
 void
 imgInit(void)
@@ -81,11 +76,9 @@ imgProcess(void)
 
 	imgGetImg();
 
-	DEBUG_OUT("get img\n",0);
 
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
-		DEBUG_OUT("img is under processing\n",0);
 		imgResize();
 		imgFindLine();
 		imgGetMidLine();
@@ -147,8 +140,6 @@ imgProcess(void)
 		}
 
 		img_flag = IMG_READY;
-
-		DEBUG_OUT("img is ready #################################\n",0);
 
 		return ret;
 	}
@@ -441,7 +432,6 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 	int32 averageX=0, averageY=0;
 	int8 i;
 	int8 availableLines = FinalLine - BaseLine;
-	//	float error=0;
 
 	for (i = BaseLine; i < FinalLine; ++i) {
 		sumX += i;
@@ -464,70 +454,7 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 		*k = (float) sumX / sumY;
 	}
 	*b = (int8) averageY -*k*averageX;
-	//
-	//	for (i = BaseLine; i < FinalLine; ++i) {
-	//		error += (*k*i+*b - middle[i])*(*k*i+*b-middle[i]);
-	//	}
-
-	//	return error;
 }
-///*
-// * 拉格朗日差值函数
-// */
-//static int
-//lagrange(uint8 x0, uint8 x1, uint8 x2,uint8 y0,uint8 y1,uint8 y2,uint8 x)
-//{
-//	int tmp;
-//	tmp = (x-x1)*(x-x2)/((x0-x1)*(x0-x2))*y0 +
-//			(x-x0)*(x-x2)/((x1-x0)*(x1-x2))*y1+
-//			(x-x0)*(x-x1)/((x2-x0)*(x2-x1))*y2;
-//	return tmp;
-//}
-//
-///*
-// * 使用拉格朗日插值拟合曲线
-// */
-//void
-//imgLagrange(int row1,int row2,int row3)
-//{
-//	for(int row=0;row< IMG_H; ++row){
-//		middle2[row] = lagrange(row1, row2, row3, middle[row1], middle[row2], middle[row3], row);
-//	}
-//}
-//
-///*
-// * 牛人 卡马克写的开平方函数
-// */
-//static float 
-//carmaSqrt(float x)      
-//{
-//	float xhalf = 0.5f*x;
-//	int i = *(int*)&x;      // get bits for floating VALUE
-//	i = 0x5f3759df- (i>>1); // gives initial guess y0
-//	x = *(float*)&i;        // convert bits BACK to float
-//	x = x*(1.5f-xhalf*x*x); // Newton step, repeating increases accuracy
-//	return (float)1/x;
-//}
-//
-//
-///**
-// * 使用面积法计算中线方向和曲率
-// * 返回值： 曲率
-// */
-//int
-//imgArea(int row1,int row2, int row3,int *area)
-//{
-//	int k;        //曲率
-//	int32 AB=0, BC=0, AC=0;
-//	*area = ((row2-row1)*(middle[row3]-middle[row1])-(row3-row1)*(middle[row2]-middle[row1]))/2;
-//
-//	AB = carmaSqrt((row1-row2)*(row1-row2)+(middle[row1]-middle[row2])*(middle[row1]-middle[row2]));
-//	BC = carmaSqrt((row2-row3)*(row2-row3)+(middle[row2]-middle[row3])*(middle[row2]-middle[row3]));
-//	AC = carmaSqrt((row1-row3)*(row1-row3)+(middle[row1]-middle[row3])*(middle[row1]-middle[row3]));
-//	k = 4*(*area)/(AB*BC*AC);
-//
-//	return k;
-//}
 
 /*
  * 起跑线检测

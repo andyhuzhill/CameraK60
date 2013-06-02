@@ -68,19 +68,6 @@ imgGetMidLine(void);
 void 
 imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
 
-///*
-// * 使用拉格朗日插值拟合曲线
-// */
-//void
-//imgLagrange(int row1, int row2,int row3);
-//
-///**
-// * 使用面积法计算中线方向和曲率
-// * 返回值： 曲率
-// */
-//int
-//imgArea(int row1, int row2, int row3,int *area);
-
 
 /*
  * 起跑线检测
