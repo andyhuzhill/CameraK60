@@ -142,7 +142,9 @@ uint8 cfgnum = sizeof(ov7727_reg)/sizeof(ov7727_reg[0]);   /*结构体数组成员数目*
 uint8 ov7725_init(uint8 *imgaddr)
 {
     IMG_BUFF = imgaddr;
-    while(ov7725_reg_init() == 0);
+    while(ov7725_reg_init() == 0){
+    	GPIOD_PTOR = (0xff << 8);
+    }
     ov7725_exti_init();
     return 0;
 }
