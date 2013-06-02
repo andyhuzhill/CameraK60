@@ -16,10 +16,10 @@
 
 #include "MK60DZ10.h"
 
-#define DEBUG               //切换调试输出的宏定义
-#define DEBUG_PRINT
+//#define DEBUG               //切换调试输出的宏定义
+//#define DEBUG_PRINT
 
-#define CORE_CLK_MHZ PLL_100        //定义内核频率
+#define CORE_CLK_MHZ PLL_180        //定义内核频率
 
 //存储器段的宏定义
 #if defined(__CWCC__)

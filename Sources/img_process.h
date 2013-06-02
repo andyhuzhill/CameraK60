@@ -18,8 +18,8 @@
 #include "common.h"
 #include "derivative.h"
 
-#define IMG_H (CAMERA_H /10) //隔十行取图像
-#define IMG_W (CAMERA_W /8)  //图像一行字节数
+#define IMG_H (50) 
+#define IMG_W (50)  
 
 /** 图像采集初始化
  */
@@ -44,6 +44,15 @@ imgResize(void);
 void
 imgFilter(void);
 
+
+/*
+ * 找两边黑线
+ * 影响到的变量 leftBlack[] 和 rightBlack[]
+ */
+
+void
+imgFindLine(void);
+
 /*
  * 说明: 提取图像中线
  */
@@ -53,12 +62,30 @@ imgGetMidLine(void);
 
 /**
  *  使用最小二乘法计算跑道方向
- *  输入变量:  BaseLine起始行 FinalLine终止行
- *  输出变量:  k, 斜率 b 常数项 (浮点型) 
- *  返回值:  最小二乘法拟合的残差和
+ *  输入变量:  BaseLine起始行 < FinalLine终止行
+ *  输出变量:  k, 斜率 b 常数项  
  */
-float
-imgLeastsq(uint8 BaseLine, uint8 FinalLine, float *k, float *b);
+void 
+imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
 
+///*
+// * 使用拉格朗日插值拟合曲线
+// */
+//void
+//imgLagrange(int row1, int row2,int row3);
+//
+///**
+// * 使用面积法计算中线方向和曲率
+// * 返回值： 曲率
+// */
+//int
+//imgArea(int row1, int row2, int row3,int *area);
+
+
+/*
+ * 起跑线检测
+ */
+int
+imgStartLine(void);
 
 #endif /* IMG_PROCESS_H_ */

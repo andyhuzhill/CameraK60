@@ -47,43 +47,53 @@
 #include "lcd.h"
 #include "pit.h"
 #include "port.h"
+#include "ff.h"
 
 #include "controller.h"
 #include "img_process.h"
 
-#define ABS(x)   ((x)>0 ? (x): (-x))
+#define ABS(x)   ((x)>=0 ? (x): (-x))
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
 
 #define STEER_FTM               FTM0
 #define STEER_CHN               CH0
 #define STEER_FREQ              300         //单位Hz
-#define STEER_DEFAULT_DUTY      50          //单位 百分之一
+#define STEER_DEFAULT_DUTY      FTM_PRECISON /2          //单位 千分之一
 
 #define MOTOR1_FTM              FTM1
 #define MOTOR1_CHN              CH0
 #define MOTOR1_FREQ             10000        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     100          //单位 百分之一
+#define MOTOR1_DEFAULT_DUTY     1000          //单位 千分之一
 
 #define MOTOR2_FTM              FTM1
 #define MOTOR2_CHN              CH1
 #define MOTOR2_FREQ             10000        //单位Hz
-#define MOTOR2_DEFAULT_DUTY     80            //单位百分之一
+#define MOTOR2_DEFAULT_DUTY     800            //单位千分之一
 
 #define ENCODER_FTM             FTM2
 #define ENCODER_CHN             CH1
 
 //  定义舵机PID参数
-#define PID_STEER_KP  3.5
-#define PID_STEER_KI  2.0
-#define PID_STEER_KD  0.0
+#define PID_STEER_KP  8.5
+#define PID_STEER_KI  0.0
+#define PID_STEER_KD  15.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  30
+#define PID_MOTOR_KP  200.0
 #define PID_MOTOR_KI  0.0
-#define PID_MOTOR_KD  0.0
+#define PID_MOTOR_KD  50.0
 #define PID_MOTOR_INTEGRATION_LIMIT     20.0
+
+#define STEER_MAX  590
+#define STEER_MIN  410
+
+//#define  SDCARD			//SD卡调试
+
+//#define  SERIAL
+//#define  AT2401
+
 
 
 #if  1

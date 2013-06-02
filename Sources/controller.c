@@ -19,107 +19,151 @@ PidObject pidSteer;
 PidObject pidMotor;
 
 void pidInit(PidObject *pid, const float desired, const float kp,
-        const float ki, const float kd)
+		const float ki, const float kd)
 {
-    pid->error = 0;
-    pid->prevError = 0;
-    pid->integ = 0;
-    pid->deriv = 0;
-    pid->desired = desired;
-    pid->kp = kp;
-    pid->ki = ki;
-    pid->kd = kd;
+	pid->error = 0;
+	pid->prevError = 0;
+	pid->integ = 0;
+	pid->deriv = 0;
+	pid->desired = desired;
+	pid->kp = kp;
+	pid->ki = ki;
+	pid->kd = kd;
 
-    pid->iLimit = DEFAULT_PID_INTEGRATION_LIMIT;
+	pid->iLimit = DEFAULT_PID_INTEGRATION_LIMIT;
+}
+
+void pidSetKp(PidObject *pid, const float kp)
+{
+	pid->kp = kp;
+}
+
+void pidSetKi(PidObject *pid, const float ki)
+{
+	pid->ki = ki;
+}
+
+void pidSetKd(PidObject *pid, const float kd)
+{
+	pid->kd = kd;
 }
 
 float UpdataPID(PidObject *pid, const float measured)
 {
-    float output;
+	float output;
 
-    pid->error = pid->desired - measured;       //计算误差
+	pid->error = pid->desired - measured;       //计算误差
 
-    pid->integ += pid->error;                   //计算积分
+	pid->integ += pid->error;                   //计算积分
 
-    if(pid->integ > pid->iLimit)                //避免积分和超过限制
-    {
-        pid->integ = pid->iLimit;
-    }
-    else if (pid->integ < - pid->iLimit)
-    {
-        pid->integ = -pid->iLimit;
-    }
+	if(pid->integ > pid->iLimit) {               //避免积分和超过限制
+		pid->integ = pid->iLimit;
+	} else if (pid->integ < - pid->iLimit) {
+		pid->integ = -pid->iLimit;
+	}
 
-    pid->deriv = (pid->error - pid->prevError); //计算微分
+	pid->deriv = (pid->error - pid->prevError); //计算微分
 
-    //计算PID输出
-    output = pid->kp * pid->error + pid->ki*pid->integ + pid->kd *pid->deriv; 
+	//计算PID输出
+	output = pid->kp * pid->error + pid->ki*pid->integ + pid->kd *pid->deriv; 
 
-    pid->prevError = pid->error;
+	pid->prevError = pid->error;
 
-    return output;
+	return output;
 }
 
 void steerInit(void)
 {
-    FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);
+	FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, STEER_DEFAULT_DUTY);
 
-    pidInit(&pidSteer, 0, PID_STEER_KP, PID_STEER_KI, PID_STEER_KD);
-    pidSteer.iLimit = PID_STEER_INTEGRATION_LIMIT;
-}
-
-void steerSetDuty(uint8 duty)
-{   
-    FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
+	pidInit(&pidSteer, 0, PID_STEER_KP, PID_STEER_KI, PID_STEER_KD);
+	pidSteer.iLimit = PID_STEER_INTEGRATION_LIMIT;
 }
 
 void
-decoderSet(void)
+steerUpdate(int8 error)
 {
-    pit_init_ms(PIT0, 100);  //100ms 触发一次PIT中断 进行测速
+	int32 out;
+
+	//	pidSetKp(&pidSteer,(error)*(error)*0.5 + 3);
+	out = UpdataPID(&pidSteer, error);
+
+	out += 500;
+
+	steerSetDuty(out);
+}
+
+void steerSetDuty(uint32 duty)
+{   
+	if(duty > STEER_MAX){
+		duty = STEER_MAX;
+	}else if(duty < STEER_MIN){
+		duty = STEER_MIN;
+	}
+	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
 }
 
 void 
 motorInit(void)
 {
-    FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
-    FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
+	FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
+	FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, MOTOR2_DEFAULT_DUTY);
 
-    pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
-    pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
+	pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
+	pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
-    port_init(PTA11, IRQ_FALLING | PULLUP | PF);                 //编码器输入 下降沿中断 上拉 带滤波
-    decoderSet();
+	// TAGS: 编码器PTA10输入 下降沿中断 上拉 带滤波
+	port_init(PTA10, IRQ_FALLING | PULLUP | PF);                 
+
+	pit_init_ms(PIT0, 500);  //100ms 触发一次PIT中断 进行测速
 }
 
 extern bool getEncoder;
+vuint32  speed_cnt=0;      // 编码器采集到的现在的速度值
 
-void motorSetSpeed(uint32 realspeed, uint32 speed)
+void 
+motorSetSpeed(uint32 speed)
 {
-    static float duty;
-    int32 pwm;
+	static float duty;
+	int32 pwm;
 
-//    printf("getEncoder is %d\n",(getEncoder == true));
-//    printf("duty is %ld\n", (uint32)duty);
-//    printf("speed_cnt is %ld\n", realspeed);
+#ifdef CLOSE_LOOP
+	if(true == getEncoder)  {
+		pidMotor.desired = speed;
+		pwm = (int32)UpdataPID(&pidMotor, speed_cnt);
 
-    if(true == getEncoder) 
-    {
-        pidMotor.desired = speed;
-        pwm = (int32)UpdataPID(&pidMotor, realspeed);
+		duty = duty + pwm;
+		//	duty = speed;
+		if(duty>FTM_PRECISON) duty = FTM_PRECISON;
+		if(duty<0) duty = 0;
 
-        duty = duty + PWM2DUTY(pwm);
-        if(duty>100) duty = 100;
-        if(duty<0) duty = 0;
-        
-        duty = speed;
+		printf("duty is %ld\n", (uint32)duty);
+		duty = FTM_PRECISON - duty;
 
-        printf("duty is %ld\n", (uint32)duty);
-        duty = 100 - duty;
+		printf("speed_cnt is %ld\n", speed_cnt);
 
-        printf("speed_cnt is %ld\n", realspeed);
+		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);
+		getEncoder = false;
+	}
+#else
+	pwm = FTM_PRECISON - speed;
+	
+	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32) pwm);
+	
+#endif
+}
 
-        FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);
-        getEncoder = false;
-    }
+void
+stopcar(void)
+{
+	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN,     0);
+	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, 1000);
+	motorSetSpeed(0);
+	while(1)
+	{
+		GPIOD_PSOR |= (0x55 << 8);
+		DELAY_MS(500);
+		GPIOD_PSOR |= (0xaa << 8);
+		DELAY_MS(500);
+	}
 }

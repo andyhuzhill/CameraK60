@@ -25,7 +25,7 @@ void ov7725_exti_init()
 
     DMA_IRQ_EN(DMA_CH0);                           //DMA通道使能
 
-    port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，下降沿触发中断，带滤波
+    port_init(PTA29, IRQ_RISING | PULLUP | PF);    //场中断，下拉，上升沿触发中断，带滤波
 
     disable_irq(PORTA_IRQn); 					   //关闭PTA的中断
 }
@@ -37,8 +37,6 @@ void ov7725_get_img()
     enable_irq(PORTA_IRQn);                 //允许PTA的中断
     while(img_flag != IMG_FINISH)           //等待图像采集完毕
     {
-        DEBUG_OUT("img_flag != IMG_FINISH\n",0);
-
         if(img_flag == IMG_FAIL)            //假如图像采集错误，则重新开始采集
         {
             img_flag = IMG_START;			//开始采集图像
@@ -54,7 +52,7 @@ Register_Info ov7727_reg[] =
 {
 
         //寄存器，寄存器值次
-        {COM4         ,0x81},
+        {COM4         ,0x41},
         {CLKRC        ,0x00}, 
         {COM2         ,0x03}, 
         {COM3         ,0xD0}, 
@@ -63,7 +61,7 @@ Register_Info ov7727_reg[] =
         {COM7         ,0x40},  
         {HSTART       ,0x3F},
         {HSIZE        ,0x50}, 
-        {VSTRT        ,0x03},
+        {VSTRT        ,0x00},
         {VSIZE        ,0x78},
         {HREF         ,0x00}, 
         {SCAL0        ,0x0A},
@@ -124,7 +122,7 @@ Register_Info ov7727_reg[] =
         {BDMStep      ,0x03},
         {SDE          ,0x04},
         {BRIGHT       ,0x00},                              
-        {CNST         ,0xff},
+        {CNST         ,0x39},
         {SIGN         ,0x06},
         {UVADJ0       ,0x11},
         {UVADJ1       ,0x02},

@@ -45,19 +45,24 @@ float UpdataPID(PidObject *pid, const float measured);
 void pidInit(PidObject *pid, const float desired, const float kp,
         const float ki, const float kd);
 
-void
-decoderSet(void);
+void pidSetKp(PidObject *pid, const float kp);
 
+void pidSetKi(PidObject *pid, const float ki);
+
+void pidSetKd(PidObject *pid, const float kd);
 /*
  * 舵机控制器初始化
  */
 void steerInit(void);
 
+void
+steerUpdate(int8 error);
+
 /*
  * 舵机改变占空比
  * duty 要达到的占空比
  */
-void steerSetDuty(uint8 duty);
+void steerSetDuty(uint32 duty);
 
 /*
  * 电机控制初始化
@@ -69,6 +74,13 @@ void motorInit(void);
  * speed 想要达到的速度
  * realspeed 实际的速度
  */
-void motorSetSpeed(uint32 realspeed, uint32 speed);
+void 
+motorSetSpeed(uint32 speed);
+
+/**
+ * 刹车
+ */
+void
+stopcar(void);
 
 #endif /* CONTROLLER_H_ */

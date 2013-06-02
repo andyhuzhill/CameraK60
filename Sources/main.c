@@ -16,8 +16,7 @@
 #include "derivative.h" /* include peripheral declarations */
 
 //全局变量定义
-vuint32 speed_cnt=0;      // 编码器采集到的现在的速度值
-vuint32  encoder_cnt=0;
+
 volatile bool getEncoder= false;
 
 void
@@ -44,10 +43,13 @@ main(void)
     imgInit();      //摄像头初始化
     motorInit();    //电机控制初始化
 
+#ifdef AT2401
+	NRF_Init();
+#endif
 
     EnableInterrupts;   //开全局中断
     
-    motorSetSpeed(encoder_cnt, 40);
+    motorSetSpeed(300);
 
     for (;;) 
     {
