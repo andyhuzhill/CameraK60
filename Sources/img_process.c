@@ -125,16 +125,16 @@ imgProcess(void)
 		ret = k*25+b;
 		if(ABS(k) <= 0.09 && (ABS(ret - 25) < 3)){
 			steerSetDuty(500);
-			motorSetSpeed(250);
+			motorSetSpeed(400);
 		}else{
 			if((k > 0) && ((ret) >25)){
 				steerSetDuty(500);
-				motorSetSpeed(150);
+				motorSetSpeed(300);
 			}else if((k < 0) && ((ret) < 25)){
 				steerSetDuty(500);
-				motorSetSpeed(150);
+				motorSetSpeed(300);
 			}else{
-				motorSetSpeed(200);
+				motorSetSpeed(350);
 				steerUpdate(ret-25);
 			}
 		}

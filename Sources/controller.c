@@ -115,7 +115,7 @@ motorInit(void)
 	// TAGS: 编码器PTA10输入 下降沿中断 上拉 带滤波
 	port_init(PTA10, IRQ_FALLING | PULLUP | PF);                 
 
-	pit_init_ms(PIT0, 500);  //100ms 触发一次PIT中断 进行测速
+	pit_init_ms(PIT0, 10);  //10ms 触发一次PIT中断 进行测速
 }
 
 extern bool getEncoder;
@@ -133,7 +133,6 @@ motorSetSpeed(uint32 speed)
 		pwm = (int32)UpdataPID(&pidMotor, speed_cnt);
 
 		duty = duty + pwm;
-		//	duty = speed;
 		if(duty>FTM_PRECISON) duty = FTM_PRECISON;
 		if(duty<0) duty = 0;
 

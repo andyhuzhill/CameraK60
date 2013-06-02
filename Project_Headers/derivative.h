@@ -94,15 +94,7 @@
 //#define  SERIAL
 //#define  AT2401
 
-
-
-#if  1
-#define DUTY2PWM(duty)  (738*(duty)-3535)
-#define PWM2DUTY(pwm)   (((pwm)+3535)/738)
-#else
-#define DUTY2PWM(duty)  (441*(duty)-3546)
-#define PWM2DUTY(pwm)   (((pwm)+3546)/441)
-#endif 
+//#define  CLOSE_LOOP		//±Õ»·µ÷ËÙ
 
 #endif
 
