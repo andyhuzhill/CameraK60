@@ -41,7 +41,7 @@ typedef enum CHn
 
 /*********************** PWM **************************/
 
-#define FTM_PRECISON 100u     /*
+#define FTM_PRECISON 1000u     /*
                                 定义占空比精度，100即精度为1%，1000u则精度为0.1%，
                                 用于占空比 duty 形参传入，即占空比为 
                                 duty/FTM_PRECISON */

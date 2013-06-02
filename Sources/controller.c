@@ -147,18 +147,21 @@ motorSetSpeed(uint32 speed)
 	}
 #else
 	pwm = FTM_PRECISON - speed;
-	
+
+	if(pwm > FTM_PRECISON) pwm = FTM_PRECISON;
+	if(pwm<0) pwm = 0;
+
 	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32) pwm);
-	
+
 #endif
 }
 
 void
 stopcar(void)
 {
-	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN,     0);
+	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN,  1);
 	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, 1000);
-	motorSetSpeed(0);
+	motorSetSpeed(1);
 	while(1)
 	{
 		GPIOD_PSOR |= (0x55 << 8);
