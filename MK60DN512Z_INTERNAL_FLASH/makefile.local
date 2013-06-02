@@ -5,7 +5,7 @@
 ################################################################################
 
 export Gnu_Make_Install_DirEnv=$(CWInstallLocationEnv)/gnu/bin
-export ProjDirPath=/home/scout/freeworkspace/CWK60
-export CWInstallLocationEnv=/home/scout/Freescale/CodeWarrior_MCU_10.2
+export ProjDirPath=/home/andy/freeworkspace/CWK60
+export CWInstallLocationEnv=/home/andy/Freescale/CodeWarrior_MCU_10.2
 export MCUToolsBaseDirEnv=$(CWInstallLocationEnv)/MCU
 export ARM_ToolsDirEnv=$(CWInstallLocationEnv)/MCU/ARM_Tools/Command_Line_Tools
