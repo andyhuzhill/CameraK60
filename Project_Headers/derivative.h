@@ -94,7 +94,7 @@
 //#define  SERIAL
 //#define  AT2401
 
-//#define  CLOSE_LOOP		//闭环调速
+#define  CLOSE_LOOP		//闭环调速
 
 #endif
 
