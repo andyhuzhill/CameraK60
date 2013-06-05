@@ -49,8 +49,6 @@ main(void)
 
     EnableInterrupts;   //开全局中断
     
-    motorSetSpeed(300);
-
     for (;;) 
     {
         imgProcess();

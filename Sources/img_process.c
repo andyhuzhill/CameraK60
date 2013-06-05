@@ -76,13 +76,28 @@ imgProcess(void)
 
 	imgGetImg();
 
-
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
 		imgResize();
+		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
 		imgLeastsq(MAX(lostRow,C), A, &k, &b);
+
+		ret = k*25+b;
+		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 3)){
+			steerSetDuty(500);
+			motorSetSpeed(500);
+		}else{
+			if((k > 0.4) && ((ret) >25) || (k < -0.4) && ((ret) < 25) || ( b == 0)){
+				motorSetSpeed(400);
+			}else{
+				motorSetSpeed(400);
+				steerUpdate(ret-25);
+			}
+		}
+
+		img_flag = IMG_READY;
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -100,12 +115,12 @@ imgProcess(void)
 		}
 		f_printf(&file, "\n");
 
-//		ufc.f = k;
-//
-//		f_printf(&file,"ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
+		//		ufc.f = k;
+		//
+		//		f_printf(&file,"ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
 
 		f_close(&file);
-		
+
 #endif 
 
 #ifdef SERIAL
@@ -122,25 +137,6 @@ imgProcess(void)
 		printf("ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
 
 #endif
-		ret = k*25+b;
-		if(ABS(k) <= 0.09 && (ABS(ret - 25) < 3)){
-			steerSetDuty(500);
-			motorSetSpeed(400);
-		}else{
-			if((k > 0) && ((ret) >25)){
-				steerSetDuty(500);
-				motorSetSpeed(300);
-			}else if((k < 0) && ((ret) < 25)){
-				steerSetDuty(500);
-				motorSetSpeed(300);
-			}else{
-				motorSetSpeed(350);
-				steerUpdate(ret-25);
-			}
-		}
-
-		img_flag = IMG_READY;
-
 		return ret;
 	}
 	return ret;
@@ -212,7 +208,6 @@ imgFindLine(void)
 
 	memset(leftBlack, -1, sizeof(leftBlack));
 	memset(rightBlack, IMG_W, sizeof(rightBlack));
-	memset((void *)middle, (IMG_W/2), sizeof(middle));
 
 	for (row = IMG_H -10; row > (IMG_H -16); --row){  //搜索前五行
 		getLeftBlack = 0;
@@ -353,6 +348,15 @@ imgFindLine(void)
 			}
 		}
 	}
+
+	for (row = 2; row < IMG_W-2; ++row) {
+		if(leftBlack[row+1] == -1 && leftBlack[row] != -1 && leftBlack[row-1] == -1){
+			leftBlack[row] = -1;
+		}
+		if(rightBlack[row+1] == IMG_W && rightBlack[row] != IMG_W && rightBlack[row-1] == IMG_W){
+			rightBlack[row] = IMG_W;
+		}
+	}
 }
 
 
@@ -365,23 +369,26 @@ imgGetMidLine(void)
 {
 	int leftCnt=0, rightCnt=0;
 	lostRow = 10;
+
+	memset((void *)middle, (IMG_W/2), sizeof(middle));
 	for (int row = IMG_H-3; row > 2; --row)  {
-
-		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W){
-			middle[row] = (leftBlack[row] + rightBlack[row]) /2;
-			leftCnt = 0;
-			rightCnt = 0;
-			continue;       //继续for循环
-		}
-
 		if(leftBlack[row] == rightBlack[row] || (leftBlack[row] > rightBlack[row])){
-			lostRow = row;
-			if(leftBlack[row+5] != -1 && rightBlack[row+5] == IMG_W) {        //右线找到左线
+			if(leftBlack[row+3] != -1 && rightBlack[row+3] == IMG_W) {        //右线找到左线
 				rightLostRow = row;
 				rightBlack[row] = IMG_W;
-			}else if(rightBlack[row+5] != IMG_W && leftBlack[row+5] == -1){   //左线找到右线
+			}else if(rightBlack[row+3] != IMG_W && leftBlack[row+3] == -1){   //左线找到右线
 				leftLostRow = row;
 				leftBlack[row] = -1;
+			}else if((leftBlack[row+3] == -1) && (rightBlack[row+3] == IMG_W)){
+				if((leftBlack[row-3] != -1) && (rightBlack[row-3] == IMG_W)){   //右线找到左线
+					rightLostRow = row;
+					rightBlack[row] = IMG_W;
+				}else if((leftBlack[row-3] == -1) && (rightBlack[row-3] != IMG_W)){ // 左线找到右线
+					leftLostRow = row;
+					leftBlack[row] = -1;
+				}else{
+					return ;
+				}
 			}
 		}
 
@@ -403,14 +410,16 @@ imgGetMidLine(void)
 			middle[row] = middle[row+1] ;
 		}
 
-		if(leftCnt >=25 && rightCnt >= 25){
-			stopcar();
+		if((middle[row] <= 3) || (middle[row] >= (IMG_W-3)) || (ABS(middle[row] - middle[row+1]) >= 10)&&(row < 30)){
+			if(lostRow == 10){
+				lostRow = row + 2;
+			}
 		}
 
-		if((middle[row] <= 3) || (middle[row] >= (IMG_W-3))){
-			if(lostRow == 10){
-				lostRow = row;
-			}
+		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W){
+			middle[row] = (leftBlack[row] + rightBlack[row]) /2;
+			leftCnt = 0;
+			rightCnt = 0;
 		}
 	}
 
@@ -432,6 +441,12 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 	int32 averageX=0, averageY=0;
 	int8 i;
 	int8 availableLines = FinalLine - BaseLine;
+
+	if(availableLines == 0){
+		*k = 0;
+		*b = 0;
+		return ;
+	}
 
 	for (i = BaseLine; i < FinalLine; ++i) {
 		sumX += i;
