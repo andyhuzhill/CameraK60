@@ -52,6 +52,8 @@ imgGetImg(void)
 	}
 }
 
+extern PidObject pidSteer;
+
 int
 imgProcess(void)
 {
@@ -84,18 +86,27 @@ imgProcess(void)
 		imgGetMidLine();
 		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
-		ret = k*25+b;
-		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 3)){
-			steerSetDuty(500);
-			motorSetSpeed(500);
-		}else{
-			if((k > 0.4) && ((ret) >25) || (k < -0.4) && ((ret) < 25) || ( b == 0)){
-				motorSetSpeed(400);
-			}else{
-				motorSetSpeed(400);
-				steerUpdate(ret-25);
-			}
-		}
+		ret = k*25+b - 25;
+		
+		pidSteer.kp = ret*ret + 1;
+		
+		steerUpdate(ret);
+		motorSetSpeed(500 - ABS(ret)*10);
+		
+//		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 3)){
+//			steerSetDuty(500);
+//			motorSetSpeed(600);
+//		}else{
+//			if(b == 0){
+//				motorSetSpeed(400);
+////			}else if((k>0)&&(ret >25) || (k<0)&&(ret <25)){
+////				motorSetSpeed(500);
+////				steerSetDuty(500+k*100);
+//			}else{
+//				motorSetSpeed(450);
+//				steerUpdate(ret-25);
+//			}
+//		}
 
 		img_flag = IMG_READY;
 

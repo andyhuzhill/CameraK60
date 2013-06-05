@@ -75,9 +75,9 @@
 #define ENCODER_CHN             CH1
 
 //  定义舵机PID参数
-#define PID_STEER_KP  8.5
+#define PID_STEER_KP  10.5
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  12.0
+#define PID_STEER_KD  30.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
@@ -89,7 +89,7 @@
 #define STEER_MAX  595
 #define STEER_MIN  405
 
-//#define  SDCARD			//SD卡调试
+#define  SDCARD			//SD卡调试
 
 //#define  SERIAL
 //#define  AT2401

@@ -61,7 +61,7 @@ Register_Info ov7727_reg[] =
         {COM7         ,0x40},  
         {HSTART       ,0x3F},
         {HSIZE        ,0x50}, 
-        {VSTRT        ,0x05},
+        {VSTRT        ,0x00},
         {VSIZE        ,0x78},
         {HREF         ,0x00}, 
         {SCAL0        ,0x0A},
