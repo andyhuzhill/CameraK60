@@ -89,9 +89,9 @@
 #define STEER_MAX  595
 #define STEER_MIN  405
 
-#define  SDCARD			//SD卡调试
+//#define  SDCARD			//SD卡调试
 
-//#define  SERIAL
+#define  SERIAL
 //#define  AT2401
 
 //#define  CLOSE_LOOP		//闭环调速

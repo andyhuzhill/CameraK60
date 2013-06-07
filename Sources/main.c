@@ -39,9 +39,9 @@ main(void)
     DisableInterrupts;  //关全局中断
 
  	ledInit();
-    steerInit();
+//    steerInit();
     imgInit();      //摄像头初始化
-    motorInit();    //电机控制初始化
+//    motorInit();    //电机控制初始化
 
 #ifdef AT2401
 	NRF_Init();

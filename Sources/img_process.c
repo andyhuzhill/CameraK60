@@ -87,21 +87,23 @@ imgProcess(void)
 		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
 		ret = k*25+b - 25;
-		
-		pidSteer.kp = ret*ret + 1;
-		
-		steerUpdate(ret);
-		motorSetSpeed(500 - ABS(ret)*10);
-		
+
+		//		pidSteer.kp = ret*ret + 1;
+		//		
+		//		steerUpdate(ret);
+		//		motorSetSpeed(500 - ABS(ret)*10);
+
 //		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 3)){
 //			steerSetDuty(500);
 //			motorSetSpeed(600);
 //		}else{
 //			if(b == 0){
 //				motorSetSpeed(400);
-////			}else if((k>0)&&(ret >25) || (k<0)&&(ret <25)){
-////				motorSetSpeed(500);
+//			}else if((k>0)&&(ret >25) || (k<0)&&(ret <25)){
+//				motorSetSpeed(500);
 ////				steerSetDuty(500+k*100);
+//				ret = k*15 + b;
+//				steerUpdate(ret - 25);
 //			}else{
 //				motorSetSpeed(450);
 //				steerUpdate(ret-25);
@@ -126,12 +128,7 @@ imgProcess(void)
 		}
 		f_printf(&file, "\n");
 
-		//		ufc.f = k;
-		//
-		//		f_printf(&file,"ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
-
 		f_close(&file);
-
 #endif 
 
 #ifdef SERIAL
