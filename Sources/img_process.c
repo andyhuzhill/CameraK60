@@ -57,8 +57,8 @@ extern PidObject pidSteer;
 int
 imgProcess(void)
 {
-	float k;
-	int8 b;
+	float k,k1;
+	int8 b,b1;
 	static int ret;
 	int A = 40;
 	int C = 10;
@@ -84,31 +84,29 @@ imgProcess(void)
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
+		if(lostRow >= 35){
+			img_flag = IMG_READY;
+			return ret;
+		}
 		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
-		ret = k*25+b - 25;
-
-		//		pidSteer.kp = ret*ret + 1;
-		//		
-		//		steerUpdate(ret);
-		//		motorSetSpeed(500 - ABS(ret)*10);
-
-//		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 3)){
-//			steerSetDuty(500);
-//			motorSetSpeed(600);
-//		}else{
-//			if(b == 0){
-//				motorSetSpeed(400);
-//			}else if((k>0)&&(ret >25) || (k<0)&&(ret <25)){
-//				motorSetSpeed(500);
-////				steerSetDuty(500+k*100);
-//				ret = k*15 + b;
-//				steerUpdate(ret - 25);
-//			}else{
-//				motorSetSpeed(450);
-//				steerUpdate(ret-25);
-//			}
-//		}
+		ret = k*30+b;
+	
+		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
+			steerSetDuty(502);
+			motorSetSpeed(13 - ABS(k)*3);
+			steerUpdate(ret -25);
+		}else{
+			if(b == 0){
+				motorSetSpeed(13-ABS(k)*5);
+				steerUpdate(ret -25);
+			}else{
+				motorSetSpeed(13-ABS(k)*5);
+				ret = steerUpdate(ret - 25);
+				ret += 500;
+				steerSetDuty(ret);
+			}
+		}
 
 		img_flag = IMG_READY;
 
@@ -377,22 +375,22 @@ imgGetMidLine(void)
 {
 	int leftCnt=0, rightCnt=0;
 	lostRow = 10;
+	int slop1 = 0, slop2 = 0;
 
 	memset((void *)middle, (IMG_W/2), sizeof(middle));
 	for (int row = IMG_H-3; row > 2; --row)  {
 		if(leftBlack[row] == rightBlack[row] || (leftBlack[row] > rightBlack[row])){
+			if(lostRow == 10){
+				lostRow = row;
+			}
 			if(leftBlack[row+3] != -1 && rightBlack[row+3] == IMG_W) {        //右线找到左线
-				rightLostRow = row;
 				rightBlack[row] = IMG_W;
 			}else if(rightBlack[row+3] != IMG_W && leftBlack[row+3] == -1){   //左线找到右线
-				leftLostRow = row;
 				leftBlack[row] = -1;
 			}else if((leftBlack[row+3] == -1) && (rightBlack[row+3] == IMG_W)){
 				if((leftBlack[row-3] != -1) && (rightBlack[row-3] == IMG_W)){   //右线找到左线
-					rightLostRow = row;
 					rightBlack[row] = IMG_W;
 				}else if((leftBlack[row-3] == -1) && (rightBlack[row-3] != IMG_W)){ // 左线找到右线
-					leftLostRow = row;
 					leftBlack[row] = -1;
 				}else{
 					return ;
@@ -403,19 +401,19 @@ imgGetMidLine(void)
 		if(leftBlack[row] ==-1 && rightBlack[row] != IMG_W){           //丢失左线
 			leftCnt ++;
 			if(row < 30 && leftCnt >= 2){
-				middle[row] = middle[row+1] + (rightBlack[row] - rightBlack[row+1]);
+				middle[row] = (middle[row+1] + (rightBlack[row] - rightBlack[row+1]) +middle[row+1])/2;
 			}else{
-				middle[row] = rightBlack[row]/2;
+				middle[row] = (rightBlack[row]/2 + middle[row+1])/2;
 			}
 		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
 			rightCnt ++;
 			if(row < 30 && rightCnt >= 2){
-				middle[row] = middle[row+1] + (leftBlack[row] - leftBlack[row+1]);
+				middle[row] = (middle[row+1] + (leftBlack[row] - leftBlack[row+1]) + middle[row+1])/2;
 			}else{
-				middle[row] = (IMG_W+leftBlack[row])/2;
+				middle[row] = ((IMG_W+leftBlack[row])/2 + middle[row+1]) /2;
 			}
 		}else if((leftBlack[row] == -1) && (rightBlack[row] == IMG_W)){    //十字丢线
-			middle[row] = middle[row+1] ;
+			middle[row] = middle[row+1];
 		}
 
 		if((middle[row] <= 3) || (middle[row] >= (IMG_W-3)) || (ABS(middle[row] - middle[row+1]) >= 10)&&(row < 30)){
@@ -432,6 +430,16 @@ imgGetMidLine(void)
 	}
 
 	for (int row = IMG_H-2; row > 1; --row)  {      //平滑中线
+		if(row < 35){
+			slop1 = middle[row+2] - middle[row];
+			slop2 = middle[row] - middle[row-2];
+
+			if(slop1*slop2 < 0){       // middle[row]是拐点
+				if((ABS(slop1)+ABS(slop2)) > 5){
+					middle[row-1] = middle[row];
+				}
+			}
+		}
 		middle[row] = (middle[row-1] + middle[row+1])/2;
 	}
 }

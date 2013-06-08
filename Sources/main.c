@@ -36,21 +36,23 @@ ledInit(void)
 int 
 main(void)
 {   
-    DisableInterrupts;  //关全局中断
+	DisableInterrupts;  //关全局中断
 
- 	ledInit();
-//    steerInit();
-    imgInit();      //摄像头初始化
-//    motorInit();    //电机控制初始化
+	ledInit();
+	steerInit();
+	imgInit();      //摄像头初始化
+	motorInit();    //电机控制初始化
 
 #ifdef AT2401
 	NRF_Init();
 #endif
 
-    EnableInterrupts;   //开全局中断
-    
-    for (;;) 
-    {
-        imgProcess();
-    }
+	EnableInterrupts;   //开全局中断
+
+	motorSetSpeed(15);
+	for (;;) 
+	{
+		imgProcess();
+		//		motorSetSpeed(15);
+	}
 }

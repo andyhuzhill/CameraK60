@@ -80,17 +80,14 @@ void steerInit(void)
 	pidSteer.iLimit = PID_STEER_INTEGRATION_LIMIT;
 }
 
-void
+int32
 steerUpdate(int8 error)
 {
 	int32 out;
 
-	//	pidSetKp(&pidSteer,(error)*(error)*0.5 + 3);
 	out = UpdataPID(&pidSteer, error);
 
-	out += 500;
-
-	steerSetDuty(out);
+	return out;
 }
 
 void steerSetDuty(uint32 duty)
@@ -115,7 +112,7 @@ motorInit(void)
 	// TAGS: 编码器PTA10输入 下降沿中断 上拉 带滤波
 	port_init(PTA10, IRQ_FALLING | PULLUP | PF);                 
 
-	pit_init_ms(PIT0, 10);  //10ms 触发一次PIT中断 进行测速
+	pit_init_ms(PIT0, 1);  //1ms 触发一次PIT中断 进行测速
 }
 
 extern bool getEncoder;
@@ -133,15 +130,13 @@ motorSetSpeed(uint32 speed)
 		pwm = (int32)UpdataPID(&pidMotor, speed_cnt);
 
 		duty = duty + pwm;
-		if(duty>FTM_PRECISON) duty = FTM_PRECISON;
-		if(duty<0) duty = 0;
+		
+		printf("get speed_cnt is %d, duty is %d\n", speed_cnt, (int32)duty);
+		
+		if(duty > FTM_PRECISON) duty = FTM_PRECISON;
+		if(duty < 0) duty = 0;
 
-		printf("duty is %ld\n", (uint32)duty);
-		duty = FTM_PRECISON - duty;
-
-		printf("speed_cnt is %ld\n", speed_cnt);
-
-		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)duty);
+		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
 		getEncoder = false;
 	}
 #else

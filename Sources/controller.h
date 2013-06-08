@@ -55,7 +55,7 @@ void pidSetKd(PidObject *pid, const float kd);
  */
 void steerInit(void);
 
-void
+int32
 steerUpdate(int8 error);
 
 /*
