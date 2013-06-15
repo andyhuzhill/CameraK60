@@ -16,8 +16,8 @@
 
 #include "MK60DZ10.h"
 
-#define DEBUG               //切换调试输出的宏定义
-#define DEBUG_PRINT
+//#define DEBUG               //切换调试输出的宏定义
+//#define DEBUG_PRINT
 
 #define CORE_CLK_MHZ PLL_180        //定义内核频率
 
@@ -98,7 +98,7 @@ void set_irq_priority (int, int);
 #define ERROR (0)
 #define SUCCESS (1)
 
-typedef enum {false = 0, true = !false} bool;
+typedef enum {false = 0, true = 1} bool;
 
 /*
  * 定义中断号

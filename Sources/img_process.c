@@ -20,7 +20,6 @@
 static int8 leftBlack[IMG_H] = {0};
 static int8 rightBlack[IMG_H]={0};
 static int8 middle[IMG_H] = {0};                         //记录中线位置
-static uint8 middle2[IMG_H] = {0};
 
 static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
@@ -57,8 +56,8 @@ extern PidObject pidSteer;
 int
 imgProcess(void)
 {
-	float k,k1;
-	int8 b,b1;
+	float k;
+	int8 b;
 	static int ret;
 	int A = 40;
 	int C = 10;
@@ -138,9 +137,9 @@ imgProcess(void)
 			printf("\n");
 		}
 		printf("\n");
-
-		ufc.f = k;
-		printf("ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
+//
+//		ufc.f = k;
+//		printf("ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
 
 #endif
 		return ret;
@@ -152,12 +151,13 @@ imgProcess(void)
 /**
  * 影响到的变量 img[]
  */
+__relocate_code__
 void
 imgResize(void)              
 {
-	uint32 tmpIndex, tmpRow;
-	uint16 col,row;    
-	uint16 oldCol,oldRow; 
+	int32 tmpIndex, tmpRow;
+	int16 col,row;    
+	int16 oldCol,oldRow; 
 
 	for(row=0; row < IMG_H; row++) {
 		oldRow = ((row * CAMERA_H  + (IMG_H >> 1) ) / IMG_H);
@@ -184,7 +184,7 @@ imgResize(void)
 void
 imgFilter(void)
 {
-	uint8 row, col;
+	int8 row, col;
 	for (row = 1; row < IMG_H-1; ++row) {
 		for (col = 1; col < IMG_W-1; ++col) {
 			if (img[row][col-1]==1 && img[row][col]==0 && img[row][col+1]==1) {
@@ -202,7 +202,7 @@ imgFilter(void)
  * 找两边黑线
  * 影响到的变量 leftBlack[] 和 rightBlack[]
  */
-
+__relocate_code__
 void
 imgFindLine(void)
 {
@@ -370,6 +370,7 @@ imgFindLine(void)
  * 说明: 提取图像中线
  * 影响到的变量:  middle[];
  */
+__relocate_code__
 void
 imgGetMidLine(void)
 {
@@ -450,6 +451,7 @@ imgGetMidLine(void)
  *  输入变量:  BaseLine起始行 < FinalLine终止行
  *  输出变量:  k, 斜率 b 常数项
  */
+__relocate_code__
 void
 imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 {

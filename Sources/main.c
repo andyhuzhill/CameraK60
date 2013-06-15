@@ -15,10 +15,6 @@
 
 #include "derivative.h" /* include peripheral declarations */
 
-//全局变量定义
-
-volatile bool getEncoder= false;
-
 void
 ledInit(void)
 {
@@ -53,6 +49,6 @@ main(void)
 	for (;;) 
 	{
 		imgProcess();
-		//		motorSetSpeed(15);
+//		motorSetSpeed(30);
 	}
 }

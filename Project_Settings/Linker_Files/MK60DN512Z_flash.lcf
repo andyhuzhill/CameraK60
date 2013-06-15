@@ -38,7 +38,7 @@ SECTIONS {
 {
    	* (.sdata)
    	* (.data)
-        * (.relocate_code)
+   * (.relocate_code)
 		.= ALIGN(0x4) ;
    	*(.ARM.extab)
 		.= ALIGN(0x4) ;
