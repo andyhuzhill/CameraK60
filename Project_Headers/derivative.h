@@ -10,13 +10,13 @@
  *   引脚分配:
  *
  * Motor ： EN--5V
- * PWM1--PTA8 FTM1-CH0
- * PWM2--PTA9 FTM1-CH1
+ * PWM1--PTC1 FTM0-CH0
+ * PWM2--PTC2 FTM0-CH1
  *
- * S-D5 : PTC1--FTM0-CH0
+ * S-D5 : PTC3--FTM0-CH2
  *
- * encoder : PTA11--FTM2--CH1
- *           PTA10--FTM2--CH0
+ * encoder : PTA9--FTM1--CH1
+ *           PTA8--FTM1--CH0
  *
  * Camera : SDA--PTB11 HREF--PTA28(行中断) D0~~~D7
  *          SCL--PTB10 VSYN--PTA29(场中断) PTB0~~~~PTB7
@@ -28,7 +28,7 @@
  *
  * 三轴加速度：SPI2_ PTB20-PCS0 PTB21-SCK PTB22-SOUT PTB23-SIN
  *
- * 拨码开关：PTD12,PTD13,PTD14,PTD15
+ * 拨码开关：PTD12,PTD13
  *
  * 光电管 ：PTC11
  * 
@@ -57,21 +57,21 @@
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
 
 #define STEER_FTM               FTM0
-#define STEER_CHN               CH0
+#define STEER_CHN               CH2
 #define STEER_FREQ              300         //单位Hz
 #define STEER_DEFAULT_DUTY      FTM_PRECISON /2          //单位 千分之一
 
-#define MOTOR1_FTM              FTM1
-#define MOTOR1_CHN              CH0
+#define MOTOR1_FTM              FTM0
+#define MOTOR1_CHN              CH1
 #define MOTOR1_FREQ             10000        //单位Hz
 #define MOTOR1_DEFAULT_DUTY     1000          //单位 千分之一
 
-#define MOTOR2_FTM              FTM1
-#define MOTOR2_CHN              CH1
+#define MOTOR2_FTM              FTM0
+#define MOTOR2_CHN              CH0
 #define MOTOR2_FREQ             10000        //单位Hz
 #define MOTOR2_DEFAULT_DUTY     800            //单位千分之一
 
-#define ENCODER_FTM             FTM2
+#define ENCODER_FTM             FTM1
 #define ENCODER_CHN             CH1
 
 //  定义舵机PID参数
@@ -91,7 +91,7 @@
 
 //#define  SDCARD			//SD卡调试
 
-#define  SERIAL
+//#define  SERIAL
 //#define  AT2401
 
 #define  CLOSE_LOOP		//闭环调速

@@ -19,7 +19,11 @@
 //#define DEBUG               //切换调试输出的宏定义
 //#define DEBUG_PRINT
 
-#define CORE_CLK_MHZ PLL_180        //定义内核频率
+#define CORE_CLK_MHZ PLL_200        //定义内核频率
+
+#ifndef __CWCC__
+#define __CWCC__
+#endif
 
 //存储器段的宏定义
 #if defined(__CWCC__)

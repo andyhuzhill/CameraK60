@@ -109,14 +109,14 @@ motorInit(void)
 	pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
 	pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
-	// TAGS: 编码器PTA10输入 下降沿中断 上拉 带滤波
-	port_init(PTA10, IRQ_FALLING | PULLUP | PF);                 
+	// TAGS: 编码器PTA9输入 下降沿中断 上拉 带滤波
+	port_init(PTA9, IRQ_FALLING | PULLUP | PF);                 
 
 	pit_init_ms(PIT0, 1);  //1ms 触发一次PIT中断 进行测速
 }
 
 extern vint8 getEncoder;
-vuint32  speed_cnt=0;      // 编码器采集到的现在的速度值
+vuint32  speed_cnt;      // 编码器采集到的现在的速度值
 
 void 
 motorSetSpeed(uint32 speed)
@@ -126,22 +126,18 @@ motorSetSpeed(uint32 speed)
 
 #ifdef CLOSE_LOOP
 	if(getEncoder)  {
-//		printf("get Encoder is %d\n",getEncoder);
-		
 		pidMotor.desired = speed;
 		pwm = (int32)UpdataPID(&pidMotor, speed_cnt);
 
 		duty = duty + pwm;
 		
-//		printf("get speed_cnt is %d, duty is %d\n", speed_cnt, (int32)duty);
-		printf("%d\n",speed_cnt);
+		printf("%d\n", speed_cnt);
 		
 		if(duty > FTM_PRECISON) duty = FTM_PRECISON;
 		if(duty < 0) duty = 0;
 
 		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
 		getEncoder = 0;
-//		printf("getEncoder is %d\n",getEncoder);
 	}
 #else
 	pwm = FTM_PRECISON - speed;

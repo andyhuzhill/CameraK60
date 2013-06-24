@@ -48,7 +48,7 @@ main(void)
 	motorSetSpeed(15);
 	for (;;) 
 	{
-		imgProcess();
-//		motorSetSpeed(30);
+//		imgProcess();
+		motorSetSpeed(15);
 	}
 }

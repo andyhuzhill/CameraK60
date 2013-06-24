@@ -53,6 +53,8 @@ imgGetImg(void)
 
 extern PidObject pidSteer;
 
+extern vint32 imgspeed;
+
 int
 imgProcess(void)
 {
@@ -79,34 +81,38 @@ imgProcess(void)
 
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
+		imgspeed = 0;
+		printf("imgspeed is %d", imgspeed);
+
 		imgResize();
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
-		if(lostRow >= 35){
-			img_flag = IMG_READY;
-			return ret;
-		}
+		
+//		if(lostRow >= 35){
+//			img_flag = IMG_READY;
+//			return ret;
+//		}
+//		
 		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
 		ret = k*30+b;
 	
 		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
 			steerSetDuty(502);
-			motorSetSpeed(13 - ABS(k)*3);
 			steerUpdate(ret -25);
 		}else{
 			if(b == 0){
-				motorSetSpeed(13-ABS(k)*5);
 				steerUpdate(ret -25);
 			}else{
-				motorSetSpeed(13-ABS(k)*5);
 				ret = steerUpdate(ret - 25);
 				ret += 500;
 				steerSetDuty(ret);
 			}
 		}
 
+		printf("imgspeed = %d\n",imgspeed);
+		
 		img_flag = IMG_READY;
 
 #ifdef SDCARD
@@ -129,20 +135,25 @@ imgProcess(void)
 #endif 
 
 #ifdef SERIAL
+//		
+//		DisableInterrupts;
+//		printf("srcImg\n");
+//		for(int i=0; i< 9600; i++){
+//			printf("%d,",srcImg[i]);
+//		}
+//		printf("\n");
+//		EnableInterrupts;
+//		
 		printf("img\n");
-		for (int row = 0; row < IMG_H; ++row) {
+		for (int Srow = 0; row < IMG_H; ++row) {
 			for (int col = 0; col < IMG_W ; ++col)  {
 				printf( "%d,",img[row][col]);
 			}
 			printf("\n");
 		}
 		printf("\n");
-//
-//		ufc.f = k;
-//		printf("ufc=%d+%d+%d+%d\n",ufc.ch[0],ufc.ch[1],ufc.ch[2],ufc.ch[3]);
 
 #endif
-		return ret;
 	}
 	return ret;
 }
@@ -495,5 +506,5 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 int
 imgStartLine(void)
 {
-
+	return 0;
 }

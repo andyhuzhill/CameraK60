@@ -37,7 +37,7 @@ PORTA_ISR(void)         //场中断处理函数
         }
     }
 
-    if (PORTA_ISFR & (1 << 10))                     //编码器引脚中断
+    if (PORTA_ISFR & (1 << 9))                     //编码器引脚中断
     {               
         encoder_cnt ++;
         GPIOD_PTOR |= (1 << 10);
@@ -51,12 +51,13 @@ DMA0_ISR(void)
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
     GPIOD_PTOR |= (1 << 13);
-    printf("DMA ready\n");
     img_flag = IMG_FINISH ; 
 }
 
 vint8 getEncoder = 0;
 extern vint32  speed_cnt;
+vint32 imgspeed = 0;
+
 void 
 PIT0_ISR(void)
 {
@@ -65,7 +66,9 @@ PIT0_ISR(void)
     speed_cnt = encoder_cnt;
     getEncoder = 1;
     encoder_cnt = 0;
-//    printf("\n");
+    imgspeed ++;
+    
+    printf("\t");
     
     GPIOD_PTOR |= (1 << 8);
     PIT_Flag_Clear(PIT0);
