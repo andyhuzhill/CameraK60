@@ -24,6 +24,13 @@
 #undef  VECTOR_084 
 #define VECTOR_084    PIT0_ISR
 
+#ifdef AT2401
+#undef 	VECTOR_107
+#define VECTOR_107    PORTE_ISR
+
+void PORTE_ISR(void);
+
+#endif 
 
 void PORTA_ISR(void);           
     //场中断服务函数

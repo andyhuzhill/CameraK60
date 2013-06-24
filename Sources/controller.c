@@ -123,6 +123,11 @@ motorSetSpeed(uint32 speed)
 {
 	static float duty;
 	int32 pwm;
+	
+#ifdef AT2401
+	uint8 txbuff[4];
+	uint8 status;
+#endif
 
 #ifdef CLOSE_LOOP
 	if(getEncoder)  {
@@ -132,6 +137,18 @@ motorSetSpeed(uint32 speed)
 		duty = duty + pwm;
 		
 		printf("%d\n", speed_cnt);
+#ifdef AT2401
+		txbuff[0] = speed_cnt / (1 << 24);
+		txbuff[1] = speed_cnt/(1 << 16) - (speed_cnt/(1<<24) << 8);
+		txbuff[2] = speed_cnt/(1 << 8) - (speed_cnt/(1<<16) << 8);
+		txbuff[3] = speed_cnt - (speed_cnt/(1<<8) << 8);
+		
+		NRF_ISR_Tx_Dat(txbuff, 4);
+		
+		do{
+			status = NRF_ISR_Tx_State();
+		}while ( status == TX_ISR_SEND);
+#endif 
 		
 		if(duty > FTM_PRECISON) duty = FTM_PRECISON;
 		if(duty < 0) duty = 0;

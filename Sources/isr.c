@@ -75,3 +75,17 @@ PIT0_ISR(void)
     
     EnableInterrupts;
 }
+
+#ifdef AT2401
+
+void 
+PORTE_ISR(void)
+{
+	if(PORTE_ISFR & (1 << 27)){
+		NRF_Handler();
+	}
+	
+	PORTE_ISFR |= ~0;
+}
+
+#endif

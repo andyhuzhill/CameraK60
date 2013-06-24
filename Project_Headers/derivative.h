@@ -92,7 +92,7 @@
 //#define  SDCARD			//SD卡调试
 
 //#define  SERIAL
-//#define  AT2401
+#define  AT2401
 
 #define  CLOSE_LOOP		//闭环调速
 
