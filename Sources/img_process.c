@@ -67,6 +67,10 @@ imgProcess(void)
 		float f;
 		char ch[4];
 	} ufc;
+	
+	int sum = 0;
+	int average;
+	int i;
 
 #ifdef SDCARD
 	FATFS fs;
@@ -86,37 +90,41 @@ imgProcess(void)
 		imgResize();
 		imgFindLine();
 		imgGetMidLine();
-
-		//		if(lostRow >= 35){
-		//			img_flag = IMG_READY;
-		//			return ret;
-		//		}
-
-		imgLeastsq(MAX(lostRow,C), A, &k, &b);
-
-		ret = middle[30];
-
-		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
-			steerSetDuty(FTM_PRECISON/2);
-			steerUpdate(ret -25);
-			ret = 13;
-		}else{
-			if(b == 0){
-				steerUpdate(ret -25);
-				ret = 8;
-			}else{
-				ret = steerUpdate(ret - 25);
-				ret += FTM_PRECISON/2;
-				steerSetDuty(ret);
-				ret = 6;
-			}
+		
+		b = MAX(lostRow,10);
+		for(i= b ;i<40;i++){
+			sum += middle[i];
 		}
+		average = sum / (40-b);
+		pidSteer.kp = (average-24)*(average-24)/2+10;
+		ret = steerUpdate(average-25);
+		ret += FTM_PRECISON/2;
+		steerSetDuty(ret);
+		ret = 10-(24-average)*(24-average)*(10-5)/576;
+		
+		
+
+//		imgLeastsq(MAX(lostRow,C), A, &k, &b);
+
+//		ret = middle[30];
+
+//		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
+//			steerSetDuty(FTM_PRECISON/2);
+//			steerUpdate(ret -25);
+//			ret = 13;
+//		}else{
+//			if(b == 0){
+//				steerUpdate(ret -25);
+//				ret = 8;
+//			}else{
+//				ret = steerUpdate(ret - 25);
+//				ret += FTM_PRECISON/2;
+//				steerSetDuty(ret);
+//				ret = 6;
+//			}
+//		}
 
 		GPIOD_PTOR |= (1 << 9);
-
-//		printf("steer duty is %d\n", ret);
-//
-//		printf("imgspeed = %d\n",imgspeed);
 
 		img_flag = IMG_READY;
 
