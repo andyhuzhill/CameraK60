@@ -20,6 +20,7 @@
 
 #define IMG_H (CAMERA_H) 
 #define IMG_W (CAMERA_W)  
+#define IMG_MID (IMG_W/2)
 
 /** 图像采集初始化
  */
