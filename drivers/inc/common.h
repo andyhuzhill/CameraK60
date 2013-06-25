@@ -16,7 +16,7 @@
 
 #include "MK60DZ10.h"
 
-//#define DEBUG               //切换调试输出的宏定义
+#define DEBUG               //切换调试输出的宏定义
 //#define DEBUG_PRINT
 
 #define CORE_CLK_MHZ PLL_200        //定义内核频率

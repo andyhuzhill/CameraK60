@@ -82,37 +82,42 @@ imgProcess(void)
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
 		imgspeed = 0;
-		printf("imgspeed is %d", imgspeed);
 
 		imgResize();
-		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
-		
-//		if(lostRow >= 35){
-//			img_flag = IMG_READY;
-//			return ret;
-//		}
-//		
+
+		//		if(lostRow >= 35){
+		//			img_flag = IMG_READY;
+		//			return ret;
+		//		}
+
 		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
-		ret = k*30+b;
-	
+		ret = middle[30];
+
 		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
-			steerSetDuty(502);
+			steerSetDuty(FTM_PRECISON/2);
 			steerUpdate(ret -25);
+			ret = 13;
 		}else{
 			if(b == 0){
 				steerUpdate(ret -25);
+				ret = 8;
 			}else{
 				ret = steerUpdate(ret - 25);
-				ret += 500;
+				ret += FTM_PRECISON/2;
 				steerSetDuty(ret);
+				ret = 6;
 			}
 		}
 
-		printf("imgspeed = %d\n",imgspeed);
-		
+		GPIOD_PTOR |= (1 << 9);
+
+//		printf("steer duty is %d\n", ret);
+//
+//		printf("imgspeed = %d\n",imgspeed);
+
 		img_flag = IMG_READY;
 
 #ifdef SDCARD
@@ -134,18 +139,18 @@ imgProcess(void)
 		f_close(&file);
 #endif 
 
-#ifdef SERIAL
-//		
-//		DisableInterrupts;
-//		printf("srcImg\n");
-//		for(int i=0; i< 9600; i++){
-//			printf("%d,",srcImg[i]);
-//		}
-//		printf("\n");
-//		EnableInterrupts;
-//		
+#ifdef SERIALIMG
+		//		
+		//		DisableInterrupts;
+		//		printf("srcImg\n");
+		//		for(int i=0; i< 9600; i++){
+		//			printf("%d,",srcImg[i]);
+		//		}
+		//		printf("\n");
+		//		EnableInterrupts;
+		//		
 		printf("img\n");
-		for (int Srow = 0; row < IMG_H; ++row) {
+		for (int row = 0; row < IMG_H; ++row) {
 			for (int col = 0; col < IMG_W ; ++col)  {
 				printf( "%d,",img[row][col]);
 			}
@@ -154,6 +159,7 @@ imgProcess(void)
 		printf("\n");
 
 #endif
+		return ret;
 	}
 	return ret;
 }

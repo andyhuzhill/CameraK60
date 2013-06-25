@@ -12,7 +12,6 @@
  * =====================================================
  */
 
-
 #include "derivative.h" /* include peripheral declarations */
 
 void
@@ -32,6 +31,7 @@ ledInit(void)
 int 
 main(void)
 {   
+	int speed = 0;
 	DisableInterrupts;  //关全局中断
 
 	ledInit();
@@ -45,10 +45,9 @@ main(void)
 
 	EnableInterrupts;   //开全局中断
 
-	motorSetSpeed(15);
 	for (;;) 
 	{
-//		imgProcess();
-		motorSetSpeed(15);
+		speed = imgProcess();
+		motorSetSpeed(speed);
 	}
 }

@@ -70,6 +70,7 @@ PIT0_ISR(void)
     
     printf("\t");
     
+    
     GPIOD_PTOR |= (1 << 8);
     PIT_Flag_Clear(PIT0);
     

@@ -97,7 +97,8 @@ void steerSetDuty(uint32 duty)
 	}else if(duty < STEER_MIN){
 		duty = STEER_MIN;
 	}
-	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
+//	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
+	FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, duty);
 }
 
 void 
@@ -148,12 +149,18 @@ motorSetSpeed(uint32 speed)
 		do{
 			status = NRF_ISR_Tx_State();
 		}while ( status == TX_ISR_SEND);
-#endif 
+#else
+#ifdef SERIAL
+		printf("%d\n",speed_cnt);
+#endif
+#endif
 		
 		if(duty > FTM_PRECISON) duty = FTM_PRECISON;
 		if(duty < 0) duty = 0;
 
-		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
+//		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
+		FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
+		FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, (uint32)(FTM_PRECISON - duty));
 		getEncoder = 0;
 	}
 #else

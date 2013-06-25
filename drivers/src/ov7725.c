@@ -131,8 +131,6 @@ Register_Info ov7727_reg[] =
 
 uint8 cfgnum = sizeof(ov7727_reg)/sizeof(ov7727_reg[0]);   /*结构体数组成员数目*/
 
-
-
 /************************************************
  * 函数名：Ov7725_Init
  * 描述  ：Sensor初始化
