@@ -42,13 +42,14 @@ main(void)
 	Size_t imgsize = {80, 60};
 	int speed = 0;
 	int8 status = 0;
+	FATFS fs;
+	FIL file;
+	int res;
+	uint32 filesize;
+
 	DisableInterrupts;  //关全局中断
 
-	LCD_Init(RED);
-//	ledInit();
-//	steerInit();
-//	imgInit();      //摄像头初始化
-//	motorInit();    //电机控制初始化
+	LCD_Init(GREEN);
 
 #ifdef AT2401
 	NRF_Init();
@@ -61,21 +62,31 @@ main(void)
 		do{
 			status = NRF_MSG_receive(&com, nrf_buff);
 		}while( status == NRF_RESULT_RX_NOVALID);
-		
+
 		if (status == NRF_RESULT_RX_VALID){
 			switch(com){
 			case COM_IMG:
-					LCD_Img_Binary_Z(site, size, (uint16*)img_bin_buff, imgsize);
-					printf("img:\n");
-					for(int i=0; i< sizeof(img_bin_buff); i++)
-						printf("%d,",img_bin_buff[i]);
-					printf("\n");
-					break;
+				LCD_Img_Binary_Z(site, size, (uint16*)img_bin_buff, imgsize);
+	
+				f_mount(0,&fs);
+				res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+
+				filesize = f_size(&file);
+
+				f_lseek(&file, filesize);
+
+				f_printf(&file, "img\n");
+
+				for(int i=0; i< 600; i++){
+					f_printf(&file, "%d,", img_bin_buff[i]);
+				}
+				f_printf(&file, "\n");
+
+				f_close(&file);
+				break;
 			default:
 				break;
 			}
 		}
-//		speed = imgProcess();
-//		motorSetSpeed(speed);
 	}
 }
