@@ -67,7 +67,7 @@ imgProcess(void)
 		float f;
 		char ch[4];
 	} ufc;
-	
+
 	int sum = 0;
 	int average;
 	int i;
@@ -90,7 +90,7 @@ imgProcess(void)
 		imgResize();
 		imgFindLine();
 		imgGetMidLine();
-		
+
 		b = MAX(lostRow,10);
 		for(i= b ;i<40;i++){
 			sum += middle[i];
@@ -101,28 +101,27 @@ imgProcess(void)
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 		ret = 10-(24-average)*(24-average)*(10-5)/576;
-		
-		
 
-//		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
-//		ret = middle[30];
+		//		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
-//		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
-//			steerSetDuty(FTM_PRECISON/2);
-//			steerUpdate(ret -25);
-//			ret = 13;
-//		}else{
-//			if(b == 0){
-//				steerUpdate(ret -25);
-//				ret = 8;
-//			}else{
-//				ret = steerUpdate(ret - 25);
-//				ret += FTM_PRECISON/2;
-//				steerSetDuty(ret);
-//				ret = 6;
-//			}
-//		}
+		//		ret = middle[30];
+
+		//		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
+		//			steerSetDuty(FTM_PRECISON/2);
+		//			steerUpdate(ret -25);
+		//			ret = 13;
+		//		}else{
+		//			if(b == 0){
+		//				steerUpdate(ret -25);
+		//				ret = 8;
+		//			}else{
+		//				ret = steerUpdate(ret - 25);
+		//				ret += FTM_PRECISON/2;
+		//				steerSetDuty(ret);
+		//				ret = 6;
+		//			}
+		//		}
 
 		GPIOD_PTOR |= (1 << 9);
 
@@ -130,8 +129,9 @@ imgProcess(void)
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
-
+		
 		filesize = f_size(&file);
+
 		f_lseek(&file, filesize);
 
 		f_printf(&file, "img\n");
