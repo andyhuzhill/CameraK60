@@ -98,6 +98,8 @@ imgProcess(void)
 			sum += middle[i];
 		}
 		average = sum / (40-b);
+		
+		// 北科大算法
 		pidSteer.kp = (average-24)*(average-24)/2+10;
 		ret = steerUpdate(average-25);
 		ret += FTM_PRECISON/2;
@@ -186,6 +188,7 @@ __relocate_code__
 void
 imgResize(void)              
 {
+#if 0
 	int32 tmpIndex, tmpRow;
 	int16 col,row;    
 	int16 oldCol,oldRow; 
@@ -206,6 +209,20 @@ imgResize(void)
 			}
 		}
 	}
+#else
+	int row, col, i;
+	for(row=0; row<IMG_H; ++row){
+		for(col=0; col<IMG_W/8; ++col){
+			for(i=7;i>=0;--i){
+				if(srcImg[row*IMG_W/8 + col] & (1 << i)){
+					img[row][col*8+(7-i)] = 1;
+				}else{
+					img[row][col*8+(7-i)] = 0;
+				}
+			}
+		}
+	}
+#endif
 }
 
 /**

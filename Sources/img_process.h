@@ -18,8 +18,8 @@
 #include "common.h"
 #include "derivative.h"
 
-#define IMG_H (50) 
-#define IMG_W (50)  
+#define IMG_H (CAMERA_H) 
+#define IMG_W (CAMERA_W)  
 
 /** 图像采集初始化
  */
