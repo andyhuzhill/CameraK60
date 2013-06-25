@@ -21,7 +21,8 @@ static int8 leftBlack[IMG_H] = {0};
 static int8 rightBlack[IMG_H]={0};
 static int8 middle[IMG_H] = {0};                         //记录中线位置
 
-static uint8 srcImg[CAMERA_SIZE];                        //保存摄像头采集数据
+static uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+static uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN);                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
@@ -67,6 +68,8 @@ imgProcess(void)
 		float f;
 		char ch[4];
 	} ufc;
+	
+	int8 status = 0 ;
 
 	int sum = 0;
 	int average;
@@ -85,6 +88,20 @@ imgProcess(void)
 
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
+		
+#ifdef AT2401
+		NRF_MSG_send(COM_IMG, nrf_buff);
+		
+		do{
+			status = NRF_MSG_send_state();
+		}while(status == TX_ISR_SEND);
+		
+		if(status == TX_ISR_SUCCEED){
+			printf("img send success!\n");
+		}else if ( status == TX_ISR_FAIL){
+			printf("img send failed\n");
+		}
+#endif
 		imgspeed = 0;
 
 		imgResize();

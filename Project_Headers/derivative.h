@@ -42,12 +42,13 @@
 #include "ov7725.h"
 #include "k60_gpio.h"
 #include "ftm.h"
-#include "nrf24l0.h"
-
-#include "lcd.h"
 #include "pit.h"
 #include "port.h"
+
 #include "ff.h"
+#include "nrf24l0.h"
+#include "nrf24l0_msg.h"
+#include "lcd.h"
 
 #include "controller.h"
 #include "img_process.h"
@@ -93,7 +94,7 @@
 
 //#define  SERIAL
 //#define  SERIALIMG
-//#define  AT2401
+#define  AT2401
 
 #define  CLOSE_LOOP		//±Õ»·µ÷ËÙ
 
