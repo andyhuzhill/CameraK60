@@ -14,6 +14,11 @@
 
 #include "derivative.h" /* include peripheral declarations */
 
+
+uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+uint8 *img_bin_buff = (uint8 *)(((uint8 *)&nrf_buff) +COM_LEN);
+
+
 void
 ledInit(void)
 {
@@ -31,13 +36,19 @@ ledInit(void)
 int 
 main(void)
 {   
+	crtl_e com;
+	Site_t site = {0, 0};
+	Size_t size = {50, 50};
+	Size_t imgsize = {80, 60};
 	int speed = 0;
+	int8 status = 0;
 	DisableInterrupts;  //关全局中断
 
-	ledInit();
-	steerInit();
-	imgInit();      //摄像头初始化
-	motorInit();    //电机控制初始化
+	LCD_Init(RED);
+//	ledInit();
+//	steerInit();
+//	imgInit();      //摄像头初始化
+//	motorInit();    //电机控制初始化
 
 #ifdef AT2401
 	NRF_Init();
@@ -47,7 +58,24 @@ main(void)
 
 	for (;;) 
 	{
-		speed = imgProcess();
-		motorSetSpeed(speed);
+		do{
+			status = NRF_MSG_receive(&com, nrf_buff);
+		}while( status == NRF_RESULT_RX_NOVALID);
+		
+		if (status == NRF_RESULT_RX_VALID){
+			switch(com){
+			case COM_IMG:
+					LCD_Img_Binary_Z(site, size, (uint16*)img_bin_buff, imgsize);
+					printf("img:\n");
+					for(int i=0; i< sizeof(img_bin_buff); i++)
+						printf("%d,",img_bin_buff[i]);
+					printf("\n");
+					break;
+			default:
+				break;
+			}
+		}
+//		speed = imgProcess();
+//		motorSetSpeed(speed);
 	}
 }
