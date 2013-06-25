@@ -89,21 +89,6 @@ imgProcess(void)
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
 		
-#ifdef AT2401
-		NRF_MSG_send(COM_IMG, nrf_buff);
-		
-		do{
-			status = NRF_MSG_send_state();
-		}while(status == TX_ISR_SEND);
-		
-		if(status == TX_ISR_SUCCEED){
-			printf("img send success!\n");
-		}else if ( status == TX_ISR_FAIL){
-			printf("img send failed\n");
-		}
-#endif
-		imgspeed = 0;
-
 		imgResize();
 		imgFindLine();
 		imgGetMidLine();
@@ -118,7 +103,6 @@ imgProcess(void)
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 		ret = 10-(24-average)*(24-average)*(10-5)/576;
-
 
 		//		imgLeastsq(MAX(lostRow,C), A, &k, &b);
 
@@ -143,6 +127,20 @@ imgProcess(void)
 		GPIOD_PTOR |= (1 << 9);
 
 		img_flag = IMG_READY;
+		
+#ifdef AT2401
+		NRF_MSG_send(COM_IMG, nrf_buff);
+		
+		do{
+			status = NRF_MSG_send_state();
+		}while(status == TX_ISR_SEND);
+		
+		if(status == TX_ISR_SUCCEED){
+			printf("img send success!\n");
+		}else if ( status == TX_ISR_FAIL){
+			printf("img send failed\n");
+		}
+#endif
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -165,15 +163,6 @@ imgProcess(void)
 #endif 
 
 #ifdef SERIALIMG
-		//		
-		//		DisableInterrupts;
-		//		printf("srcImg\n");
-		//		for(int i=0; i< 9600; i++){
-		//			printf("%d,",srcImg[i]);
-		//		}
-		//		printf("\n");
-		//		EnableInterrupts;
-		//		
 		printf("img\n");
 		for (int row = 0; row < IMG_H; ++row) {
 			for (int col = 0; col < IMG_W ; ++col)  {
