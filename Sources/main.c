@@ -67,21 +67,21 @@ main(void)
 			case COM_IMG:
 				LCD_Img_Binary(site, size, (uint16*)img_bin_buff);
 	
-				f_mount(0,&fs);
-				res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
-
-				filesize = f_size(&file);
-
-				f_lseek(&file, filesize);
-
-				f_printf(&file, "img\n");
-
-				for(int i=0; i< 600; i++){
-					f_printf(&file, "%d,", img_bin_buff[i]);
-				}
-				f_printf(&file, "\n");
-
-				f_close(&file);
+//				f_mount(0,&fs);
+//				res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+//
+//				filesize = f_size(&file);
+//
+//				f_lseek(&file, filesize);
+//
+//				f_printf(&file, "img\n");
+//
+//				for(int i=0; i< 600; i++){
+//					f_printf(&file, "%d,", img_bin_buff[i]);
+//				}
+//				f_printf(&file, "\n");
+//
+//				f_close(&file);
 				break;
 			default:
 				break;
