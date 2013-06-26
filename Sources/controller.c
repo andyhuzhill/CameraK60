@@ -137,18 +137,17 @@ motorSetSpeed(uint32 speed)
 
 		duty = duty + pwm;
 		
-		printf("%d\n", speed_cnt);
 #ifdef AT2401
-		txbuff[0] = speed_cnt / (1 << 24);
-		txbuff[1] = speed_cnt/(1 << 16) - (speed_cnt/(1<<24) << 8);
-		txbuff[2] = speed_cnt/(1 << 8) - (speed_cnt/(1<<16) << 8);
-		txbuff[3] = speed_cnt - (speed_cnt/(1<<8) << 8);
-		
-		NRF_ISR_Tx_Dat(txbuff, 4);
-		
-		do{
-			status = NRF_ISR_Tx_State();
-		}while ( status == TX_ISR_SEND);
+//		txbuff[0] = speed_cnt / (1 << 24);
+//		txbuff[1] = speed_cnt/(1 << 16) - (speed_cnt/(1<<24) << 8);
+//		txbuff[2] = speed_cnt/(1 << 8) - (speed_cnt/(1<<16) << 8);
+//		txbuff[3] = speed_cnt - (speed_cnt/(1<<8) << 8);
+//		
+//		NRF_ISR_Tx_Dat(txbuff, 4);
+//		
+//		do{
+//			status = NRF_ISR_Tx_State();
+//		}while ( status == TX_ISR_SEND);
 #else
 #ifdef SERIAL
 		printf("%d\n",speed_cnt);

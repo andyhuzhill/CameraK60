@@ -69,8 +69,9 @@ imgProcess(void)
 #endif
 
 	int sum = 0;
-	int average;
-	int i;
+	int8 average;
+	int8 i;
+	uint8 txbuff[1] = {0};
 
 #ifdef SDCARD
 	FATFS fs;
@@ -86,46 +87,60 @@ imgProcess(void)
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
 
+		imgspeed = 0;
+
 		imgResize();
+		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
 
-//		b = MAX(lostRow,10);
-//		for(i= b ;i<startRow;i++){
-//			sum += middle[i];
-//		}
-//		if(b != startRow){
-//			average = sum / (startRow-b);
-//		}else{
-//			average=middle[startRow];
-//		}
-//
-//		// 北科大算法
-//		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+10;
-//		ret = steerUpdate(average-IMG_MID);
-//		ret += FTM_PRECISON/2;
-//		steerSetDuty(ret);
-//
-//		ret = MAX_SPEED-(IMG_MID-average)*(IMG_MID-average)*(MAX_SPEED-MIN_SPEED)/(IMG_MID*IMG_MID);
-
-		imgLeastsq(MAX(lostRow,10), startRow, &k, &b);
-
-		ret = middle[30];
-		if(ABS(k) <= 0.1 && (ABS(ret - IMG_MID) < 2)){
-			steerSetDuty(FTM_PRECISON/2);
-			steerUpdate(ret -IMG_MID);
-			ret = 13;
-		}else{
-			if(b == 0){
-				steerUpdate(ret -IMG_MID);
-				ret = 8;
-			}else{
-				ret = steerUpdate(ret - IMG_MID);
-				ret += FTM_PRECISON/2;
-				steerSetDuty(ret);
-				ret = 6;
-			}
+		b = MAX(lostRow,10);
+		for(i= b ;i<50;i++){
+			sum += middle[i];
 		}
+		if(b != startRow){
+			average = sum / (50-b);
+		}else{
+			average=middle[50];
+		}
+
+		// 北科大算法
+		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+5;
+		ret = steerUpdate(average-IMG_MID);
+		
+#ifdef AT2401
+		txbuff[0] = average;
+		
+		NRF_ISR_Tx_Dat(txbuff, 1);
+		
+		do{
+			status = NRF_ISR_Tx_State();
+		}while(status == TX_ISR_SEND);
+		
+#endif
+		ret += FTM_PRECISON/2;
+		steerSetDuty(ret);
+
+		ret = MAX_SPEED-(IMG_MID-average)*(IMG_MID-average)*(MAX_SPEED-MIN_SPEED)/(1681);
+
+		//		imgLeastsq(MAX(lostRow,10), startRow, &k, &b);
+		//
+		//		ret = middle[30];
+		//		if(ABS(k) <= 0.1 && (ABS(ret - IMG_MID) < 2)){
+		//			steerSetDuty(FTM_PRECISON/2);
+		//			steerUpdate(ret -IMG_MID);
+		//			ret = 13;
+		//		}else{
+		//			if(b == 0){
+		//				steerUpdate(ret -IMG_MID);
+		//				ret = 8;
+		//			}else{
+		//				ret = steerUpdate(ret - IMG_MID);
+		//				ret += FTM_PRECISON/2;
+		//				steerSetDuty(ret);
+		//				ret = 6;
+		//			}
+		//		}
 
 		GPIOD_PTOR |= (1 << 9);
 
@@ -138,11 +153,6 @@ imgProcess(void)
 			status = NRF_MSG_send_state();
 		}while(status == TX_ISR_SEND);
 
-		if(status == TX_ISR_SUCCEED){
-			printf("img send success!\n");
-		}else if ( status == TX_ISR_FAIL){
-			printf("img send failed\n");
-		}
 #endif
 
 #ifdef SDCARD
@@ -176,6 +186,7 @@ imgProcess(void)
 		printf("\n");
 
 #endif
+		printf("imgspeed = %d", imgspeed);
 		return ret;
 	}
 	return ret;
@@ -415,9 +426,9 @@ imgFindLine(void)
 	}
 #else
 	int8_t row, col;
-    int8_t leftStart, leftEnd, rightStart, rightEnd;
-    int8_t getLeftBlack=0, getRightBlack=0;  //标志是否找到黑线
-    int8_t leftLostCnt =0, rightLostCnt=0;
+	int8_t leftStart, leftEnd, rightStart, rightEnd;
+	int8_t getLeftBlack=0, getRightBlack=0;  //标志是否找到黑线
+	int8_t leftLostCnt =0, rightLostCnt=0;
 
 
 	memset((void *)leftBlack, -1, sizeof(leftBlack));
@@ -453,7 +464,7 @@ imgFindLine(void)
 		}
 	}
 
-	startRow = row;
+	//	startRow = row;
 
 	leftStart = leftEnd = leftBlack[row+1];
 	rightStart = rightEnd = rightBlack[row+1];
@@ -628,14 +639,10 @@ imgGetMidLine(void)
 		middle[row] = (middle[row-1] + middle[row+1])/2;
 	}
 #else
-
 	int leftCnt=0, rightCnt=0;
 	lostRow = 10;
-	int slop1 = 0, slop2 = 0;
 
-	memset((void *)middle, IMG_W/2 , sizeof(middle));
-
-	for (int row = IMG_H-5; row > 0; --row) {
+	for (int row = IMG_H-8; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
 			middle[row] = (leftBlack[row] + rightBlack[row])/2;
 			leftCnt = rightCnt = 0;
@@ -647,7 +654,7 @@ imgGetMidLine(void)
 		}
 	}
 
-	for(int row = IMG_H-6; row > 1; --row){
+	for(int row = IMG_H-8; row > 1; --row){
 		middle[row]= (middle[row+1]+middle[row-1])/2;
 
 		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>10)){

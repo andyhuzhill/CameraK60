@@ -91,9 +91,9 @@
 #define STEER_MIN  410
 
 #define MAX_SPEED 7
-#define MIN_SPEED 3
+#define MIN_SPEED 4
 
-#define  SDCARD			//SD¿¨µ÷ÊÔ
+//#define  SDCARD			//SD¿¨µ÷ÊÔ
 
 //#define  SERIAL
 //#define  SERIALIMG
