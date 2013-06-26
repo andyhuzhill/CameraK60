@@ -146,7 +146,7 @@ imgProcess(void)
 
 		img_flag = IMG_READY;
 
-#ifdef AT2401
+#ifdef IMG_SEND
 		NRF_MSG_send(COM_IMG, nrf_buff);
 
 		do{
