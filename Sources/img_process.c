@@ -60,15 +60,9 @@ extern vint32 imgspeed;
 int
 imgProcess(void)
 {
-	//	float k;
+	float k;
 	int8 b;
 	static int ret;
-	//	int A = 40;
-	//	int C = 10;
-	//	union {
-	//		float f;
-	//		char ch[4];
-	//	} ufc;
 
 #ifdef AT2401
 	int8 status = 0 ;
@@ -96,43 +90,42 @@ imgProcess(void)
 		imgFindLine();
 		imgGetMidLine();
 
-		b = MAX(lostRow,10);
-		for(i= b ;i<startRow;i++){
-			sum += middle[i];
-		}
-		if(b != startRow){
-			average = sum / (startRow-b);
+//		b = MAX(lostRow,10);
+//		for(i= b ;i<startRow;i++){
+//			sum += middle[i];
+//		}
+//		if(b != startRow){
+//			average = sum / (startRow-b);
+//		}else{
+//			average=middle[startRow];
+//		}
+//
+//		// 北科大算法
+//		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+10;
+//		ret = steerUpdate(average-IMG_MID);
+//		ret += FTM_PRECISON/2;
+//		steerSetDuty(ret);
+//
+//		ret = MAX_SPEED-(IMG_MID-average)*(IMG_MID-average)*(MAX_SPEED-MIN_SPEED)/(IMG_MID*IMG_MID);
+
+		imgLeastsq(MAX(lostRow,10), startRow, &k, &b);
+
+		ret = middle[30];
+		if(ABS(k) <= 0.1 && (ABS(ret - IMG_MID) < 2)){
+			steerSetDuty(FTM_PRECISON/2);
+			steerUpdate(ret -IMG_MID);
+			ret = 13;
 		}else{
-			average=middle[startRow];
+			if(b == 0){
+				steerUpdate(ret -IMG_MID);
+				ret = 8;
+			}else{
+				ret = steerUpdate(ret - IMG_MID);
+				ret += FTM_PRECISON/2;
+				steerSetDuty(ret);
+				ret = 6;
+			}
 		}
-
-		// 北科大算法
-		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+10;
-		ret = steerUpdate(average-IMG_MID);
-		ret += FTM_PRECISON/2;
-		steerSetDuty(ret);
-
-		ret = MAX_SPEED-(IMG_MID-average)*(IMG_MID-average)*(MAX_SPEED-MIN_SPEED)/(IMG_MID*IMG_MID);
-
-		//		imgLeastsq(MAX(lostRow,C), A, &k, &b);
-
-		//		ret = middle[30];
-
-		//		if(ABS(k) <= 0.1 && (ABS(ret - 25) < 2)){
-		//			steerSetDuty(FTM_PRECISON/2);
-		//			steerUpdate(ret -25);
-		//			ret = 13;
-		//		}else{
-		//			if(b == 0){
-		//				steerUpdate(ret -25);
-		//				ret = 8;
-		//			}else{
-		//				ret = steerUpdate(ret - 25);
-		//				ret += FTM_PRECISON/2;
-		//				steerSetDuty(ret);
-		//				ret = 6;
-		//			}
-		//		}
 
 		GPIOD_PTOR |= (1 << 9);
 
