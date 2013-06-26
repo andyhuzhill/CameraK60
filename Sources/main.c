@@ -35,7 +35,7 @@ main(void)
 	DisableInterrupts;  //关全局中断
 
 	ledInit();
-	steerInit();
+	steerInit();	//舵机初始化
 	imgInit();      //摄像头初始化
 	motorInit();    //电机控制初始化
 

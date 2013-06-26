@@ -59,18 +59,20 @@ extern vint32 imgspeed;
 int
 imgProcess(void)
 {
-	float k;
+//	float k;
 	int8 b;
 	static int ret;
-	int A = 40;
-	int C = 10;
-	union {
-		float f;
-		char ch[4];
-	} ufc;
+//	int A = 40;
+//	int C = 10;
+//	union {
+//		float f;
+//		char ch[4];
+//	} ufc;
 
+#ifdef AT2401
 	int8 status = 0 ;
-
+#endif
+	
 	int sum = 0;
 	int average;
 	int i;
