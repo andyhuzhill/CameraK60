@@ -27,6 +27,7 @@ static vuint8 img[IMG_H][IMG_W];                         //½«ÉãÏñÍ·²É¼¯Êý¾ÝÁí´æÈ
 static int8 leftLostRow=0, rightLostRow =0;              //×óÓÒ±ßÏß¶ªÊ§µÄÐÐÊý
 
 static int8 lostRow;
+static int8 startRow;
 
 ////// Íâ²¿¹«¹²±äÁ¿ÉùÃ÷
 extern volatile IMG_STATE img_flag;
@@ -59,20 +60,20 @@ extern vint32 imgspeed;
 int
 imgProcess(void)
 {
-//	float k;
+	//	float k;
 	int8 b;
 	static int ret;
-//	int A = 40;
-//	int C = 10;
-//	union {
-//		float f;
-//		char ch[4];
-//	} ufc;
+	//	int A = 40;
+	//	int C = 10;
+	//	union {
+	//		float f;
+	//		char ch[4];
+	//	} ufc;
 
 #ifdef AT2401
 	int8 status = 0 ;
 #endif
-	
+
 	int sum = 0;
 	int average;
 	int i;
@@ -96,17 +97,21 @@ imgProcess(void)
 		imgGetMidLine();
 
 		b = MAX(lostRow,10);
-		for(i= b ;i<40;i++){
+		for(i= b ;i<startRow;i++){
 			sum += middle[i];
 		}
-		average = sum / (40-b);
+		if(b != startRow){
+			average = sum / (startRow-b);
+		}else{
+			average=middle[startRow];
+		}
 
 		// ±±¿Æ´óËã·¨
 		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+10;
 		ret = steerUpdate(average-IMG_MID);
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
-		
+
 		ret = MAX_SPEED-(IMG_MID-average)*(IMG_MID-average)*(MAX_SPEED-MIN_SPEED)/(IMG_MID*IMG_MID);
 
 		//		imgLeastsq(MAX(lostRow,C), A, &k, &b);
@@ -416,17 +421,16 @@ imgFindLine(void)
 		}
 	}
 #else
-
 	int8_t row, col;
+    int8_t leftStart, leftEnd, rightStart, rightEnd;
+    int8_t getLeftBlack=0, getRightBlack=0;  //±êÖ¾ÊÇ·ñÕÒµ½ºÚÏß
+    int8_t leftLostCnt =0, rightLostCnt=0;
 
-	int8_t leftStart, leftEnd, rightStart, rightEnd;
-	int8_t getLeftBlack=0, getRightBlack=0;  //±êÖ¾ÊÇ·ñÕÒµ½ºÚÏß
-	int8_t leftLostCnt =0, rightLostCnt=0;
 
 	memset((void *)leftBlack, -1, sizeof(leftBlack));
 	memset((void *)rightBlack, IMG_W, sizeof(rightBlack));
 
-	row = IMG_H -2;
+	row = IMG_H -5;
 	getRightBlack = getLeftBlack = 0;
 	do{
 		for (col = (IMG_W /2); col >= 0; --col) {  // ÏÈÕÒ×ó±ßºÚÏß
@@ -437,7 +441,7 @@ imgFindLine(void)
 			}
 		}
 
-		for (col = (IMG_W /2); col <= (IMG_W -1); ++col) {  // ÔÙÕÒÓÒ±ßºÚÏß
+		for (col = (IMG_W /2)+1; col <= (IMG_W -1); ++col) {  // ÔÙÕÒÓÒ±ßºÚÏß
 			if (img[row][col] != 0){     //·¢ÏÖºÚÏß
 				rightBlack[row] = col;   //¼ÇÂ¼ÏÂºÚÏßµÄÁÐÊý
 				getRightBlack ++;
@@ -455,6 +459,8 @@ imgFindLine(void)
 			leftBlack[row+1] = leftBlack[row+2] = leftBlack[row+3] = leftBlack[row+4] = -1;
 		}
 	}
+
+	startRow = row;
 
 	leftStart = leftEnd = leftBlack[row+1];
 	rightStart = rightEnd = rightBlack[row+1];
@@ -546,7 +552,6 @@ imgFindLine(void)
 		}
 		row --;
 	}while(row > 0);
-
 #endif
 }
 
@@ -637,71 +642,27 @@ imgGetMidLine(void)
 
 	memset((void *)middle, IMG_W/2 , sizeof(middle));
 
-	for (int row = IMG_H-3; row > 2; --row)  {
+	for (int row = IMG_H-5; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
-			middle[row] = (leftBlack[row] + rightBlack[row]) /2;
-			leftCnt = 0;
-			rightCnt = 0;
+			middle[row] = (leftBlack[row] + rightBlack[row])/2;
+			leftCnt = rightCnt = 0;
 			continue;
+		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
+			middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
+			middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
 		}
-		if(leftBlack[row] == rightBlack[row] || (leftBlack[row] > rightBlack[row])){
+	}
+
+	for(int row = IMG_H-6; row > 1; --row){
+		middle[row]= (middle[row+1]+middle[row-1])/2;
+
+		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>10)){
 			if(lostRow == 10){
 				lostRow = row;
 			}
-			if(leftBlack[row+3] != -1 && rightBlack[row+3] == IMG_W) {        //ÓÒÏßÕÒµ½×óÏß
-				rightBlack[row] = IMG_W;
-			}else if(rightBlack[row+3] != IMG_W && leftBlack[row+3] == -1){   //×óÏßÕÒµ½ÓÒÏß
-				leftBlack[row] = -1;
-			}else if((leftBlack[row+3] == -1) && (rightBlack[row+3] == IMG_W)){
-				if((leftBlack[row-3] != -1) && (rightBlack[row-3] == IMG_W)){   //ÓÒÏßÕÒµ½×óÏß
-					rightBlack[row] = IMG_W;
-				}else if((leftBlack[row-3] == -1) && (rightBlack[row-3] != IMG_W)){ // ×óÏßÕÒµ½ÓÒÏß
-					leftBlack[row] = -1;
-				}else{
-					return ;
-				}
-			}
-		}
-
-		if(leftBlack[row] ==-1 && rightBlack[row] != IMG_W){           //¶ªÊ§×óÏß
-			leftCnt ++;
-			if(row < 30 && leftCnt >= 2){
-				middle[row] = (middle[row+1] + (rightBlack[row] - rightBlack[row+1]) +middle[row+1])/2;
-			}else{
-				middle[row] = (rightBlack[row]/2 + middle[row+1])/2;
-			}
-		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
-			rightCnt ++;
-			if(row < 30 && rightCnt >= 2){
-				middle[row] = (middle[row+1] + (leftBlack[row] - leftBlack[row+1]) + middle[row+1])/2;
-			}else{
-				middle[row] = ((IMG_W+leftBlack[row])/2 + middle[row+1]) /2;
-			}
-		}else if((leftBlack[row] == -1) && (rightBlack[row] == IMG_W)){    //Ê®×Ö¶ªÏß
-			middle[row] = middle[row+1];
-		}
-
-		if((middle[row] <= 3) || (middle[row] >= (IMG_W-3)) || ((ABS(middle[row] - middle[row+1]) >= 10)&&(row < 30))){
-			if(lostRow == 10){
-				lostRow = row + 2;
-			}
 		}
 	}
-
-	for (int row = IMG_H-2; row > 1; --row)  {      //Æ½»¬ÖÐÏß
-		if(row < 35){
-			slop1 = middle[row+2] - middle[row];
-			slop2 = middle[row] - middle[row-2];
-
-			if(slop1*slop2 < 0){       // middle[row]ÊÇ¹Õµã
-				if((ABS(slop1)+ABS(slop2)) > 5){
-					middle[row-1] = middle[row];
-				}
-			}
-		}
-		middle[row] = (middle[row-1] + middle[row+1])/2;
-	}
-
 #endif
 }
 

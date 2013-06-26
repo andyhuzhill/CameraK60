@@ -64,12 +64,12 @@
 
 #define MOTOR1_FTM              FTM0
 #define MOTOR1_CHN              CH1
-#define MOTOR1_FREQ             300        //单位Hz
+#define MOTOR1_FREQ             10000        //单位Hz
 #define MOTOR1_DEFAULT_DUTY     1000          //单位 千分之一
 
 #define MOTOR2_FTM              FTM0
 #define MOTOR2_CHN              CH0
-#define MOTOR2_FREQ             300        //单位Hz
+#define MOTOR2_FREQ             10000        //单位Hz
 #define MOTOR2_DEFAULT_DUTY     800            //单位千分之一
 
 #define ENCODER_FTM             FTM1
@@ -78,7 +78,7 @@
 //  定义舵机PID参数
 #define PID_STEER_KP  20
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  30.0
+#define PID_STEER_KD  20.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
@@ -90,10 +90,10 @@
 #define STEER_MAX  590
 #define STEER_MIN  410
 
-#define MAX_SPEED 10
+#define MAX_SPEED 8
 #define MIN_SPEED 5
 
-//#define  SDCARD			//SD卡调试
+#define  SDCARD			//SD卡调试
 
 //#define  SERIAL
 //#define  SERIALIMG
