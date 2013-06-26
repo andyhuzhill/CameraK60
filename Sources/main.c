@@ -38,8 +38,7 @@ main(void)
 {   
 	crtl_e com;
 	Site_t site = {0, 0};
-	Size_t size = {50, 50};
-	Size_t imgsize = {80, 60};
+	Size_t size = {80, 60};
 	int speed = 0;
 	int8 status = 0;
 	FATFS fs;
@@ -66,7 +65,7 @@ main(void)
 		if (status == NRF_RESULT_RX_VALID){
 			switch(com){
 			case COM_IMG:
-				LCD_Img_Binary_Z(site, size, (uint16*)img_bin_buff, imgsize);
+				LCD_Img_Binary(site, size, (uint16*)img_bin_buff);
 	
 				f_mount(0,&fs);
 				res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
