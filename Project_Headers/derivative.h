@@ -97,7 +97,13 @@
 
 //#define  SERIAL
 //#define  SERIALIMG
-#define  AT2401
+#define SENDIMG
+
+#ifdef SENDIMG
+	#ifndef AT2401
+		#define  AT2401
+	#endif 
+#endif
 
 #define  CLOSE_LOOP		//±Õ»·µ÷ËÙ
 

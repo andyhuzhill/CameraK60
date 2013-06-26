@@ -108,16 +108,16 @@ imgProcess(void)
 		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+5;
 		ret = steerUpdate(average-IMG_MID);
 		
-#ifdef AT2401
-		txbuff[0] = average;
-		
-		NRF_ISR_Tx_Dat(txbuff, 1);
-		
-		do{
-			status = NRF_ISR_Tx_State();
-		}while(status == TX_ISR_SEND);
-		
-#endif
+//#ifdef AT2401
+//		txbuff[0] = average;
+//		
+//		NRF_ISR_Tx_Dat(txbuff, 1);
+//		
+//		do{
+//			status = NRF_ISR_Tx_State();
+//		}while(status == TX_ISR_SEND);
+//		
+//#endif
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 
