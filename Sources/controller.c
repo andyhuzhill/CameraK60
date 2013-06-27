@@ -48,7 +48,7 @@ void pidSetKd(PidObject *pid, const float kd)
 	pid->kd = kd;
 }
 
-float UpdataPID(PidObject *pid, const float measured)
+float UpdatePID(PidObject *pid, const float measured)
 {
 	float output;
 
@@ -85,7 +85,7 @@ steerUpdate(int8 error)
 {
 	int32 out;
 
-	out = UpdataPID(&pidSteer, error);
+	out = UpdatePID(&pidSteer, error);
 
 	return out;
 }
@@ -110,8 +110,8 @@ motorInit(void)
 	pidInit(&pidMotor, 0, PID_MOTOR_KP, PID_MOTOR_KI, PID_MOTOR_KD);
 	pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
-	// TAGS: 编码器PTA9输入 下降沿中断 上拉 带滤波
-	port_init(PTA9, IRQ_FALLING | PULLUP | PF);                 
+	// TAGS: 编码器PTA8输入 下降沿中断 上拉 带滤波
+	port_init(PTA8, IRQ_FALLING | PULLUP | PF);                 
 
 	pit_init_ms(PIT0, 1);  //1ms 触发一次PIT中断 进行测速
 }
@@ -133,7 +133,7 @@ motorSetSpeed(uint32 speed)
 #ifdef CLOSE_LOOP
 	if(getEncoder)  {
 		pidMotor.desired = speed;
-		pwm = (int32)UpdataPID(&pidMotor, speed_cnt);
+		pwm = (int32)UpdatePID(&pidMotor, speed_cnt);
 
 		duty = duty + pwm;
 		

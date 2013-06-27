@@ -37,7 +37,7 @@ PORTA_ISR(void)         //场中断处理函数
         }
     }
 
-    if (PORTA_ISFR & (1 << 9))                     //编码器引脚中断
+    if (PORTA_ISFR & (1 << 8))                     //编码器引脚中断
     {               
         encoder_cnt ++;
         GPIOD_PTOR |= (1 << 10);

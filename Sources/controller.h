@@ -16,17 +16,6 @@
 
 #include "derivative.h"
 
-typedef enum
-{
-    ROAD_LOST           = 0,
-    STRATIGHT           = 1,
-    ROUND               = 2,
-    STRATIGHT_TO_ROUND  = 3,
-    BIG_S               = 4,
-    SMALL_S             = 5,
-    CROSS               = 6
-}Road_type;
-
 typedef struct
 {
   float desired;      //< 设置要达到的值
@@ -40,7 +29,7 @@ typedef struct
   float iLimit;       //< 积分限
 } PidObject;
 
-float UpdataPID(PidObject *pid, const float measured);
+float UpdatePID(PidObject *pid, const float measured);
 
 void pidInit(PidObject *pid, const float desired, const float kp,
         const float ki, const float kd);

@@ -13,7 +13,7 @@
  * PWM1--PTC1 FTM0-CH0
  * PWM2--PTC2 FTM0-CH1
  *
- * S-D5 : PTC3--FTM0-CH2
+ * S-D5 : PTA10--FTM2-CH0
  *
  * encoder : PTA9--FTM1--CH1
  *           PTA8--FTM1--CH0
@@ -57,23 +57,23 @@
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
 
-#define STEER_FTM               FTM0
-#define STEER_CHN               CH2
+#define STEER_FTM               FTM2
+#define STEER_CHN               CH0
 #define STEER_FREQ              300         //单位Hz
 #define STEER_DEFAULT_DUTY      FTM_PRECISON /2          //单位 千分之一
 
 #define MOTOR1_FTM              FTM0
 #define MOTOR1_CHN              CH1
-#define MOTOR1_FREQ             300        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     1000          //单位 千分之一
+#define MOTOR1_FREQ             10000        //单位Hz
+#define MOTOR1_DEFAULT_DUTY     FTM_PRECISON         //单位 万分之一
 
 #define MOTOR2_FTM              FTM0
 #define MOTOR2_CHN              CH0
-#define MOTOR2_FREQ             300        //单位Hz
-#define MOTOR2_DEFAULT_DUTY     800            //单位千分之一
+#define MOTOR2_FREQ             10000        //单位Hz
+#define MOTOR2_DEFAULT_DUTY     FTM_PRECISON            //单位万分之一
 
 #define ENCODER_FTM             FTM1
-#define ENCODER_CHN             CH1
+#define ENCODER_PIN             PTA8
 
 //  定义舵机PID参数
 #define PID_STEER_KP  20
@@ -82,22 +82,22 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  0.1
-#define PID_MOTOR_KI  0.0
-#define PID_MOTOR_KD  40.0
-#define PID_MOTOR_INTEGRATION_LIMIT     20.0
+#define PID_MOTOR_KP  25.0	
+#define PID_MOTOR_KI  1.0
+#define PID_MOTOR_KD  1800.0
+#define PID_MOTOR_INTEGRATION_LIMIT     10.0
 
-#define STEER_MAX  590
-#define STEER_MIN  410
+#define STEER_MAX  (FTM_PRECISON*6/10)
+#define STEER_MIN  (FTM_PRECISON*4/10)
 
-#define MAX_SPEED 7
+#define MAX_SPEED 6
 #define MIN_SPEED 4
 
 //#define  SDCARD			//SD卡调试
 
 //#define  SERIAL
-//#define  SERIALIMG
-#define SENDIMG
+
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401

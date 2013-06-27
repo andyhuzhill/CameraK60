@@ -63,6 +63,7 @@ imgProcess(void)
 	float k;
 	int8 b;
 	static int ret;
+	int error=10;
 
 #ifdef AT2401
 	int8 status = 0 ;
@@ -71,7 +72,6 @@ imgProcess(void)
 	int sum = 0;
 	int8 average;
 	int8 i;
-	uint8 txbuff[1] = {0};
 
 #ifdef SDCARD
 	FATFS fs;
@@ -94,34 +94,28 @@ imgProcess(void)
 		imgFindLine();
 		imgGetMidLine();
 
-		b = MAX(lostRow,10);
+		//		b = MAX(lostRow,10);
+		b = 10;
+		if (b > 50) return ;
 		for(i= b ;i<50;i++){
 			sum += middle[i];
 		}
-		if(b != startRow){
+
+		if(b != 50 ){
 			average = sum / (50-b);
 		}else{
-			average=middle[50];
+			average = middle[45];
 		}
 
-		// 北科大算法
-		pidSteer.kp = (average-IMG_MID)*(average-IMG_MID)/2+5;
-		ret = steerUpdate(average-IMG_MID);
-		
-//#ifdef AT2401
-//		txbuff[0] = average;
-//		
-//		NRF_ISR_Tx_Dat(txbuff, 1);
-//		
-//		do{
-//			status = NRF_ISR_Tx_State();
-//		}while(status == TX_ISR_SEND);
-//		
-//#endif
+		// 山寨北科大算法
+		error = average - IMG_MID;
+		pidSteer.kp = error*error/2 + 5;
+		ret = steerUpdate(error);
+
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 
-		ret = MAX_SPEED-(IMG_MID-average)*(IMG_MID-average)*(MAX_SPEED-MIN_SPEED)/(1681);
+		ret = MAX_SPEED-error*error*(MAX_SPEED-MIN_SPEED)/(1600);
 
 		//		imgLeastsq(MAX(lostRow,10), startRow, &k, &b);
 		//
@@ -146,7 +140,7 @@ imgProcess(void)
 
 		img_flag = IMG_READY;
 
-#ifdef IMG_SEND
+#ifdef SENDIMG
 		NRF_MSG_send(COM_IMG, nrf_buff);
 
 		do{
@@ -186,7 +180,7 @@ imgProcess(void)
 		printf("\n");
 
 #endif
-		printf("imgspeed = %d", imgspeed);
+		//		printf("imgspeed = %d", imgspeed);
 		return ret;
 	}
 	return ret;
@@ -426,10 +420,10 @@ imgFindLine(void)
 	}
 #else
 	int8_t row, col;
+
 	int8_t leftStart, leftEnd, rightStart, rightEnd;
 	int8_t getLeftBlack=0, getRightBlack=0;  //标志是否找到黑线
 	int8_t leftLostCnt =0, rightLostCnt=0;
-
 
 	memset((void *)leftBlack, -1, sizeof(leftBlack));
 	memset((void *)rightBlack, IMG_W, sizeof(rightBlack));
@@ -464,7 +458,7 @@ imgFindLine(void)
 		}
 	}
 
-	//	startRow = row;
+	startRow = row;
 
 	leftStart = leftEnd = leftBlack[row+1];
 	rightStart = rightEnd = rightBlack[row+1];
@@ -641,6 +635,9 @@ imgGetMidLine(void)
 #else
 	int leftCnt=0, rightCnt=0;
 	lostRow = 10;
+	int slop1 = 0, slop2 = 0;
+
+	memset((void *)middle, IMG_W/2 , sizeof(middle));
 
 	for (int row = IMG_H-8; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
@@ -649,8 +646,10 @@ imgGetMidLine(void)
 			continue;
 		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //丢失左线
 			middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+			//            middle[row] = rightBlack[row] - jiaozheng[row]/2;
 		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
 			middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
+			//            middle[row] = leftBlack[row] + jiaozheng[row]/2;
 		}
 	}
 
