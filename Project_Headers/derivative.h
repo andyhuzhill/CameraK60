@@ -78,7 +78,7 @@
 //  定义舵机PID参数
 #define PID_STEER_KP  20
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  20.0
+#define PID_STEER_KD  40.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
@@ -90,19 +90,28 @@
 #define STEER_MAX  (FTM_PRECISON*6/10)
 #define STEER_MIN  (FTM_PRECISON*4/10)
 
-#define MAX_SPEED 6
+#define MAX_SPEED 10
 #define MIN_SPEED 4
 
 //#define  SDCARD			//SD卡调试
 
 //#define  SERIAL
 
-#define SENDIMG
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
 		#define  AT2401
 	#endif 
+#endif
+
+
+#define SPEED
+
+#ifdef SPEED
+#ifndef AT2401
+#define AT2401
+#endif
 #endif
 
 #define  CLOSE_LOOP		//闭环调速

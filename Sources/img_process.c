@@ -60,12 +60,12 @@ extern vint32 imgspeed;
 int
 imgProcess(void)
 {
-	float k;
+//	float k;
 	int8 b;
 	static int ret;
 	int error=10;
 
-#ifdef AT2401
+#ifdef SENDIMG
 	int8 status = 0 ;
 #endif
 
@@ -109,7 +109,11 @@ imgProcess(void)
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
-		pidSteer.kp = error*error/2 + 5;
+		if(error <= 5){
+			pidSteer.kp = error*error/3 + 30;
+		}else{
+			pidSteer.kp = error*error/2 + 80;
+		}
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
