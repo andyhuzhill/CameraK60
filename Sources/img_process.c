@@ -29,7 +29,7 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 static int8 lostRow;
 static int8 startRow;
 
-static int8 maxspeed = 8;
+static int8 maxspeed = 4;
 static int8 minspeed = 4;
 
 ////// 外部公共变量声明
@@ -106,11 +106,11 @@ imgProcess(void)
 		// 山寨北科大算法
 		error = average - IMG_MID;
 		if(error <= 2){
-			maxspeed = 7;
+			maxspeed = 4;
 		}else{
-			maxspeed = 6;
+			maxspeed = 4;
 		}
-		pidSteer.kp = error*error/2 + 120;
+		pidSteer.kp = error*error/2 + 200;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
