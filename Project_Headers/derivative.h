@@ -90,14 +90,11 @@
 #define STEER_MAX  (FTM_PRECISON*6/10)
 #define STEER_MIN  (FTM_PRECISON*4/10)
 
-//#define MAX_SPEED 8
-//#define MIN_SPEED 4
-
 //#define  SDCARD			//SD¿¨µ÷ÊÔ
 
 //#define  SERIAL
 
-#define SENDIMG
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
