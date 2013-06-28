@@ -61,7 +61,6 @@ void motorInit(void);
 /*
  * 电机调速
  * speed 想要达到的速度
- * realspeed 实际的速度
  */
 void 
 motorSetSpeed(int32 speed);

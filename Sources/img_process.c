@@ -101,16 +101,16 @@ imgProcess(void)
 		for(i= b ;i<50;i++){
 			sum += middle[i];
 		}
-		average = sum / (50-b);
+		average = sum/(50-b);
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
-		if(error <= 2){
-			maxspeed = 4;
+		if(ABS(error) <= 2){
+			maxspeed = 7;
 		}else{
-			maxspeed = 4;
+			maxspeed = 5;
 		}
-		pidSteer.kp = error*error/2 + 200;
+		pidSteer.kp = error*error/2 + 120;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
