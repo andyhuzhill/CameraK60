@@ -82,7 +82,7 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  500.0	
+#define PID_MOTOR_KP  300.0	
 #define PID_MOTOR_KI  1.0
 #define PID_MOTOR_KD  2000.0
 #define PID_MOTOR_INTEGRATION_LIMIT     10.0

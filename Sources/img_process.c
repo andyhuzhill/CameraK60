@@ -63,7 +63,7 @@ extern vint32 imgspeed;
 int
 imgProcess(void)
 {
-//	float k;
+	//	float k;
 	int8 b;
 	static int ret;
 	int error=10;
@@ -97,28 +97,21 @@ imgProcess(void)
 		imgFindLine();
 		imgGetMidLine();
 
-		//		b = MAX(lostRow,10);
-		b = 10;
-//		if (b > 50) return ;
+		b = MAX(lostRow,3);
+		if (b >= 50) b = 3;
 		for(i= b ;i<50;i++){
 			sum += middle[i];
 		}
-
-		if(b != 50 ){
-			average = sum / (50-b);
-		}else{
-			average = middle[45];
-		}
+		average = sum / (50-b);
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
 		if(error <= 3){
-			pidSteer.kp = error*error/2 + 60;
-			maxspeed = 8;
+			maxspeed = 7;
 		}else{
 			maxspeed = 5;
-			pidSteer.kp = error*error/2 + 90;
 		}
+		pidSteer.kp = error*error/2 + 100;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
@@ -643,7 +636,7 @@ imgGetMidLine(void)
 	}
 #else
 	int leftCnt=0, rightCnt=0;
-	lostRow = 10;
+	lostRow = 3;
 	int slop1 = 0, slop2 = 0;
 
 	memset((void *)middle, IMG_W/2 , sizeof(middle));
@@ -665,7 +658,7 @@ imgGetMidLine(void)
 	for(int row = IMG_H-8; row > 1; --row){
 		middle[row]= (middle[row+1]+middle[row-1])/2;
 
-		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>10)){
+		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
 			if(lostRow == 10){
 				lostRow = row;
 			}
