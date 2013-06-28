@@ -372,9 +372,17 @@ imgGetMidLine(void)
 			leftCnt = rightCnt = 0;
 			continue;
 		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
-			middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+			if(row > 50){
+				middle[row] = rightBlack[row] / 2;
+			}else{
+				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+			}
 		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
-			middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
+			if(row > 50){
+				middle[row] = (leftBlack[row]+IMG_W) /2;
+			}else{
+				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
+			}
 		}
 	}
 
@@ -439,5 +447,10 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 int
 imgStartLine(void)
 {
+	int8 row, col;
+	
+	for(row = IMG_H; row < (IMG_H-5); --row){
+		
+	}
 	return 0;
 }
