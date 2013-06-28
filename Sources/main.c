@@ -15,9 +15,11 @@
 #include "derivative.h" /* include peripheral declarations */
 
 
-uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
-uint8 *img_bin_buff = (uint8 *)(((uint8 *)&nrf_buff) +COM_LEN);
+//uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+//uint8 *img_bin_buff = (uint8 *)(((uint8 *)&nrf_buff) +COM_LEN);
 
+extern  uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+extern  uint8 *srcImg;  
 
 void
 ledInit(void)
@@ -50,7 +52,7 @@ main(void)
 
 	DisableInterrupts;  //关全局中断
 
-	LCD_Init(GREEN);
+	LCD_Init(RED);
 	gpio_init(PORT_E, 6, Mode_IN, High);
 
 #ifdef AT2401
@@ -68,9 +70,9 @@ main(void)
 		if (status == NRF_RESULT_RX_VALID){
 			switch(com){
 			case COM_IMG:
-				LCD_Img_Binary(site, size, (uint16*)img_bin_buff);
+				LCD_Img_Binary(site, size, (uint16*)srcImg);
 				
-				outimg(img_bin_buff);
+//				outimg(img_bin_buff);
 				
 				img_flag = IMG_FINISH;
 				imgProcess();

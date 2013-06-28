@@ -21,8 +21,8 @@ static int8 leftBlack[IMG_H] = {0};
 static int8 rightBlack[IMG_H]={0};
 static int8 middle[IMG_H] = {0};                         //记录中线位置
 
-static uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
-static uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN);                        //保存摄像头采集数据
+ uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+ uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN);                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
@@ -73,9 +73,14 @@ imgProcess(void)
 	int8 b;
 	static int ret;
 	int error=10;
-	Site_t speedsite = {61,0};
-	Site_t avrsite = {80,0};
-	Site_t steersite = {70,0};
+
+	Site_t steersign = {0, 65};
+	Site_t steersite = {5, 65};
+
+	Site_t avrsite = {5,80};
+	
+	Site_t speedsign = {0, 95};
+	Site_t speedsite = {5,95};
 
 #ifdef SENDIMG
 	int8 status = 0 ;
@@ -115,7 +120,7 @@ imgProcess(void)
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
-		if(error <= 2){
+		if(ABS(error) <= 2){
 			maxspeed = 7;
 		}else{
 			maxspeed = 6;
@@ -125,11 +130,24 @@ imgProcess(void)
 
 		ret += FTM_PRECISON/2;
 //		steerSetDuty(ret);
+		if(ret >= 0){
+			LCD_Char(steersign, ' ', WHITE, WHITE);
+		}else{
+			ret = - ret;
+			LCD_Char(steersign, '-', YELLOW, WHITE);
+		}
 		LCD_Num_C(steersite, ret, YELLOW, WHITE);
 
 		ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
 		
-		LCD_Num_C(speedsite, ret, BLACK, WHITE);
+		if(ret >= 0){
+				LCD_Char(speedsign, ' ', WHITE, WHITE);
+			}else{
+				ret = -ret;
+				LCD_Char(speedsign, '-', BLACK, WHITE);
+			}
+		
+		LCD_Num_C(speedsite, ret,  BLACK, WHITE);
 		LCD_Num_C(avrsite, average, RED, WHITE);
 	
 
