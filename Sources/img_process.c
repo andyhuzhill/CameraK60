@@ -459,26 +459,32 @@ imgStartLine(void)
 	for(row = IMG_H; row < (IMG_H-6); --row){
 		for(col=0;col<(IMG_W-1); ++col){
 			if(img[row][col]!= img[row][col+1]){
-				site[count++] = col;		//记录跳变点位置
-				if(count >=6){
+//				site[count++] = col;		//记录跳变点位置
+				count ++;
+				if(count >= 4){
+					if(0==getStartLine){
+						getStartLine = 1;
+					}else{
+						stopcar();
+					}
 					break;
 				}
 			}
 		}
 		
-		a = site[1] - site[0];
-		b = site[2] - site[1];
-		c = site[3] - site[2];
-		d = site[4] - site[3];
-		e = site[5] - site[4];
-		
-		if((ABS(b-a) <= 3 && ABS(c-b) <=3) ||
-				(ABS(c-b)<=3 && ABS(d-c)<=3)){
-			if(0 == getStartLine){
-				getStartLine = 1;
-			}else{
-				stopcar();
-			}
-		}
+//		a = site[1] - site[0];
+//		b = site[2] - site[1];
+//		c = site[3] - site[2];
+//		d = site[4] - site[3];
+//		e = site[5] - site[4];
+//		
+//		if((ABS(b-a) <= 3 && ABS(c-b) <=3) ||
+//				(ABS(c-b)<=3 && ABS(d-c)<=3)){
+//			if(0 == getStartLine){
+//				getStartLine = 1;
+//			}else{
+//				stopcar();
+//			}
+//		}
 	}
 }

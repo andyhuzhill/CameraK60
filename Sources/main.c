@@ -46,6 +46,7 @@ main(void)
 	EnableInterrupts;   //开全局中断
 	
 	DELAY_MS(2000);
+	
 
 	for (;;) 
 	{
