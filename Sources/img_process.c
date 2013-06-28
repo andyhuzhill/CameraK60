@@ -31,6 +31,7 @@ static int8 startRow;
 
 static int8 maxspeed = 4;
 static int8 minspeed = 4;
+static int8 getStartLine = 0;
 
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
@@ -95,6 +96,7 @@ imgProcess(void)
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
+		imgStartLine();
 
 		b = MAX(lostRow,3);
 		if (b >= 50) b = 3;
@@ -106,9 +108,9 @@ imgProcess(void)
 		// 山寨北科大算法
 		error = average - IMG_MID;
 		if(ABS(error) <= 2){
-			maxspeed = 7;
+			maxspeed = 9;
 		}else{
-			maxspeed = 5;
+			maxspeed = 7;
 		}
 		pidSteer.kp = error*error/2 + 120;
 		ret = steerUpdate(error);
@@ -193,6 +195,7 @@ imgResize(void)
  * 滤波 将孤立的噪声去掉
  * 影响到的变量: img[];
  */
+__relocate_code__
 void
 imgFilter(void)
 {
@@ -444,13 +447,38 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b)
 /*
  * 起跑线检测
  */
-int
+__relocate_code__
+void
 imgStartLine(void)
 {
 	int8 row, col;
+	int8 site[6]={0};
+	int8 count = 0;
+	int8 a,b,c,d,e;
 	
-	for(row = IMG_H; row < (IMG_H-5); --row){
+	for(row = IMG_H; row < (IMG_H-6); --row){
+		for(col=0;col<(IMG_W-1); ++col){
+			if(img[row][col]!= img[row][col+1]){
+				site[count++] = col;		//记录跳变点位置
+				if(count >=6){
+					break;
+				}
+			}
+		}
 		
+		a = site[1] - site[0];
+		b = site[2] - site[1];
+		c = site[3] - site[2];
+		d = site[4] - site[3];
+		e = site[5] - site[4];
+		
+		if((ABS(b-a) <= 3 && ABS(c-b) <=3) ||
+				(ABS(c-b)<=3 && ABS(d-c)<=3)){
+			if(0 == getStartLine){
+				getStartLine = 1;
+			}else{
+				stopcar();
+			}
+		}
 	}
-	return 0;
 }

@@ -43,6 +43,7 @@ imgResize(void);
 /*
  * 滤波 将孤立的噪声去掉
  */
+__relocate_code__
 void
 imgFilter(void);
 
@@ -76,7 +77,8 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
 /*
  * 起跑线检测
  */
-int
+__relocate_code__
+void
 imgStartLine(void);
 
 #endif /* IMG_PROCESS_H_ */
