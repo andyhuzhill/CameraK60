@@ -29,6 +29,9 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 static int8 lostRow;
 static int8 startRow;
 
+static int8 maxspeed = 8;
+static int8 minspeed = 4;
+
 ////// 外部公共变量声明
 extern volatile IMG_STATE img_flag;
 
@@ -109,17 +112,19 @@ imgProcess(void)
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
-//		if(error <= 3){
-			pidSteer.kp = error*error/2 + 100;
-//		}else{
-//			pidSteer.kp = error*error/2 + 90;
-//		}
+		if(error <= 3){
+			pidSteer.kp = error*error/2 + 60;
+			maxspeed = 8;
+		}else{
+			maxspeed = 5;
+			pidSteer.kp = error*error/2 + 90;
+		}
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 
-		ret = MAX_SPEED-error*error*(MAX_SPEED-MIN_SPEED)/(1600);
+		ret = maxspeed -error*error*(maxspeed-minspeed)/(1600);
 
 		//		imgLeastsq(MAX(lostRow,10), startRow, &k, &b);
 		//

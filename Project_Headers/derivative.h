@@ -78,7 +78,7 @@
 //  定义舵机PID参数
 #define PID_STEER_KP  20
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  50.0
+#define PID_STEER_KD  60.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
@@ -90,8 +90,8 @@
 #define STEER_MAX  (FTM_PRECISON*6/10)
 #define STEER_MIN  (FTM_PRECISON*4/10)
 
-#define MAX_SPEED 8
-#define MIN_SPEED 4
+//#define MAX_SPEED 8
+//#define MIN_SPEED 4
 
 //#define  SDCARD			//SD卡调试
 
