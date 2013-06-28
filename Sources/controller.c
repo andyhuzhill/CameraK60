@@ -90,11 +90,11 @@ steerUpdate(int8 error)
 	return out;
 }
 
-void steerSetDuty(uint32 duty)
+void steerSetDuty(int32 duty)
 {   
-	if(duty > STEER_MAX){
+	if((int32)duty > (int32)STEER_MAX){
 		duty = STEER_MAX;
-	}else if(duty < STEER_MIN){
+	}else if((int32)duty < (int32)STEER_MIN){
 		duty = STEER_MIN;
 	}
 	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
@@ -120,7 +120,7 @@ extern vint8 getEncoder;
 vuint32  speed_cnt;      // 编码器采集到的现在的速度值
 
 void 
-motorSetSpeed(uint32 speed)
+motorSetSpeed(int32 speed)
 {
 	static float duty;
 	int32 pwm;

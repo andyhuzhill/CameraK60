@@ -64,7 +64,7 @@ int
 imgProcess(void)
 {
 	int8 b;
-	static int ret;
+	static int32 ret;
 	int error=10;
 
 #ifdef SENDIMG
