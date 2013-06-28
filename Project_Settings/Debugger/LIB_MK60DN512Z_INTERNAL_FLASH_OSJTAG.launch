@@ -123,7 +123,85 @@
 <listEntry value="Other Executables"/>
 <listEntry value="Symbolics"/>
 </listAttribute>
+<intAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MASK_0" value="0"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MASK_1" value="0"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MASK_2" value="0"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MASK_3" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_DATA_SIZE_0" value="Word"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_DATA_SIZE_1" value="Word"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_DATA_SIZE_2" value="Word"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_DATA_SIZE_3" value="Word"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_EV_0" value="Disabled"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_EV_1" value="Disabled"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_EV_2" value="Disabled"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_MATCH_EV_3" value="Disabled"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_VALUE_0" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_VALUE_1" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_VALUE_2" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COMP_VALUE_3" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_COUNTER_VALUE" value="4294967290"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_CYCLE_COUNTER_TAP" value="Tap at cycle count bit 6"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_ENABLE_EXCEPTION_OVERHEAD" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_ENABLE_FOLDED_INSTRUCTIONS" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_ENABLE_SLEEP_COUNT" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_EN_CPI_COUNT" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_EN_CYCLE_COUNT" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_EN_EXCEPTION_TRACE" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_EN_LSU_COUNT" value="true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.DWT_EXT_COUNTER_RELOAD_VALUE" value="0"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.DWT_SYNC_PACKET_RATE" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ENABLE_DWT_CYCLE_COUNTER" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ENABLE_ETB_ALMOST_FULL_MODE" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ENABLE_ETM_TRACING" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ENABLE_ITM_TRACING" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_CONTINUOUS_FORMATTING" value="true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETB_COUNTER_RELOAD_VALUE" value="800"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_ENABLE_FORMATTING" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_FLUSH_MANUALLY" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_FLUSH_USING_FLUSHIN" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_FLUSH_USING_TRIGEV" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_STOP_ON_FLUSH_COMPLETION" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_STOP_ON_TRIGGER_EVENT" value="false"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETB_TRIGGER_COUNTER" value="0"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_TRIGGER_FLUSH_COMPLETION" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_TRIGGER_ON_TRIGEV" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETB_TRIGGER_ON_TRIGIN" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETM_BRANCH_OUTPUT" value="true"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_COUNTER_RELOAD_VALUE" value="0"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETM_ENABLE_TIMESTAMPS" value="true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_ICE_START_MASK" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_ICE_STOP_MASK" value="0"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETM_STALL_PROC" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ETM_TRACE_START_STOP_ENABLE" value="false"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TRIGGER_FUNCTION" value="A"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_TRIGGER_INDEX_A" value="0"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_TRIGGER_INDEX_B" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TRIGGER_RES_A" value="Always true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TRIGGER_RES_B" value="DWT comparator"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TR_START_STOP_FUNCTION" value="A"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_TR_START_STOP_INDEX_A" value="0"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_TR_START_STOP_INDEX_B" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TR_START_STOP_RES_A" value="Always true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TR_START_STOP_RES_B" value="DWT comparator"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TSTAMP_FUNCTION" value="A"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_TSTAMP_INDEX_A" value="0"/>
+<intAttribute key="com.freescale.sa.arm.targetconfig.ETM_TSTAMP_INDEX_B" value="0"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TSTAMP_RES_A" value="Always true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ETM_TSTAMP_RES_B" value="DWT comparator"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.GLOBAL_ITM_TIMESTAMPS" value="false"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ITM_GLOBAL_TS_FREQ" value="Disabled"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.ITM_SYNC_PACKAGES" value="true"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ITM_TRACE_ENABLE_MASK" value="1"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.ITM_TS_PRESCALER" value="1 tick"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.LOCAL_ITM_TIMESTAMPS" value="true"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.LOW_POWER_MODE_ENABLE" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.NO_ITM_TIMESTAMPS" value="false"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.TRACE_DESTINATION" value="TD_ETB"/>
+<stringAttribute key="com.freescale.sa.arm.targetconfig.TRACE_DESTINATION_CLOCK" value="25"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.TRACE_DESTINATION_KEEP_BUFFERS" value="false"/>
+<booleanAttribute key="com.freescale.sa.arm.targetconfig.TRACE_DESTINATION_SWO" value="false"/>
 <booleanAttribute key="com.freescale.sa.mcu.launch.ENABLE_ANALYSIS" value="false"/>
+<booleanAttribute key="com.freescale.sa.mcu.launch.ENABLE_LOGGING" value="false"/>
 <stringAttribute key="com.pemicro.mcu.debug.connections.pne.arm.CommandLineArgs" value="arm_icd "/>
 <stringAttribute key="com.pemicro.mcu.debug.connections.pne.arm.ConfigFile" value=""/>
 <stringAttribute key="com.pemicro.mcu.debug.connections.pne.arm.Library" value="arm_pne_gdi"/>

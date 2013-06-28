@@ -96,7 +96,7 @@ imgProcess(void)
 
 		//		b = MAX(lostRow,10);
 		b = 10;
-		if (b > 50) return ;
+//		if (b > 50) return ;
 		for(i= b ;i<50;i++){
 			sum += middle[i];
 		}
@@ -109,10 +109,10 @@ imgProcess(void)
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
-		if(error <= 5){
-			pidSteer.kp = error*error/3 + 30;
+		if(error <= 3){
+			pidSteer.kp = error*error/2 + 50;
 		}else{
-			pidSteer.kp = error*error/2 + 80;
+			pidSteer.kp = error*error/2 + 90;
 		}
 		ret = steerUpdate(error);
 

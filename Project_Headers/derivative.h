@@ -82,15 +82,15 @@
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
-#define PID_MOTOR_KP  25.0	
+#define PID_MOTOR_KP  500.0	
 #define PID_MOTOR_KI  1.0
-#define PID_MOTOR_KD  1800.0
+#define PID_MOTOR_KD  2000.0
 #define PID_MOTOR_INTEGRATION_LIMIT     10.0
 
 #define STEER_MAX  (FTM_PRECISON*6/10)
 #define STEER_MIN  (FTM_PRECISON*4/10)
 
-#define MAX_SPEED 10
+#define MAX_SPEED 8
 #define MIN_SPEED 4
 
 //#define  SDCARD			//SD卡调试
@@ -106,7 +106,7 @@
 #endif
 
 
-#define SPEED
+//#define SPEED
 
 #ifdef SPEED
 #ifndef AT2401
