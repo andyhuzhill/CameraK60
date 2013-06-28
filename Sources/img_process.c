@@ -36,6 +36,13 @@ static int8 minspeed = 4;
 extern volatile IMG_STATE img_flag;
 
 void
+outimg(uint8*imgpointer)
+{
+	srcImg = imgpointer;	
+}
+
+
+void
 imgInit(void)
 {
 	ov7725_init(srcImg);
@@ -66,6 +73,9 @@ imgProcess(void)
 	int8 b;
 	static int ret;
 	int error=10;
+	Site_t speedsite = {61,0};
+	Site_t avrsite = {80,0};
+	Site_t steersite = {70,0};
 
 #ifdef SENDIMG
 	int8 status = 0 ;
@@ -84,7 +94,7 @@ imgProcess(void)
 	f_mount(0,&fs);
 #endif
 
-	imgGetImg();
+//	imgGetImg();
 
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
@@ -115,8 +125,13 @@ imgProcess(void)
 
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
+		LCD_Num_C(steersite, ret, YELLOW, WHITE);
 
 		ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
+		
+		LCD_Num_C(speedsite, ret, BLACK, WHITE);
+		LCD_Num_C(avrsite, average, RED, WHITE);
+	
 
 		GPIOD_PTOR |= (1 << 9);
 

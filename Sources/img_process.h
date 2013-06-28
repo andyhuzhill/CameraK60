@@ -46,6 +46,9 @@ imgResize(void);
 void
 imgFilter(void);
 
+void
+outimg(uint8*imgpointer);
+
 
 /*
  * ура╫╠ъ╨зоъ
