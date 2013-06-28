@@ -51,7 +51,7 @@ steerUpdate(int8 error);
  * 舵机改变占空比
  * duty 要达到的占空比
  */
-void steerSetDuty(uint32 duty);
+void steerSetDuty(int32 duty);
 
 /*
  * 电机控制初始化

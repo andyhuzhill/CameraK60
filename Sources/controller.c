@@ -90,11 +90,11 @@ steerUpdate(int8 error)
 	return out;
 }
 
-void steerSetDuty(uint32 duty)
+void steerSetDuty(int32 duty)
 {   
-	if(duty > STEER_MAX){
+	if(duty > (int32)STEER_MAX){
 		duty = STEER_MAX;
-	}else if(duty < STEER_MIN){
+	}else if(duty < (int32)STEER_MIN){
 		duty = STEER_MIN;
 	}
 	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
