@@ -96,8 +96,8 @@ imgProcess(void)
 
 //	imgGetImg();
 
-	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
-		img_flag = IMG_PROCESS;
+//	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
+//		img_flag = IMG_PROCESS;
 
 		imgspeed = 0;
 
@@ -124,7 +124,7 @@ imgProcess(void)
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
-		steerSetDuty(ret);
+//		steerSetDuty(ret);
 		LCD_Num_C(steersite, ret, YELLOW, WHITE);
 
 		ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
@@ -178,8 +178,8 @@ imgProcess(void)
 
 #endif
 		return ret;
-	}
-	return ret;
+//	}
+//	return ret;
 }
 
 
