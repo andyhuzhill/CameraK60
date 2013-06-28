@@ -109,11 +109,11 @@ imgProcess(void)
 
 		// 山寨北科大算法
 		error = average - IMG_MID;
-		if(error <= 3){
-			pidSteer.kp = error*error/2 + 50;
-		}else{
-			pidSteer.kp = error*error/2 + 90;
-		}
+//		if(error <= 3){
+			pidSteer.kp = error*error/2 + 100;
+//		}else{
+//			pidSteer.kp = error*error/2 + 90;
+//		}
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
