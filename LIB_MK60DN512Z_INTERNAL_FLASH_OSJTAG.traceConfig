@@ -1,0 +1,515 @@
+<SAE>
+	<DataProducerInstance>
+		<SourceType>ARM Trace</SourceType>
+		<TargetType>ARM Trace Probe</TargetType>
+		<ImplPlugin>
+			<Name>Target Config</Name>
+			<PluginContractID>@freescale.com/fsl.components.sa.traceproducer.hwic;1</PluginContractID>
+			<ConfigurationName>ETM Trace</ConfigurationName>
+			<WrapperFactory>sae.compluginwrapper</WrapperFactory>
+			<WrapperClass>DataProducerComWrapper</WrapperClass>
+			<Configuration>
+				<Name>ETM Trace</Name>
+				<Version>1.1.0</Version>
+				<Comments>Trace Producer that uses a TraceProbe to collect data from a TraceTarget</Comments>
+				<ConfigBlock>
+					<Name>OnDemand Accessor</Name>
+					<BoolAttribute>
+						<Name>OnDemand Enabled</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<StringAttribute>
+						<Name>Factory Name</Name>
+						<DefaultValue>sae.dataaccessorplugin.ondemand.arm</DefaultValue>
+					</StringAttribute>
+					<StringAttribute>
+						<Name>XPCOM Factory Name</Name>
+						<DefaultValue>sae.dataaccessorplugin.ondemand.arm.xpcom</DefaultValue>
+					</StringAttribute>
+					<StringAttribute>
+						<Name>Plugin Name</Name>
+						<DefaultValue>OnDemandTraceAccessor</DefaultValue>
+					</StringAttribute>
+				</ConfigBlock>
+				<ConfigBlock>
+					<Name>Target Endianess</Name>
+					<BoolAttribute>
+						<Name>Big Endian</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+				</ConfigBlock>
+			</Configuration>
+		</ImplPlugin>
+		<RequiresPlugin>
+			<Name>Trace Target</Name>
+			<Factory>sae.tracetargetconfigplugin.xpcom</Factory>
+			<Class>TraceTargetConfigPluginArm</Class>
+			<ConfigurationName>Trace Config for Arm</ConfigurationName>
+			<Configuration>
+				<Name>Trace Config for Arm</Name>
+				<Version>1.0.2.001</Version>
+				<Comments>Basic predefined configuration for generating and collecting trace on Arm.</Comments>
+				<ConfigBlock>
+					<Name>DWT Config</Name>
+					<BoolAttribute>
+						<Name>Enable cycle count</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<UInt32Attribute>
+						<Name>CYCCNT value</Name>
+						<DefaultValue>4294967290</DefaultValue>
+					</UInt32Attribute>
+					<UInt32Attribute>
+						<Name>POSTPRESET reload value</Name>
+						<DefaultValue>0</DefaultValue>
+					</UInt32Attribute>
+					<UInt32Attribute>
+						<Name>POSTCNT reload value</Name>
+						<DefaultValue>0</DefaultValue>
+					</UInt32Attribute>
+					<UInt32Attribute>
+						<Name>Cycle tap select</Name>
+						<DefaultValue>0</DefaultValue>
+					</UInt32Attribute>
+					<EnumAttribute>
+						<Name>Sync packet rate</Name>
+						<DefaultValue>TAP_AT_CYCNT_b24</DefaultValue>
+						<EnumValues>TAP_DISABLED,TAP_AT_CYCNT_b24,TAP_AT_CYCNT_b26,TAP_AT_CYCNT_b28</EnumValues>
+					</EnumAttribute>
+					<BoolAttribute>
+						<Name>PC sample enable</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Cycle event enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Exception trace enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>CPI count event enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Exception overhead event enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Sleep count event enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>LSU count event enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Folded instruction count event enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<ConfigBlock>
+						<Name>Comparator 0</Name>
+						<UInt32Attribute>
+							<Name>Value</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<UInt32Attribute>
+							<Name>Mask</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>DISABLED</DefaultValue>
+							<EnumValues>DISABLED,GENERATE_CMPMATCH_EVENT_IADDR,GENERATE_CMPMATCH_EVENT_RO_DADDR,GENERATE_CMPMATCH_EVENT_WO_DADDR,GENERATE_CMPMATCH_EVENT_RW_DADDR</EnumValues>
+						</EnumAttribute>
+						<EnumAttribute>
+							<Name>Match Data Size</Name>
+							<DefaultValue>WORD</DefaultValue>
+							<EnumValues>BYTE,HALFWORD,WORD</EnumValues>
+						</EnumAttribute>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Comparator 1</Name>
+						<UInt32Attribute>
+							<Name>Value</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<UInt32Attribute>
+							<Name>Mask</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>DISABLED</DefaultValue>
+							<EnumValues>DISABLED,GENERATE_CMPMATCH_EVENT_IADDR,GENERATE_CMPMATCH_EVENT_RO_DADDR,GENERATE_CMPMATCH_EVENT_WO_DADDR,GENERATE_CMPMATCH_EVENT_RW_DADDR</EnumValues>
+						</EnumAttribute>
+						<EnumAttribute>
+							<Name>Match Data Size</Name>
+							<DefaultValue>WORD</DefaultValue>
+							<EnumValues>BYTE,HALFWORD,WORD</EnumValues>
+						</EnumAttribute>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Comparator 2</Name>
+						<UInt32Attribute>
+							<Name>Value</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<UInt32Attribute>
+							<Name>Mask</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>DISABLED</DefaultValue>
+							<EnumValues>DISABLED,GENERATE_CMPMATCH_EVENT_IADDR,GENERATE_CMPMATCH_EVENT_RO_DADDR,GENERATE_CMPMATCH_EVENT_WO_DADDR,GENERATE_CMPMATCH_EVENT_RW_DADDR</EnumValues>
+						</EnumAttribute>
+						<EnumAttribute>
+							<Name>Match Data Size</Name>
+							<DefaultValue>WORD</DefaultValue>
+							<EnumValues>BYTE,HALFWORD,WORD</EnumValues>
+						</EnumAttribute>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Comparator 3</Name>
+						<UInt32Attribute>
+							<Name>Value</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<UInt32Attribute>
+							<Name>Mask</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>DISABLED</DefaultValue>
+							<EnumValues>DISABLED,GENERATE_CMPMATCH_EVENT_IADDR,GENERATE_CMPMATCH_EVENT_RO_DADDR,GENERATE_CMPMATCH_EVENT_WO_DADDR,GENERATE_CMPMATCH_EVENT_RW_DADDR</EnumValues>
+						</EnumAttribute>
+						<EnumAttribute>
+							<Name>Match Data Size</Name>
+							<DefaultValue>WORD</DefaultValue>
+							<EnumValues>BYTE,HALFWORD,WORD</EnumValues>
+						</EnumAttribute>
+					</ConfigBlock>
+				</ConfigBlock>
+				<ConfigBlock>
+					<Name>ETB Config</Name>
+					<BoolAttribute>
+						<Name>Trace Capture Enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<UInt32Attribute>
+						<Name>Trigger counter register</Name>
+						<DefaultValue>0</DefaultValue>
+					</UInt32Attribute>
+					<BoolAttribute>
+						<Name>Enable ETB almost full</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<UInt32Attribute>
+						<Name>ETB counter reload value</Name>
+						<DefaultValue>800</DefaultValue>
+					</UInt32Attribute>
+					<BoolAttribute>
+						<Name>Enable formatting</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Continuous formatting</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Generate flush using FLUSHIN</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Generate flush using Trigger event</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Generate flush manually</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Indicate trigger on TRIGIN</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Indicate trigger on trigger event</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Indicate trigger on flush completion</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Stop on flush completion</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Stop on trigger event</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+				</ConfigBlock>
+				<ConfigBlock>
+					<Name>ETM Config</Name>
+					<UInt32Attribute>
+						<Name>Trace ID</Name>
+						<DefaultValue>1</DefaultValue>
+					</UInt32Attribute>
+					<ConfigBlock>
+						<Name>General Config</Name>
+						<BoolAttribute>
+							<Name>Port selection</Name>
+							<DefaultValue>true</DefaultValue>
+						</BoolAttribute>
+						<BoolAttribute>
+							<Name>Stall processor</Name>
+							<DefaultValue>true</DefaultValue>
+						</BoolAttribute>
+						<BoolAttribute>
+							<Name>Branch output</Name>
+							<DefaultValue>true</DefaultValue>
+						</BoolAttribute>
+						<BoolAttribute>
+							<Name>Enable timestamps</Name>
+							<DefaultValue>true</DefaultValue>
+						</BoolAttribute>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Trigger Control</Name>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>FUNC_A</DefaultValue>
+							<EnumValues>FUNC_A,FUNC_NOT_A,FUNC_A_AND_B,FUNC_NOT_A_AND_B,FUNC_NOT_A_AND_NOT_B,FUNC_A_OR_B,FUNC_NOT_A_OR_B,FUNC_NOT_A_OR_NOT_B</EnumValues>
+						</EnumAttribute>
+						<ConfigBlock>
+							<Name>Resource A</Name>
+							<EnumAttribute>
+								<Name>Resource type</Name>
+								<DefaultValue>RES_TYPE_HARD_WIRED_INPUT</DefaultValue>
+								<EnumValues>RES_TYPE_WATCHPOINT_COMP,RES_TYPE_COUNTER_AT_ZERO,RES_TYPE_TRACE_START_STOP,RES_TYPE_HARD_WIRED_INPUT</EnumValues>
+							</EnumAttribute>
+							<UInt32Attribute>
+								<Name>Resource index</Name>
+								<DefaultValue>15</DefaultValue>
+								<UInt32Range>
+									<MaxValue>15</MaxValue>
+								</UInt32Range>
+							</UInt32Attribute>
+						</ConfigBlock>
+						<ConfigBlock>
+							<Name>Resource B</Name>
+							<EnumAttribute>
+								<Name>Resource type</Name>
+								<DefaultValue>RES_TYPE_WATCHPOINT_COMP</DefaultValue>
+								<EnumValues>RES_TYPE_WATCHPOINT_COMP,RES_TYPE_COUNTER_AT_ZERO,RES_TYPE_TRACE_START_STOP,RES_TYPE_HARD_WIRED_INPUT</EnumValues>
+							</EnumAttribute>
+							<UInt32Attribute>
+								<Name>Resource index</Name>
+								<DefaultValue>0</DefaultValue>
+								<UInt32Range>
+									<MaxValue>3</MaxValue>
+								</UInt32Range>
+							</UInt32Attribute>
+						</ConfigBlock>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Trace Enable</Name>
+						<BoolAttribute>
+							<Name>Trace start/stop enable</Name>
+							<DefaultValue>false</DefaultValue>
+						</BoolAttribute>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>FUNC_A</DefaultValue>
+							<EnumValues>FUNC_A,FUNC_NOT_A,FUNC_A_AND_B,FUNC_NOT_A_AND_B,FUNC_NOT_A_AND_NOT_B,FUNC_A_OR_B,FUNC_NOT_A_OR_B,FUNC_NOT_A_OR_NOT_B</EnumValues>
+						</EnumAttribute>
+						<ConfigBlock>
+							<Name>Resource A</Name>
+							<EnumAttribute>
+								<Name>Resource type</Name>
+								<DefaultValue>RES_TYPE_HARD_WIRED_INPUT</DefaultValue>
+								<EnumValues>RES_TYPE_WATCHPOINT_COMP,RES_TYPE_COUNTER_AT_ZERO,RES_TYPE_TRACE_START_STOP,RES_TYPE_HARD_WIRED_INPUT</EnumValues>
+							</EnumAttribute>
+							<UInt32Attribute>
+								<Name>Resource index</Name>
+								<DefaultValue>15</DefaultValue>
+								<UInt32Range>
+									<MaxValue>15</MaxValue>
+								</UInt32Range>
+							</UInt32Attribute>
+						</ConfigBlock>
+						<ConfigBlock>
+							<Name>Resource B</Name>
+							<EnumAttribute>
+								<Name>Resource type</Name>
+								<DefaultValue>RES_TYPE_WATCHPOINT_COMP</DefaultValue>
+								<EnumValues>RES_TYPE_WATCHPOINT_COMP,RES_TYPE_COUNTER_AT_ZERO,RES_TYPE_TRACE_START_STOP,RES_TYPE_HARD_WIRED_INPUT</EnumValues>
+							</EnumAttribute>
+							<UInt32Attribute>
+								<Name>Resource index</Name>
+								<DefaultValue>0</DefaultValue>
+								<UInt32Range>
+									<MaxValue>3</MaxValue>
+								</UInt32Range>
+							</UInt32Attribute>
+						</ConfigBlock>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Timestamp Event</Name>
+						<EnumAttribute>
+							<Name>Function</Name>
+							<DefaultValue>FUNC_A</DefaultValue>
+							<EnumValues>FUNC_A,FUNC_NOT_A,FUNC_A_AND_B,FUNC_NOT_A_AND_B,FUNC_NOT_A_AND_NOT_B,FUNC_A_OR_B,FUNC_NOT_A_OR_B,FUNC_NOT_A_OR_NOT_B</EnumValues>
+						</EnumAttribute>
+						<ConfigBlock>
+							<Name>Resource A</Name>
+							<EnumAttribute>
+								<Name>Resource type</Name>
+								<DefaultValue>RES_TYPE_HARD_WIRED_INPUT</DefaultValue>
+								<EnumValues>RES_TYPE_WATCHPOINT_COMP,RES_TYPE_COUNTER_AT_ZERO,RES_TYPE_TRACE_START_STOP,RES_TYPE_HARD_WIRED_INPUT</EnumValues>
+							</EnumAttribute>
+							<UInt32Attribute>
+								<Name>Resource index</Name>
+								<DefaultValue>15</DefaultValue>
+								<UInt32Range>
+									<MaxValue>15</MaxValue>
+								</UInt32Range>
+							</UInt32Attribute>
+						</ConfigBlock>
+						<ConfigBlock>
+							<Name>Resource B</Name>
+							<EnumAttribute>
+								<Name>Resource type</Name>
+								<DefaultValue>RES_TYPE_WATCHPOINT_COMP</DefaultValue>
+								<EnumValues>RES_TYPE_WATCHPOINT_COMP,RES_TYPE_COUNTER_AT_ZERO,RES_TYPE_TRACE_START_STOP,RES_TYPE_HARD_WIRED_INPUT</EnumValues>
+							</EnumAttribute>
+							<UInt32Attribute>
+								<Name>Resource index</Name>
+								<DefaultValue>0</DefaultValue>
+								<UInt32Range>
+									<MaxValue>3</MaxValue>
+								</UInt32Range>
+							</UInt32Attribute>
+						</ConfigBlock>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Embedded ICE control</Name>
+						<UInt32Attribute>
+							<Name>Start resource select mask</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+						<UInt32Attribute>
+							<Name>Stop resource select mask</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>FIFOFULL control</Name>
+						<UInt32Attribute>
+							<Name>FIFOFULL Level</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+					</ConfigBlock>
+					<ConfigBlock>
+						<Name>Counter</Name>
+						<UInt32Attribute>
+							<Name>Counter reload value</Name>
+							<DefaultValue>0</DefaultValue>
+						</UInt32Attribute>
+					</ConfigBlock>
+				</ConfigBlock>
+				<ConfigBlock>
+					<Name>General config</Name>
+					<StringAttribute>
+						<Name>Launch config name</Name>
+						<DefaultValue>LIB_MK60DN512Z_INTERNAL_FLASH_OSJTAG</DefaultValue>
+					</StringAttribute>
+					<StringAttribute>
+						<Name>Config path</Name>
+						<DefaultValue>/home/andy/freeworkspace/CWK60</DefaultValue>
+					</StringAttribute>
+					<BoolAttribute>
+						<Name>StopTrace</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>StartTrace</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Low power mode</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+				</ConfigBlock>
+				<ConfigBlock>
+					<Name>ITM Config</Name>
+					<BoolAttribute>
+						<Name>ITM Enable</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<UInt32Attribute>
+						<Name>Trace ID</Name>
+						<DefaultValue>2</DefaultValue>
+					</UInt32Attribute>
+					<BoolAttribute>
+						<Name>No timestamps</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Local timestamps</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Global timestamps</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<EnumAttribute>
+						<Name>Global timestamp frequency</Name>
+						<DefaultValue>TSTAMP_DISABLED</DefaultValue>
+						<EnumValues>TSTAMP_DISABLED,EVERY_128_CYCLES,EVERY_8192_CYCLES,EVERY_PACKET</EnumValues>
+					</EnumAttribute>
+					<BoolAttribute>
+						<Name>Sync packages</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Enable packet emission from DTW</Name>
+						<DefaultValue>true</DefaultValue>
+					</BoolAttribute>
+					<EnumAttribute>
+						<Name>Timestamp prescaler</Name>
+						<DefaultValue>TSP_1_TICK</DefaultValue>
+						<EnumValues>TSP_1_TICK,TSP_4_TICKS,TSP_16_TICKS,TSP_64_TICKS</EnumValues>
+					</EnumAttribute>
+					<UInt32Attribute>
+						<Name>Trace enable mask</Name>
+						<DefaultValue>1</DefaultValue>
+					</UInt32Attribute>
+				</ConfigBlock>
+				<ConfigBlock>
+					<Name>Trace destination config</Name>
+					<EnumAttribute>
+						<Name>Type</Name>
+						<DefaultValue>TD_ETB</DefaultValue>
+						<EnumValues>TD_ETB,TD_JTRACE,TD_TRACELINK</EnumValues>
+					</EnumAttribute>
+					<BoolAttribute>
+						<Name>SWO Enabled</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<BoolAttribute>
+						<Name>Keep Buffers</Name>
+						<DefaultValue>false</DefaultValue>
+					</BoolAttribute>
+					<StringAttribute>
+						<Name>Core Clock</Name>
+						<DefaultValue>25</DefaultValue>
+					</StringAttribute>
+				</ConfigBlock>
+			</Configuration>
+		</RequiresPlugin>
+	</DataProducerInstance>
+</SAE>

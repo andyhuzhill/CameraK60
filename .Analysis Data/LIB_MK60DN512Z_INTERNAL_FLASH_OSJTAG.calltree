@@ -1,0 +1,13 @@
+**1
+/home/andy/freeworkspace/CWK60/.Analysis Data/LIB_MK60DN512Z_INTERNAL_FLASH_OSJTAG_0_CWK60.afx
+
+**Lines
+
+"Call Pair": "Caller ID"(width 70, sort, int); "Caller Name"(width 200, sort, string); "Call Site"(width 70, sort, int); "Callee ID"(width 70, sort, int); "Callee Name"(width 200, sort, string); "Number of calls"(width 80, sort, int); "Source File Path"(width 2056, sort, string); "Line Number"(width 60, sort, int); "%% Total calls of parent"(width 60, sort, float); "%% Total times it was called"(width 60, sort, float); "Max Call Stack"(width 10, sort, string); "Max Size Stack"(width 10, sort, string); "Inclusive Time"(width 70, sort, float)
+**Data
+
+*0
+"Call Pair": "0"; "<START>"; "0"; "2"; "motorInit"; "1"; "/home/andy/freeworkspace/CWK60/Sources/controller.c"; "106"; "50.00"; "100.00"; "false"; "false"; "0"
+"Call Pair": "0"; "<START>"; "0"; "3"; "motorSetSpeed"; "1"; "/home/andy/freeworkspace/CWK60/Sources/controller.c"; "124"; "50.00"; "100.00"; "true"; "true"; "106047360391"
+"Call Pair": "3"; "motorSetSpeed"; "3914"; "4"; "NRF_ISR_Tx_State"; "30"; "/home/andy/freeworkspace/CWK60/drivers/src/nrf24l0.c"; "483"; "100.00"; "100.00"; "true"; "true"; "106047360391"
+

@@ -1,0 +1,12 @@
+**1
+/home/andy/freeworkspace/CWK60/.Analysis Data/LIB_MK60DN512Z_INTERNAL_FLASH_OSJTAG_0_CWK60.afx
+
+**Lines
+
+"File": "Name"(width 200, sort string); "Number of Lines"(width 80, sort int); "Lines Executed"(width 60, sort int); "Coverage %%"(width 70, sort float)
+**Data
+
+*0
+"File": "controller.c"; "294"; "61"; "20.75"
+"File": "nrf24l0.c"; "1204"; "24"; "1.99"
+
