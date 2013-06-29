@@ -181,7 +181,7 @@ stopcar(void)
 	{
 		GPIOD_PTOR |= (0x55 << 8);
 		DELAY_MS(500);
-		GPIOD_PTOR |= (0xaa << 8);
+		GPIOD_PTOR |= (0x55 << 8);
 		DELAY_MS(500);
 	}
 }
