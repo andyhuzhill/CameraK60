@@ -94,7 +94,7 @@
 
 //#define  SERIAL
 
-//#define SENDIMG
+#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
@@ -112,6 +112,8 @@
 #endif
 
 #define  CLOSE_LOOP		//±Õ»·µ÷ËÙ
+
+extern uint32 startLineFlag;
 
 #endif
 

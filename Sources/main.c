@@ -14,6 +14,8 @@
 
 #include "derivative.h" /* include peripheral declarations */
 
+uint32 startLineFlag;
+
 void
 ledInit(void)
 {
@@ -46,8 +48,8 @@ main(void)
 	EnableInterrupts;   //开全局中断
 	
 	DELAY_MS(2000);
+	startLineFlag = 0;
 	
-
 	for (;;) 
 	{
 		speed = imgProcess();
