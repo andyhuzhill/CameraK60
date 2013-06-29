@@ -60,6 +60,8 @@ imgGetImg(void)
 extern PidObject pidSteer;
 
 extern vint32 imgspeed;
+extern speedChoice choice;
+extern int32 imgcount;
 
 int
 imgProcess(void)
@@ -91,6 +93,7 @@ imgProcess(void)
 		img_flag = IMG_PROCESS;
 
 		imgspeed = 0;
+		imgcount ++;
 
 		imgResize();
 		imgFilter();
@@ -105,27 +108,6 @@ imgProcess(void)
 		}
 		average = sum/(50-b);
 
-		// 山寨北科大算法
-		error = average - IMG_MID;
-		if(ABS(error) <= 3){
-			maxspeed = 7;
-		}else{
-			maxspeed = 7;
-		}
-		pidSteer.kp = error*error/2 + 180;
-		ret = steerUpdate(error);
-
-		ret += FTM_PRECISON/2;
-		steerSetDuty(ret);
-
-		ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
-
-		GPIOD_PTOR |= (1 << 9);
-
-		img_flag = IMG_READY;
-
-		printf("imgspeed= %d",imgspeed);
-
 #ifdef SENDIMG
 		NRF_MSG_send(COM_IMG, nrf_buff);
 
@@ -134,7 +116,52 @@ imgProcess(void)
 		}while(status == TX_ISR_SEND);
 
 #endif
-		imgStartLine();
+
+		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
+			imgStartLine();
+		}
+
+		// 山寨北科大算法
+		error = average - IMG_MID;
+
+		switch(choice){
+		case LOWEST:
+			maxspeed = 7;
+			break;
+		case MID:
+			if(ABS(error) <= 3){
+				maxspeed = 8;
+			}else{
+				maxspeed = 7;
+			}
+			break;
+		case FASTER:
+			if(ABS(error) <= 3){
+				maxspeed = 10;
+			}else{
+				maxspeed = 7;
+			}
+			break;
+		case FASTEST:
+			break;
+		default:
+			break;
+		}
+
+		pidSteer.kp = error*error/2 + 180;
+		ret = steerUpdate(error);
+
+		ret += FTM_PRECISON/2;
+		steerSetDuty(ret);
+
+		ret = maxspeed;
+
+		GPIOD_PTOR |= (1 << 9);
+
+		img_flag = IMG_READY;
+
+		printf("imgspeed= %d",imgspeed);
+
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -464,10 +491,10 @@ imgStartLine(void)
 			if(img[row][col]!= img[row][col+1]){
 				tiaobian[count++] = row;
 				if(count >= 5){
-					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2)&&
-							((tiaobian[2]-tiaobian[1]) >= 4) //&&
-//							(tiaobian[3]-tiaobian[2] >= 5)
-							){
+					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) &&
+							((tiaobian[2]-tiaobian[1]) >= 15) &&
+							(tiaobian[3]-tiaobian[2] >= 15)
+					){
 						stopcar();
 						return ;
 					}

@@ -94,7 +94,7 @@
 
 //#define  SERIAL
 
-#define SENDIMG
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
@@ -113,7 +113,12 @@
 
 #define  CLOSE_LOOP		//±Õ»·µ÷ËÙ
 
-extern uint32 startLineFlag;
+typedef enum{
+	LOWEST  = 0,
+	MID     = 1,
+	FASTER  = 2,
+	FASTEST = 3,
+}speedChoice;
 
 #endif
 
