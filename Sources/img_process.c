@@ -97,7 +97,7 @@ imgProcess(void)
 
 		imgResize();
 		imgFilter();
-		imgFindLine();
+//		imgFindLine();
 		imgGetMidLine();
 
 
@@ -127,6 +127,7 @@ imgProcess(void)
 		switch(choice){
 		case LOWEST:
 			maxspeed = 7;
+			minspeed = 5;
 			break;
 		case MID:
 			if(ABS(error) <= 3){
@@ -148,13 +149,14 @@ imgProcess(void)
 			break;
 		}
 
-		pidSteer.kp = error*error/2 + 180;
+		pidSteer.kp = error*error/80 + 180;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 
-		ret = maxspeed;
+//		ret = maxspeed;
+		ret = maxspeed - (maxspeed-minspeed)*(average-IMG_MID)*(average-IMG_MID)/1600;
 
 		GPIOD_PTOR |= (1 << 9);
 
@@ -393,6 +395,7 @@ __relocate_code__
 void
 imgGetMidLine(void)
 {
+#if 0
 	int leftCnt=0, rightCnt=0;
 	lostRow = 3;
 	int slop1 = 0, slop2 = 0;
@@ -428,6 +431,92 @@ imgGetMidLine(void)
 			}
 		}
 	}
+#else
+	int8_t getLeft=0, getRight=0;
+	int8_t row, col;
+	int8_t start, end;
+
+	memset(leftBlack, -1, sizeof(leftBlack));
+	memset(rightBlack, IMG_W, sizeof(rightBlack));
+	memset(middle, (IMG_W/2), sizeof(middle));
+
+	for(row=IMG_H-1; row > (IMG_H-8); --row){
+		getLeft = getRight = 0;
+		for(col=0;col<(IMG_W-1); ++col){
+			if((img[row][col] != 0) && (img[row][col+1] == 0)){
+				getLeft = 1;
+				leftBlack[row] = col;
+				break;
+			}
+		}
+
+		for(col=IMG_W-1; col >= 1; --col){
+			if((img[row][col]!=0) && (img[row][col-1] == 0)){
+				getRight = 1;
+				rightBlack[row] = col;
+				break;
+			}
+		}
+
+		if(getLeft && getRight){            //ÕÒµ½Á½±ßºÚÏß
+			middle[row] = (leftBlack[row]+rightBlack[row])/2;
+		}else if(getLeft && !getRight){     //¶ªÊ§ÓÒ±ßºÚÏß
+			middle[row] = (leftBlack[row]+IMG_W)/2;
+		}else if(!getLeft && getRight){     //¶ªÊ§×ó±ßºÚÏß
+			middle[row] = rightBlack[row]/2;
+		}else if(!getLeft && !getRight){    //Á½±ß¶ªÏß
+			// ??
+		}
+
+		if((middle[row] <3) || (middle[row] > (IMG_W-2))){
+			lostRow = row;
+			return;
+		}
+	}
+
+	for(row = (IMG_H-8); row > 0; --row){
+		getLeft = getRight = 0;
+		start   = middle[row+1];
+		end     = 1;
+		for(col=start; col >= end; --col){   //´ÓÖÐÏßÍù×óËÑË÷
+			if((img[row][col] == 0) && (img[row][col-1] != 0)){
+				getLeft = 1;
+				leftBlack[row] = col-1;
+				break;
+			}
+		}
+
+		end = IMG_W-1;
+
+		for(col=start; col < end; ++col){   //´ÓÖÐÏßÍùÓÒËÑË÷
+			if((img[row][col] == 0) && (img[row][col+1] != 0)){
+				getRight = 1;
+				rightBlack[row] = col+1;
+				break;
+			}
+		}
+
+		if(getLeft && getRight){            //ÕÒµ½Á½±ßºÚÏß
+			middle[row] = (leftBlack[row]+rightBlack[row])/2;
+		}else if(getLeft && !getRight){     //¶ªÊ§ÓÒ±ßºÚÏß
+			middle[row] = middle[row+1] + leftBlack[row+1] - leftBlack[row+2];
+		}else if(!getLeft && getRight){     //¶ªÊ§×ó±ßºÚÏß
+			middle[row] = middle[row+1] + rightBlack[row+1] - rightBlack[row+2];
+		}else if(!getLeft && !getRight){    //Á½±ß¶ªÏß
+			// ??
+			middle[row] = middle[row+1];
+		}
+
+		if((middle[row] <3) || (middle[row] > (IMG_W-2))){
+			lostRow = row;
+			return;
+		}
+	}
+
+	for(row=2;row<IMG_H-2; ++row){
+		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
+	}
+#endif
 }
 
 
