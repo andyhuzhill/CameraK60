@@ -22,7 +22,7 @@ static int8 rightBlack[IMG_H]={0};
 static int8 middle[IMG_H] = {0};                         //记录中线位置
 
 static uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
-static uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN);                        //保存摄像头采集数据
+static uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN); //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
@@ -71,7 +71,7 @@ imgProcess(void)
 	int error=10;
 
 #ifdef SENDIMG
-	int8 status = 0 ;
+	int8 status = 0;
 #endif
 
 	int sum = 0;
@@ -101,7 +101,7 @@ imgProcess(void)
 		imgGetMidLine();
 
 
-		b = MAX(lostRow,3);
+		b = MAX(lostRow,3); 
 		if (b >= 50) b = 3;
 		for(i= b ;i<50;i++){
 			sum += middle[i];
@@ -126,8 +126,8 @@ imgProcess(void)
 
 		switch(choice){
 		case LOWEST:
-			maxspeed = 7;
-			minspeed = 5;
+			maxspeed = 10;
+			minspeed = 7;
 			break;
 		case MID:
 			if(ABS(error) <= 3){
@@ -432,6 +432,7 @@ imgGetMidLine(void)
 		}
 	}
 #else
+	
 	int8_t getLeft=0, getRight=0;
 	int8_t row, col;
 	int8_t start, end;
@@ -513,9 +514,10 @@ imgGetMidLine(void)
 		}
 	}
 
-	for(row=2;row<IMG_H-2; ++row){
+	for(row=2;row<(IMG_H-2); ++row){
 		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
 	}
+	
 #endif
 }
 
@@ -582,8 +584,8 @@ imgStartLine(void)
 				if(count >= 5){
 					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) &&
 							((tiaobian[2]-tiaobian[1]) >= 15) &&
-							(tiaobian[3]-tiaobian[2] >= 15)
-					){
+							(tiaobian[3]-tiaobian[2] >= 15))
+					{
 						stopcar();
 						return ;
 					}
