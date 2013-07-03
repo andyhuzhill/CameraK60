@@ -686,11 +686,11 @@
 									<listOptionValue builtIn="false" value="&quot;${MCUToolsBaseDir}/ARM_EABI_Support/ewl/lib&quot;"/>
 								</option>
 								<option id="com.freescale.arm.cdt.toolchain.linker.commandFile.1521269835" name="Linker Command File" superClass="com.freescale.arm.cdt.toolchain.linker.commandFile" value="${ProjDirPath}/Project_Settings/Linker_Files/MK60DN512Z_flash.lcf" valueType="string"/>
-								<option id="com.freescale.arm.cdt.toolchain.linker.generateMapFile.1581010917" superClass="com.freescale.arm.cdt.toolchain.linker.generateMapFile" value="true" valueType="boolean"/>
-								<option id="com.freescale.arm.cdt.toolchain.linker.mapKeep.1151301389" superClass="com.freescale.arm.cdt.toolchain.linker.mapKeep" value="false" valueType="boolean"/>
-								<option id="com.freescale.arm.cdt.toolchain.linker.generateSymTab.1292272807" superClass="com.freescale.arm.cdt.toolchain.linker.generateSymTab" value="true" valueType="boolean"/>
-								<option id="com.freescale.arm.cdt.toolchain.linker.sortSymTab.677256790" superClass="com.freescale.arm.cdt.toolchain.linker.sortSymTab" value="true" valueType="boolean"/>
-								<option id="com.freescale.arm.cdt.toolchain.linker.mapSymFirst.655835512" superClass="com.freescale.arm.cdt.toolchain.linker.mapSymFirst" value="true" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.linker.generateMapFile.1581010917" name="Generate Link Map" superClass="com.freescale.arm.cdt.toolchain.linker.generateMapFile" value="true" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.linker.mapKeep.1151301389" name="Keep Map on Failure" superClass="com.freescale.arm.cdt.toolchain.linker.mapKeep" value="false" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.linker.generateSymTab.1292272807" name="Generate Symbol Table" superClass="com.freescale.arm.cdt.toolchain.linker.generateSymTab" value="true" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.linker.sortSymTab.677256790" name="Sort Symbols by Address" superClass="com.freescale.arm.cdt.toolchain.linker.sortSymTab" value="true" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.linker.mapSymFirst.655835512" name="Mapping Symbols First" superClass="com.freescale.arm.cdt.toolchain.linker.mapSymFirst" value="true" valueType="boolean"/>
 								<inputType id="com.freescale.arm.cdt.toolchain.linker.input.241123683" name="ARM Linker Input" superClass="com.freescale.arm.cdt.toolchain.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -706,7 +706,7 @@
 									<listOptionValue builtIn="false" value="&quot;${MCUToolsBaseDir}/ARM_EABI_Support/ewl/EWL_C/include&quot;"/>
 								</option>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.exceptions.969519180" name="Enable Exceptions" superClass="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.exceptions" value="false" valueType="boolean"/>
-								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode.2144646933" name="Speed vs. Size" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode.size" valueType="enumerated"/>
+								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode.2144646933" name="Speed vs. Size" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode.space" valueType="enumerated"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.level.712198653" name="Optimization Level" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.level" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.level.level0" valueType="enumerated"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.c99.1850644626" name="Enable C99 Extensions" superClass="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.c99" value="true" valueType="boolean"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.warn.warningsFlag.hidden.adjusted.1021751624.adjusted.111995758" name="(hidden) warnings flag" superClass="com.freescale.arm.cdt.toolchain.armCpp.warn.warningsFlag.hidden.adjusted.1021751624" value="false" valueType="boolean"/>
@@ -847,13 +847,17 @@
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.warn.warningsFlag.hidden.adjusted.508940301.adjusted.551419641" superClass="com.freescale.arm.cdt.toolchain.armCpp.warn.warningsFlag.hidden.adjusted.508940301" value="true" valueType="boolean"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.warn.warningsFlag.hidden.adjusted.508940301.adjusted.2090647535" superClass="com.freescale.arm.cdt.toolchain.armCpp.warn.warningsFlag.hidden.adjusted.508940301" value="false" valueType="boolean"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.warn.warnAsErrors.1138449896" name="Treat All Warnings as Errors" superClass="com.freescale.arm.cdt.toolchain.armCpp.warn.warnAsErrors" value="false" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.inlineLevel.564925165" name="Inlining" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.inlineLevel" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.inlineLevel.smart" valueType="enumerated"/>
 								<inputType id="com.freescale.arm.cdt.toolchain.armCpp.cSource.1428116789" name="ARM C/C++ Compiler" superClass="com.freescale.arm.cdt.toolchain.armCpp.cSource"/>
 							</tool>
 							<tool command="&quot;${ARM_ToolsDir}/mwasmarm&quot;" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="" id="com.freescale.arm.cdt.toolchain.assembler.166255019" name="ARM Assembler" superClass="com.freescale.arm.cdt.toolchain.assembler">
 								<inputType id="com.freescale.arm.cdt.toolchain.armAsm.input.667014812" name="ARM Assembler Input" superClass="com.freescale.arm.cdt.toolchain.armAsm.input"/>
 							</tool>
 							<tool command="&quot;${ARM_ToolsDir}/mwccarm&quot; -gccinc" commandLinePattern="${COMMAND} -E ${FLAGS} ${INPUTS}" errorParsers="" id="com.freescale.arm.cdt.toolchain.preproc.995938934" name="ARM Preprocessor" superClass="com.freescale.arm.cdt.toolchain.preproc"/>
-							<tool command="&quot;${ARM_ToolsDir}/mwldarm&quot;" commandLinePattern="${COMMAND} -dis ${FLAGS} ${INPUTS}" errorParsers="" id="com.freescale.arm.cdt.toolchain.disassembler.1256023600" name="ARM Disassembler" superClass="com.freescale.arm.cdt.toolchain.disassembler"/>
+							<tool command="&quot;${ARM_ToolsDir}/mwldarm&quot;" commandLinePattern="${COMMAND} -dis ${FLAGS} ${INPUTS}" errorParsers="" id="com.freescale.arm.cdt.toolchain.disassembler.1256023600" name="ARM Disassembler" superClass="com.freescale.arm.cdt.toolchain.disassembler">
+								<option id="com.freescale.arm.cdt.toolchain.disassembler.xtables.365452724" superClass="com.freescale.arm.cdt.toolchain.disassembler.xtables" value="true" valueType="boolean"/>
+								<option id="com.freescale.arm.cdt.toolchain.disassembler.debug.280130468" superClass="com.freescale.arm.cdt.toolchain.disassembler.debug" value="true" valueType="boolean"/>
+							</tool>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="com.freescale.arm.cdt.toolchain.config.arm.release.501179006.Project_Settings/Linker_Files/MK60DN512Z_ram.lcf" name="MK60DN512Z_ram.lcf" rcbsApplicability="disable" resourcePath="Project_Settings/Linker_Files/MK60DN512Z_ram.lcf" toolsToInvoke="com.freescale.arm.cdt.toolchain.linker.899073871.154592304">

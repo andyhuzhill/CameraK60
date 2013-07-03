@@ -111,7 +111,7 @@ motorInit(void)
 	pidMotor.iLimit = PID_MOTOR_INTEGRATION_LIMIT;
 
 	// TAGS: 编码器PTA8输入 下降沿中断 上拉 带滤波
-	port_init(PTA8, IRQ_FALLING | PULLUP | PF);                 
+	port_init(ENCODER_PIN, IRQ_FALLING | PULLUP | PF);                 
 
 	pit_init_ms(PIT0, 1);  //1ms 触发一次PIT中断 进行测速
 }
@@ -154,8 +154,8 @@ motorSetSpeed(int32 speed)
 #endif
 #endif
 		
-		if(duty > FTM_PRECISON) duty = FTM_PRECISON;
-		if(duty < 0) duty = 0;
+		if(duty >= FTM_PRECISON) duty = FTM_PRECISON;
+		if(duty <= 0) duty = 0;
 
 		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
 //		FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);

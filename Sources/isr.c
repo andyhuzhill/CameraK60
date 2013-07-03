@@ -37,7 +37,7 @@ PORTA_ISR(void)         //场中断处理函数
         }
     }
 
-    if (PORTA_ISFR & (1 << 8))                     //编码器引脚中断
+    if (PORTA_ISFR & (1 << ENCODER_PIN))                     //编码器引脚中断
     {               
         encoder_cnt ++;
         GPIOD_PTOR |= (1 << 10);
@@ -61,8 +61,6 @@ vint32 imgspeed = 0;
 void 
 PIT0_ISR(void)
 {
-    DisableInterrupts;
-    
     speed_cnt = encoder_cnt;
     getEncoder = 1;
     encoder_cnt = 0;
@@ -70,11 +68,8 @@ PIT0_ISR(void)
     
     printf("\t");
     
-    
-    GPIOD_PTOR |= (1 << 8);
+    GPIOD_PTOR |= (1 << 11);
     PIT_Flag_Clear(PIT0);
-    
-    EnableInterrupts;
 }
 
 #ifdef AT2401
