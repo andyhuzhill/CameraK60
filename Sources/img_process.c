@@ -398,7 +398,6 @@ __relocate_code__
 void
 imgGetMidLine(void)
 {
-	
 	int8_t getLeft=0, getRight=0;
 	int8_t row, col;
 	int8_t start, end;
