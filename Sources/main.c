@@ -52,7 +52,7 @@ main(void)
 
 	DisableInterrupts;  //关全局中断
 
-	LCD_Init(RED);
+	LCD_Init(YELLOW);
 	gpio_init(PORT_E, 6, Mode_IN, High);
 
 #ifdef AT2401
