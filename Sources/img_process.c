@@ -97,9 +97,7 @@ imgProcess(void)
 
 		imgResize();
 		imgFilter();
-		//		imgFindLine();
 		imgGetMidLine();
-
 
 		b = MAX(lostRow,3); 
 		if (b >= 50) b = 3;
@@ -118,7 +116,7 @@ imgProcess(void)
 #endif
 
 		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-			imgStartLine();
+//			imgStartLine();
 		}
 
 		// 山寨北科大算法
@@ -149,7 +147,7 @@ imgProcess(void)
 			break;
 		}
 
-		pidSteer.kp = error*error/100 + 100;
+		pidSteer.kp = error*error/80 + 160;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
@@ -587,9 +585,10 @@ imgStartLine(void)
 			if(img[row][col]!= img[row][col+1]){
 				tiaobian[count++] = row;
 				if(count >= 5){
-					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) &&
-							((tiaobian[2]-tiaobian[1]) >= 15) &&
-							(tiaobian[3]-tiaobian[2] >= 15))
+					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) //&&
+//							((tiaobian[2]-tiaobian[1]) >= 15) &&
+//							(tiaobian[3]-tiaobian[2] >= 15)
+							)
 					{
 						stopcar();
 						return ;

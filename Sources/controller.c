@@ -154,7 +154,7 @@ motorSetSpeed(int32 speed)
 #endif
 #endif
 		
-		if(duty >= FTM_PRECISON) duty = FTM_PRECISON;
+		if(duty >= FTM_PRECISON/2) duty = FTM_PRECISON/2;
 		if(duty <= 0) duty = 0;
 
 		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
