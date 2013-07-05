@@ -37,7 +37,7 @@ getSpeedChoice(void)
 	gpio_init(PORT_D, 12, Mode_IN, High);
 	gpio_init(PORT_D, 13, Mode_IN, High);
 	
-	switch(GPIOD_PDIR & (0x3 << 12))
+	switch(((GPIOD_PDIR & (0x3 << 12)) >> 12))
 	{
 	case 0:
 		choice = LOWEST;
@@ -52,8 +52,11 @@ getSpeedChoice(void)
 		choice = FASTEST;
 		break;
 	default:
+		choice = LOWEST;
 		break;
 	}
+	
+	GPIOD_PDOR |= ((GPIOD_PDIR & (0x3 << 12)) >> 12) << 9;
 }
 
 int 
