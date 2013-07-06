@@ -147,7 +147,7 @@ imgProcess(void)
 			break;
 		}
 
-		pidSteer.kp = error*error/80 + 160;
+		pidSteer.kp = error*error/30 + 30;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
