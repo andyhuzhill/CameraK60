@@ -98,7 +98,7 @@ void steerSetDuty(int32 duty)
 		duty = STEER_MIN;
 	}
 	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
-//	FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, duty);
+	//	FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, duty);
 }
 
 void 
@@ -124,7 +124,7 @@ motorSetSpeed(int32 speed)
 {
 	static float duty;
 	int32 pwm;
-	
+
 #ifdef SPEED
 	uint8 txbuff[4];
 	uint8 status;
@@ -136,30 +136,35 @@ motorSetSpeed(int32 speed)
 		pwm = (int32)UpdatePID(&pidMotor, speed_cnt);
 
 		duty = duty + pwm;
-		
+
 #ifdef SPEED
 		txbuff[0] = speed_cnt / (1 << 24);
 		txbuff[1] = speed_cnt/(1 << 16) - (speed_cnt/(1<<24) << 8);
 		txbuff[2] = speed_cnt/(1 << 8) - (speed_cnt/(1<<16) << 8);
 		txbuff[3] = speed_cnt - (speed_cnt/(1<<8) << 8);
-		
+
 		NRF_ISR_Tx_Dat(txbuff, 4);
-		
+
 		do{
 			status = NRF_ISR_Tx_State();
 		}while ( status == TX_ISR_SEND);
 #else
-#ifdef SERIAL
+//#ifdef SERIAL
 		printf("%d\n",speed_cnt);
+//#endif
 #endif
-#endif
-		
-		if(duty >= FTM_PRECISON/2) duty = FTM_PRECISON/2;
-		if(duty <= 0) duty = 0;
 
-		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
-//		FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
-//		FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, (uint32)(FTM_PRECISON - duty));
+		if(duty >= FTM_PRECISON*2/3) duty = FTM_PRECISON*2/3;
+		//		if(duty <= 0) duty = 0;
+		if(duty <= 0){
+			FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, FTM_PRECISON);
+			FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)(FTM_PRECISON + duty));
+		}else{
+			FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, FTM_PRECISON);
+			FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
+		}
+		//		FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
+		//		FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, (uint32)(FTM_PRECISON - duty));
 		getEncoder = 0;
 	}
 #else

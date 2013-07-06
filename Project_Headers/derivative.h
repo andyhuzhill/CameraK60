@@ -64,12 +64,12 @@
 
 #define MOTOR1_FTM              FTM0
 #define MOTOR1_CHN              CH1
-#define MOTOR1_FREQ             10000        //单位Hz
+#define MOTOR1_FREQ             12000        //单位Hz
 #define MOTOR1_DEFAULT_DUTY     FTM_PRECISON         //单位 万分之一
 
 #define MOTOR2_FTM              FTM0
 #define MOTOR2_CHN              CH0
-#define MOTOR2_FREQ             10000        //单位Hz
+#define MOTOR2_FREQ             12000        //单位Hz
 #define MOTOR2_DEFAULT_DUTY     FTM_PRECISON            //单位万分之一
 
 #define ENCODER_FTM             FTM1
@@ -78,7 +78,7 @@
 //  定义舵机PID参数
 #define PID_STEER_KP  20
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  50.0
+#define PID_STEER_KD  100.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
@@ -94,7 +94,7 @@
 
 //#define  SERIAL
 
-#define SENDIMG
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
@@ -103,7 +103,7 @@
 #endif
 
 
-//#define SPEED
+#define SPEED
 
 #ifdef SPEED
 #ifndef AT2401

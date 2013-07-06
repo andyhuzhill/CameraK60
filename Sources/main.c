@@ -81,7 +81,8 @@ main(void)
 	
 	for (;;) 
 	{
-		speed = imgProcess();
+//		speed = imgProcess();
+		speed = 7;
 		motorSetSpeed(speed);
 	}
 }

@@ -142,25 +142,26 @@ imgProcess(void)
 			}
 			break;
 		case FASTEST:
+			maxspeed = 5;
+			minspeed = 5;
 			break;
 		default:
 			break;
 		}
 
-		pidSteer.kp = error*error/30 + 80;
+		pidSteer.kp = error*error/30 + 20;
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 
-		//		ret = maxspeed;
-		ret = maxspeed - (maxspeed-minspeed)*(average-IMG_MID)*(average-IMG_MID)/1600;
+		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
 
 		GPIOD_PTOR |= (1 << 9);
 
 		img_flag = IMG_READY;
 
-		printf("imgspeed= %d",imgspeed);
+//		printf("imgspeed= %d",imgspeed);
 
 
 #ifdef SDCARD
