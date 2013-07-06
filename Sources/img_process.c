@@ -125,7 +125,7 @@ imgProcess(void)
 		switch(choice){
 		case LOWEST:
 			maxspeed = 9;
-			minspeed = 7;
+			minspeed = 3;
 			break;
 		case MID:
 			if(ABS(error) <= 3){
@@ -143,7 +143,7 @@ imgProcess(void)
 			break;
 		case FASTEST:
 			maxspeed = 5;
-			minspeed = 5;
+			minspeed = 2;
 			break;
 		default:
 			break;
@@ -160,9 +160,6 @@ imgProcess(void)
 		GPIOD_PTOR |= (1 << 9);
 
 		img_flag = IMG_READY;
-
-//		printf("imgspeed= %d",imgspeed);
-
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
