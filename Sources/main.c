@@ -60,18 +60,19 @@ main(void)
 
 	EnableInterrupts;   //开全局中断
 	
-//	while(1)
-//	{
-//		status = NRF_ISR_Rx_Dat(rxbuff);
-//		
-//		if(status == RX_DR){
-//			for(i=0;i<4; i++){
-//				printf("%d,",rxbuff[i]);
-//			}
-//			printf("\n");
-//		}
-//
-//	}
+	while(1)
+	{
+		status = NRF_ISR_Rx_Dat(rxbuff);
+		
+		if(status == RX_DR){
+			for(i=0;i<4; i++){
+				printf("%d,",rxbuff[i]);
+			}
+			printf("\n");
+		}
+
+	}
+	
 	for (;;) 
 	{
 		do{
