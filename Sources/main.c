@@ -77,6 +77,11 @@ main(void)
 				img_flag = IMG_FINISH;
 				imgProcess();
 				
+				printf("\nimg\n");
+				for(int i = 0; i<600; ++i){
+					printf("%d,", srcImg[i]);
+				}
+				
 				break;
 			default:
 				break;
