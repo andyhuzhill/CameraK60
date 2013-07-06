@@ -21,8 +21,8 @@ static int8 leftBlack[IMG_H] = {0};
 static int8 rightBlack[IMG_H]={0};
 static int8 middle[IMG_H] = {0};                         //记录中线位置
 
- uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
- uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN);                        //保存摄像头采集数据
+uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN);                        //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
@@ -78,10 +78,10 @@ imgProcess(void)
 	Site_t steersite = {5, 65};
 
 	Site_t avrsite = {5,80};
-	
+
 	Site_t speedsign = {0, 95};
 	Site_t speedsite = {5,95};
-	
+
 	Site_t pointsite = {0,0};
 
 #ifdef SENDIMG
@@ -101,108 +101,108 @@ imgProcess(void)
 	f_mount(0,&fs);
 #endif
 
-//	imgGetImg();
+	//	imgGetImg();
 
-//	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
-//		img_flag = IMG_PROCESS;
+	//	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
+	//		img_flag = IMG_PROCESS;
 
-		imgspeed = 0;
+	imgspeed = 0;
 
-		imgResize();
-		imgFilter();
-//		imgFindLine();
-		imgGetMidLine();
+	imgResize();
+	imgFilter();
+	//		imgFindLine();
+	imgGetMidLine();
 
-		b = MAX(lostRow,3);
-		if (b >= 50) b = 3;
-		for(i= b ;i<50;i++){
-			sum += middle[i];
-			pointsite.x = middle[i];
-			pointsite.y = i;
-			LCD_Point(pointsite, RED);
-		}
-		average = sum / (50-b);
+	b = MAX(lostRow,3);
+	if (b >= 50) b = 3;
+	for(i= b ;i<50;i++){
+		sum += middle[i];
+		pointsite.x = middle[i];
+		pointsite.y = i;
+		LCD_Point(pointsite, RED);
+	}
+	average = sum / (50-b);
 
-		// 山寨北科大算法
-		error = average - IMG_MID;
-		if(ABS(error) <= 2){
-			maxspeed = 7;
-		}else{
-			maxspeed = 6;
-		}
-		pidSteer.kp = error*error/80 + 120;
-		ret = steerUpdate(error);
+	// 山寨北科大算法
+	error = average - IMG_MID;
+	if(ABS(error) <= 2){
+		maxspeed = 7;
+	}else{
+		maxspeed = 6;
+	}
+	pidSteer.kp = error*error/30 + 30;
+	ret = steerUpdate(error);
 
-		ret += FTM_PRECISON/2;
-//		steerSetDuty(ret);
-		if(ret >= 0){
-			LCD_Char(steersign, ' ', WHITE, WHITE);
-		}else{
-			ret = - ret;
-			LCD_Char(steersign, '-', YELLOW, WHITE);
-		}
-		LCD_Num_C(steersite, ret, YELLOW, WHITE);
-		
+	ret += FTM_PRECISON/2;
+	//		steerSetDuty(ret);
+	if(ret >= 0){
+		LCD_Char(steersign, ' ', WHITE, WHITE);
+	}else{
+		ret = - ret;
+		LCD_Char(steersign, '-', YELLOW, WHITE);
+	}
+	LCD_Num_C(steersite, ret, YELLOW, WHITE);
 
-		ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
-		
-		if(ret >= 0){
-				LCD_Char(speedsign, ' ', WHITE, WHITE);
-			}else{
-				ret = -ret;
-				LCD_Char(speedsign, '-', BLACK, WHITE);
-			}
-		
-		LCD_Num_C(speedsite, ret,  BLACK, WHITE);
-		LCD_Num_C(avrsite, average, RED, WHITE);	
 
-		GPIOD_PTOR |= (1 << 9);
+	ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
 
-		img_flag = IMG_READY;
+	if(ret >= 0){
+		LCD_Char(speedsign, ' ', WHITE, WHITE);
+	}else{
+		ret = -ret;
+		LCD_Char(speedsign, '-', BLACK, WHITE);
+	}
+
+	LCD_Num_C(speedsite, ret,  BLACK, WHITE);
+	LCD_Num_C(avrsite, average, RED, WHITE);	
+
+	GPIOD_PTOR |= (1 << 9);
+
+	img_flag = IMG_READY;
 
 #ifdef SENDIMG
-		NRF_MSG_send(COM_IMG, nrf_buff);
+	NRF_MSG_send(COM_IMG, nrf_buff);
 
-		do{
-			status = NRF_MSG_send_state();
-		}while(status == TX_ISR_SEND);
+	do{
+		status = NRF_MSG_send_state();
+	}while(status == TX_ISR_SEND);
 
 #endif
 
 #ifdef SDCARD
-		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+	res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
 
-		filesize = f_size(&file);
+	filesize = f_size(&file);
 
-		f_lseek(&file, filesize);
+	f_lseek(&file, filesize);
 
-		f_printf(&file, "img\n");
+	f_printf(&file, "img\n");
 
-		for(int row = 0; row < IMG_H; ++row){
-			for(int col = 0; col < IMG_W; ++col){
-				f_printf(&file, "%d,", img[row][col]);
-			}
-			f_printf(&file, "\n");
+	for(int row = 0; row < IMG_H; ++row){
+		for(int col = 0; col < IMG_W; ++col){
+			f_printf(&file, "%d,", img[row][col]);
 		}
 		f_printf(&file, "\n");
+	}
+	f_printf(&file, "\n");
 
-		f_close(&file);
+	f_close(&file);
 #endif 
 
 #ifdef SERIALIMG
-		printf("img\n");
-		for (int row = 0; row < IMG_H; ++row) {
-			for (int col = 0; col < IMG_W ; ++col)  {
-				printf( "%d,",img[row][col]);
-			}
-			printf("\n");
+	printf("img\n");
+	for (int row = 0; row < IMG_H; ++row) {
+		for (int col = 0; col < IMG_W ; ++col)  {
+			printf( "%d,",img[row][col]);
 		}
 		printf("\n");
+	}
+	printf("\n");
 
 #endif
-		return ret;
-//	}
-//	return ret;
+	return ret;
+	//	}
+	//	return ret;
 }
 
 
@@ -406,6 +406,8 @@ imgGetMidLine(void)
 	memset(rightBlack, IMG_W, sizeof(rightBlack));
 	memset(middle, (IMG_W/2), sizeof(middle));
 
+	lostRow = 3;
+
 	for(row=IMG_H-1; row > (IMG_H-8); --row){
 		getLeft = getRight = 0;
 		for(col=0;col<(IMG_W-1); ++col){
@@ -424,8 +426,17 @@ imgGetMidLine(void)
 			}
 		}
 
-		if(getLeft && getRight && (leftBlack[row] < rightBlack[row])){            //找到两边黑线
+		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) &&
+				(ABS(rightBlack[row]-leftBlack[row]) > 10)){            //找到两边黑线
 			middle[row] = (leftBlack[row]+rightBlack[row])/2;
+		}else if(getLeft && getRight &&
+				((leftBlack[row] > rightBlack[row]) && leftBlack[row] > IMG_W/2)
+		){
+			middle[row] = rightBlack[row] / 2;
+		}else if (getLeft && getRight &&
+				((leftBlack[row] > rightBlack[row]) && rightBlack[row] < IMG_W/2)
+		){
+			middle[row] = (leftBlack[row] + IMG_W-1)/2;
 		}else if(getLeft && !getRight){     //丢失右边黑线
 			middle[row] = (leftBlack[row]+IMG_W)/2;
 		}else if(!getLeft && getRight){     //丢失左边黑线
@@ -462,15 +473,8 @@ imgGetMidLine(void)
 			}
 		}
 
-		if(getLeft && getRight && (leftBlack[row] < rightBlack[row])){            //找到两边黑线
-			if(leftBlack[row] < rightBlack[row]){
-				middle[row] = (leftBlack[row]+rightBlack[row])/2;
-			}else if(leftBlack[row+1]!=-1 && ((leftBlack[row]-leftBlack[row+1]) < 0)){
-				middle[row] = middle[row+1] + leftBlack[row]-leftBlack[row+1];
-			}else if(rightBlack[row+1] != IMG_W && ((leftBlack[row]-leftBlack[row+1]) > 0)){
-				middle[row] = middle[row+1] + rightBlack[row]-rightBlack[row+1];
-			}
-		
+		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) && (ABS(rightBlack[row]-leftBlack[row]) > 10)){            //找到两边黑线
+			middle[row] = (leftBlack[row]+rightBlack[row])/2;
 		}else if(getLeft && !getRight){     //丢失右边黑线
 			middle[row] = middle[row+1] + leftBlack[row+1] - leftBlack[row+2];
 		}else if(!getLeft && getRight){     //丢失左边黑线
@@ -486,10 +490,10 @@ imgGetMidLine(void)
 		}
 	}
 
-	for(row=2;row<(IMG_H-2); ++row){
+	for(row=IMG_H-2;row>=lostRow; ++row){
 		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
 	}
-	
+
 }
 
 
