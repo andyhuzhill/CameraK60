@@ -116,10 +116,9 @@ imgProcess(void)
 #endif
 
 		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-			imgStartLine();
+//			imgStartLine();
 		}
 
-		// 山寨北科大算法
 		error = average - IMG_MID;
 
 		switch(choice){
