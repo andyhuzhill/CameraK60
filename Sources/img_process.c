@@ -149,7 +149,7 @@ imgProcess(void)
 			break;
 		}
 		
-		if(ABS(error) < 3){
+		if(ABS(error) < 0){
 			pidSteer.kp = error*error/100 + 10;
 		}else {
 			pidSteer.kp = error*error/100 + 50;
