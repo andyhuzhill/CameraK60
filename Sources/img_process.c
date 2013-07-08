@@ -116,7 +116,7 @@ imgProcess(void)
 #endif
 
 		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-//			imgStartLine();
+			imgStartLine();
 		}
 
 		// 山寨北科大算法
@@ -142,14 +142,18 @@ imgProcess(void)
 			}
 			break;
 		case FASTEST:
-			maxspeed = 5;
+			maxspeed = 7;
 			minspeed = 2;
 			break;
 		default:
 			break;
 		}
-
-		pidSteer.kp = error*error/30 + 20;
+		
+		if(ABS(error) < 3){
+			pidSteer.kp = error*error/100 + 10;
+		}else {
+			pidSteer.kp = error*error/100 + 50;
+		}
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;

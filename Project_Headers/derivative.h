@@ -78,7 +78,7 @@
 //  定义舵机PID参数
 #define PID_STEER_KP  20
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  100.0
+#define PID_STEER_KD  400.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
@@ -94,7 +94,7 @@
 
 //#define  SERIAL
 
-//#define SENDIMG
+#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
@@ -103,7 +103,7 @@
 #endif
 
 
-#define SPEED
+//#define SPEED
 
 #ifdef SPEED
 #ifndef AT2401

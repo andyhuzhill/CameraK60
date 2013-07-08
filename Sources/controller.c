@@ -149,20 +149,15 @@ motorSetSpeed(int32 speed)
 			status = NRF_ISR_Tx_State();
 		}while ( status == TX_ISR_SEND);
 #else
-//#ifdef SERIAL
-		printf("%d\n",speed_cnt);
-//#endif
+		//#ifdef SERIAL
+		//		printf("%d\n",speed_cnt);
+		//#endif
 #endif
 
 		if(duty >= FTM_PRECISON*2/3) duty = FTM_PRECISON*2/3;
-		//		if(duty <= 0) duty = 0;
-		if(duty <= 0){
-			FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, FTM_PRECISON);
-			FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, (uint32)(FTM_PRECISON + duty));
-		}else{
-			FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, FTM_PRECISON);
-			FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
-		}
+		if(duty <= 0) duty = 0;
+
+		FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, (uint32)(FTM_PRECISON - duty));
 		//		FTM_PWM_init(MOTOR1_FTM, MOTOR1_CHN, MOTOR1_FREQ, MOTOR1_DEFAULT_DUTY);
 		//		FTM_PWM_init(MOTOR2_FTM, MOTOR2_CHN, MOTOR2_FREQ, (uint32)(FTM_PRECISON - duty));
 		getEncoder = 0;
