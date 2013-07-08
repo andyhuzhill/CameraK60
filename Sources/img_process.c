@@ -121,31 +121,37 @@ imgProcess(void)
 
 		error = average - IMG_MID;
 
-		switch(choice){
-		case LOWEST:
-			maxspeed = 9;
-			minspeed = 3;
-			break;
-		case MID:
-			if(ABS(error) <= 3){
-				maxspeed = 8;
-			}else{
-				maxspeed = 7;
-			}
-			break;
-		case FASTER:
-			if(ABS(error) <= 3){
-				maxspeed = 10;
-			}else{
-				maxspeed = 7;
-			}
-			break;
-		case FASTEST:
-			maxspeed = 7;
-			minspeed = 2;
-			break;
-		default:
-			break;
+//		switch(choice){
+//		case LOWEST:
+//			maxspeed = 9;
+//			minspeed = 3;
+//			break;
+//		case MID:
+//			if(ABS(error) <= 3){
+//				maxspeed = 8;
+//			}else{
+//				maxspeed = 7;
+//			}
+//			break;
+//		case FASTER:
+//			if(ABS(error) <= 3){
+//				maxspeed = 15;
+//			}else{
+//				maxspeed = 10;
+//			}
+//			break;
+//		case FASTEST:
+//			maxspeed = 7;
+//			minspeed = 2;
+//			break;
+//		default:
+//			break;
+//		}
+		
+		if(ABS(error) <= 3){
+			maxspeed = 15;
+		}else{
+			maxspeed = 10;
 		}
 
 		if(ABS(error) < 0){
@@ -265,21 +271,37 @@ imgGetMidLine(void)
 	for(row=IMG_H-1; row > (IMG_H-8); --row){
 		getLeft = getRight = 0;
 
-		for(col=0;col<(IMG_W-1); ++col){
-			if((img[row][col] != 0) && (img[row][col+1] == 0)){
+		for(col=IMG_W/2; col>0; --col){
+			if((img[row][col] == 0) && (img[row][col-1] != 0)){
 				getLeft = 1;
-				leftBlack[row] = col;
-
+				leftBlack[row] = col - 1;
 				break;
 			}
 		}
+		if(!getLeft){
+			for(col=IMG_W/2; col < IMG_W; ++col){
+				if(img[row][col] != 0 && (img[row][col+1] == 0)){
+					getLeft = 1;
+					leftBlack[row] = col;
+					break;
+				}
+			}
+		}
 
-		for(col=IMG_W-1; col > 0; --col){
-			if((img[row][col]!=0) && (img[row][col-1] == 0)){
+		for(col=IMG_W/2; col < IMG_W; ++col){
+			if((img[row][col]==0) && (img[row][col+1] != 0)){
 				getRight = 1;
-				rightBlack[row] = col;
-
+				rightBlack[row] = col + 1;
 				break;
+			}
+		}
+		if(!getRight){
+			for(col=IMG_W/2; col > 0; --col){
+				if((img[row][col] != 0) && (img[row][col-1] == 0)){
+					getRight = 1;
+					rightBlack[row] = col;
+					break;
+				}
 			}
 		}
 
@@ -316,7 +338,6 @@ imgGetMidLine(void)
 			if((img[row][col] == 0) && (img[row][col-1] != 0)){
 				getLeft = 1;
 				leftBlack[row] = col-1;
-
 				break;
 			}
 		}
@@ -337,14 +358,14 @@ imgGetMidLine(void)
 		}else if(getLeft && !getRight &&
 				(((leftBlack[row]-leftBlack[row+1]) > -10) && ((leftBlack[row] -leftBlack[row+1])) < 10)
 		){     //¶ªÊ§ÓÒ±ßºÚÏß
-			middle[row] = middle[row+1] + leftBlack[row] - leftBlack[row+1];
+			middle[row] = middle[row+1] + (leftBlack[row] - leftBlack[row+1]);
 		}else if(getLeft && !getRight){
 			middle[row] = (leftBlack[row] + IMG_W) / 2;
 		}
 		else if(!getLeft && getRight &&
 				(((rightBlack[row]-rightBlack[row+1]) > -10) && ((rightBlack[row] -rightBlack[row+1])) < 10)
 		){     //¶ªÊ§×ó±ßºÚÏß
-			middle[row] = middle[row+1] + rightBlack[row] - rightBlack[row+1];
+			middle[row] = middle[row+1] + (rightBlack[row] - rightBlack[row+1]);
 		}else if(!getLeft && getRight){
 			middle[row] = rightBlack[row] / 2;
 		}
