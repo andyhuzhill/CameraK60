@@ -116,7 +116,7 @@ imgProcess(void)
 #endif
 
 		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-//			imgStartLine();
+			//			imgStartLine();
 		}
 
 		error = average - IMG_MID;
@@ -147,7 +147,7 @@ imgProcess(void)
 		default:
 			break;
 		}
-		
+
 		if(ABS(error) < 0){
 			pidSteer.kp = error*error/100 + 10;
 		}else {
@@ -251,101 +251,123 @@ __relocate_code__
 void
 imgGetMidLine(void)
 {
-    int8_t getLeft=0, getRight=0;
-    int8_t row, col;
-    int8_t start, end;
+	int8_t getLeft=0, getRight=0;
+	int8_t row, col;
+	int8_t start, end;
+	int8_t slop1, slop2;
 
-    memset(leftBlack, -1, sizeof(leftBlack));
-    memset(rightBlack, IMG_W, sizeof(rightBlack));
-    memset(middle, (IMG_W/2), sizeof(middle));
+	memset(leftBlack, -1, sizeof(leftBlack));
+	memset(rightBlack, IMG_W, sizeof(rightBlack));
+	memset(middle, (IMG_W/2), sizeof(middle));
 
-    lostRow = 3;
+	lostRow = 3;
 
-    for(row=IMG_H-1; row > (IMG_H-8); --row){
-        getLeft = getRight = 0;
-        for(col=0;col<(IMG_W-1); ++col){
-            if((img[row][col] != 0) && (img[row][col+1] == 0)){
-                getLeft = 1;
-                leftBlack[row] = col;
-                break;
-            }
-        }
+	for(row=IMG_H-1; row > (IMG_H-8); --row){
+		getLeft = getRight = 0;
 
-        for(col=IMG_W-1; col >= 1; --col){
-            if((img[row][col]!=0) && (img[row][col-1] == 0)){
-                getRight = 1;
-                rightBlack[row] = col;
-                break;
-            }
-        }
+		for(col=0;col<(IMG_W-1); ++col){
+			if((img[row][col] != 0) && (img[row][col+1] == 0)){
+				getLeft = 1;
+				leftBlack[row] = col;
 
-        if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) &&
-                (ABS(rightBlack[row]-leftBlack[row]) > 10)){            //ÕÒµ½Á½±ßºÚÏß
-            middle[row] = (leftBlack[row]+rightBlack[row])/2;
-        }else if(getLeft && getRight &&
-                 ((leftBlack[row] > rightBlack[row]) && leftBlack[row] > IMG_W/2)
-                 ){
-            middle[row] = rightBlack[row] / 2;
-        }else if (getLeft && getRight &&
-                  ((leftBlack[row] > rightBlack[row]) && rightBlack[row] < IMG_W/2)
-                  ){
-            middle[row] = (leftBlack[row] + IMG_W-1)/2;
-        }else if(getLeft && !getRight){     //¶ªÊ§ÓÒ±ßºÚÏß
-            middle[row] = (leftBlack[row]+IMG_W)/2;
-        }else if(!getLeft && getRight){     //¶ªÊ§×ó±ßºÚÏß
-            middle[row] = rightBlack[row]/2;
-        }else if(!getLeft && !getRight){    //Á½±ß¶ªÏß
-            // ??
-        }
+				break;
+			}
+		}
 
-        if((middle[row] <3) || (middle[row] > (IMG_W-2))){
-            lostRow = row;
-            return;
-        }
-    }
+		for(col=IMG_W-1; col > 0; --col){
+			if((img[row][col]!=0) && (img[row][col-1] == 0)){
+				getRight = 1;
+				rightBlack[row] = col;
 
-    for(row = (IMG_H-8); row > 0; --row){
-        getLeft = getRight = 0;
-        start   = middle[row+1];
-        end     = 1;
-        for(col=start; col >= end; --col){   //´ÓÖÐÏßÍù×óËÑË÷
-            if((img[row][col] == 0) && (img[row][col-1] != 0)){
-                getLeft = 1;
-                leftBlack[row] = col-1;
-                break;
-            }
-        }
+				break;
+			}
+		}
 
-        end = IMG_W-1;
+		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) &&
+				(ABS(rightBlack[row]-leftBlack[row]) > 20)){            //ÕÒµ½Á½±ßºÚÏß
+			middle[row] = (leftBlack[row]+rightBlack[row])/2;
+		}else if(getLeft && getRight &&
+				((leftBlack[row] > rightBlack[row]) && leftBlack[row] > IMG_W/2)
+		){
+			middle[row] = rightBlack[row] / 2;
+		}else if (getLeft && getRight &&
+				((leftBlack[row] > rightBlack[row]) && rightBlack[row] < IMG_W/2)
+		){
+			middle[row] = (leftBlack[row] + IMG_W-1)/2;
+		}else if(getLeft && !getRight){     //¶ªÊ§ÓÒ±ßºÚÏß
+			middle[row] = (leftBlack[row]+IMG_W)/2;
+		}else if(!getLeft && getRight){     //¶ªÊ§×ó±ßºÚÏß
+			middle[row] = rightBlack[row]/2;
+		}else if(!getLeft && !getRight){    //Á½±ß¶ªÏß
+			// ??
+		}
 
-        for(col=start; col < end; ++col){   //´ÓÖÐÏßÍùÓÒËÑË÷
-            if((img[row][col] == 0) && (img[row][col+1] != 0)){
-                getRight = 1;
-                rightBlack[row] = col+1;
-                break;
-            }
-        }
+		if((middle[row] <3) || (middle[row] > (IMG_W-2))){
+			lostRow = row;
+			return;
+		}
+	}
 
-        if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) && (ABS(rightBlack[row]-leftBlack[row]) > 10)){            //ÕÒµ½Á½±ßºÚÏß
-            middle[row] = (leftBlack[row]+rightBlack[row])/2;
-        }else if(getLeft && !getRight){     //¶ªÊ§ÓÒ±ßºÚÏß
-            middle[row] = middle[row+1] + leftBlack[row+1] - leftBlack[row+2];
-        }else if(!getLeft && getRight){     //¶ªÊ§×ó±ßºÚÏß
-            middle[row] = middle[row+1] + rightBlack[row+1] - rightBlack[row+2];
-        }else if(!getLeft && !getRight){    //Á½±ß¶ªÏß
-            // ??
-            middle[row] = middle[row+1];
-        }
+	for(row = (IMG_H-8); row > 0; --row){
+		getLeft = getRight = 0;
+		start   = middle[row+1];
+		end     = 0;
+		for(col=start; col > end; --col){   //´ÓÖÐÏßÍù×óËÑË÷
+			if((img[row][col] == 0) && (img[row][col-1] != 0)){
+				getLeft = 1;
+				leftBlack[row] = col-1;
 
-        if((middle[row] <3) || (middle[row] > (IMG_W-2))){
-            lostRow = row;
-            return;
-        }
-    }
+				break;
+			}
+		}
 
-    for(row=IMG_H-2;row>=lostRow; ++row){
-        middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
-    }
+		end = IMG_W-1;
+
+		for(col=start; col < end; ++col){   //´ÓÖÐÏßÍùÓÒËÑË÷
+			if((img[row][col] == 0) && (img[row][col+1] != 0)){
+				getRight = 1;
+				rightBlack[row] = col+1;
+
+				break;
+			}
+		}
+
+		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) && ((rightBlack[row]-leftBlack[row]) > 10)){            //ÕÒµ½Á½±ßºÚÏß
+			middle[row] = (leftBlack[row]+rightBlack[row])/2;
+		}else if(getLeft && !getRight &&
+				(((leftBlack[row]-leftBlack[row+1]) > -10) && ((leftBlack[row] -leftBlack[row+1])) < 10)
+		){     //¶ªÊ§ÓÒ±ßºÚÏß
+			middle[row] = middle[row+1] + leftBlack[row] - leftBlack[row+1];
+		}else if(getLeft && !getRight){
+			middle[row] = (leftBlack[row] + IMG_W) / 2;
+		}
+		else if(!getLeft && getRight &&
+				(((rightBlack[row]-rightBlack[row+1]) > -10) && ((rightBlack[row] -rightBlack[row+1])) < 10)
+		){     //¶ªÊ§×ó±ßºÚÏß
+			middle[row] = middle[row+1] + rightBlack[row] - rightBlack[row+1];
+		}else if(!getLeft && getRight){
+			middle[row] = rightBlack[row] / 2;
+		}
+		else if(!getLeft && !getRight){    //Á½±ß¶ªÏß
+			// ??
+			middle[row] = middle[row+1];
+		}
+
+		if((middle[row] <3) || (middle[row] > (IMG_W-2))){
+			lostRow = row;
+			return;
+		}
+	}
+
+	for(row=IMG_H-4;row>=lostRow+2; ++row){
+
+		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
+
+		if(ABS(middle[row]-middle[row+1]) > 20){
+			lostRow = row;
+			break;
+		}
+	}
 }
 
 //
@@ -410,9 +432,9 @@ imgStartLine(void)
 				tiaobian[count++] = row;
 				if(count >= 5){
 					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) //&&
-//							((tiaobian[2]-tiaobian[1]) >= 15) &&
-//							(tiaobian[3]-tiaobian[2] >= 15)
-							)
+							//							((tiaobian[2]-tiaobian[1]) >= 15) &&
+							//							(tiaobian[3]-tiaobian[2] >= 15)
+					)
 					{
 						stopcar();
 						return ;
