@@ -80,7 +80,7 @@ main(void)
 
 	//	DELAY_MS(2000);
 
-	for (;;) 
+	while(1) 
 	{
 		speed = imgProcess();
 		motorSetSpeed(speed);

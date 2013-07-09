@@ -50,13 +50,12 @@ DMA0_ISR(void)
 {
     DMA_DIS(CAMERA_DMA_CH);                 //关闭通道CHn 硬件请求
     DMA_IRQ_CLEAN(CAMERA_DMA_CH);           //清除通道传输中断标志位
-    GPIOD_PTOR |= (1 << 12);
+    GPIOD_PTOR |= (1 << 15);
     img_flag = IMG_FINISH ; 
 }
 
 vint8 getEncoder = 0;
 extern vint32  speed_cnt;
-vint32 imgspeed = 0;
 
 void 
 PIT0_ISR(void)
@@ -64,7 +63,6 @@ PIT0_ISR(void)
     speed_cnt = encoder_cnt;
     getEncoder = 1;
     encoder_cnt = 0;
-    imgspeed ++;
     
     printf("\t");
     
