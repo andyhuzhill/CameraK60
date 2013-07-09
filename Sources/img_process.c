@@ -29,8 +29,8 @@ static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 static int8 lostRow;
 static int8 startRow;
 
-static int8 maxspeed = 4;
-static int8 minspeed = 4;
+int8 maxspeed ;
+int8 minspeed ;
 static int8 getStartLine = 0;
 
 ////// 外部公共变量声明
@@ -121,46 +121,12 @@ imgProcess(void)
 
 		error = average - IMG_MID;
 
-		//		switch(choice){
-		//		case LOWEST:
-		//			maxspeed = 9;
-		//			minspeed = 3;
-		//			break;
-		//		case MID:
-		//			if(ABS(error) <= 3){
-		//				maxspeed = 8;
-		//			}else{
-		//				maxspeed = 7;
-		//			}
-		//			break;
-		//		case FASTER:
-		//			if(ABS(error) <= 3){
-		//				maxspeed = 15;
-		//			}else{
-		//				maxspeed = 10;
-		//			}
-		//			break;
-		//		case FASTEST:
-		//			maxspeed = 7;
-		//			minspeed = 2;
-		//			break;
-		//		default:
-		//			break;
-		//		}
-
 		if(ABS(error) <= 3){
-			maxspeed = 12;
-			minspeed = 5;
+			pidSteer.kp = error*error/100 + 10;
 		}else{
-			maxspeed = 9;
-			minspeed = 2;
+			pidSteer.kp = error*error/100 + 80;
 		}
 
-		if(ABS(error) < 0){
-			pidSteer.kp = error*error/100 + 10;
-		}else {
-			pidSteer.kp = error*error/100 + 50;
-		}
 		ret = steerUpdate(error);
 
 		ret += FTM_PRECISON/2;
@@ -172,7 +138,6 @@ imgProcess(void)
 
 		img_flag = IMG_READY;
 
-		
 		
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);

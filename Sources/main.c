@@ -41,22 +41,30 @@ getSpeedChoice(void)
 	{
 	case 0:
 		choice = LOWEST;
+		maxspeed = 7;
+		minspeed = 7;
 		break;
 	case 1:
 		choice = MID;
+		maxspeed = 10;
+		minspeed = 7;
 		break;
 	case 2:
 		choice = FASTER;
+		maxspeed = 12;
+		minspeed = 5;
 		break;
 	case 3:
 		choice = FASTEST;
+		maxspeed = 15;
+		minspeed = 7;
 		break;
 	default:
 		choice = LOWEST;
+		maxspeed = 7;
+		minspeed = 7;
 		break;
 	}
-
-	GPIOD_PDOR |= ((GPIOD_PDIR & (0x3 << 12)) >> 12) << 9;
 }
 
 int 
@@ -82,7 +90,8 @@ main(void)
 
 	while(1) 
 	{
-		speed = imgProcess();
+		imgProcess();
+		speed = 7;
 		motorSetSpeed(speed);
 	}
 }

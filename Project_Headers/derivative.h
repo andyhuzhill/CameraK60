@@ -94,7 +94,7 @@
 
 //#define  SERIAL
 
-#define SENDIMG
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401
@@ -103,7 +103,7 @@
 #endif
 
 
-//#define SPEED
+#define SPEED
 
 #ifdef SPEED
 #ifndef AT2401
@@ -119,6 +119,10 @@ typedef enum{
 	FASTER  = 2,
 	FASTEST = 3,
 }speedChoice;
+
+
+extern int8 maxspeed ;
+extern int8 minspeed ;
 
 #endif
 
