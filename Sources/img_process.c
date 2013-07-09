@@ -401,6 +401,7 @@ imgGetMidLine(void)
 	int8_t getLeft=0, getRight=0;
 	int8_t row, col;
 	int8_t start, end;
+	int8_t slop1, slop2;
 
 	memset(leftBlack, -1, sizeof(leftBlack));
 	memset(rightBlack, IMG_W, sizeof(rightBlack));
@@ -410,24 +411,43 @@ imgGetMidLine(void)
 
 	for(row=IMG_H-1; row > (IMG_H-8); --row){
 		getLeft = getRight = 0;
-		for(col=0;col<(IMG_W-1); ++col){
-			if((img[row][col] != 0) && (img[row][col+1] == 0)){
+
+		for(col=IMG_W/2; col>0; --col){
+			if((img[row][col] == 0) && (img[row][col-1] != 0)){
 				getLeft = 1;
-				leftBlack[row] = col;
+				leftBlack[row] = col - 1;
 				break;
 			}
 		}
+		if(!getLeft){
+			for(col=IMG_W/2; col < IMG_W; ++col){
+				if(img[row][col] != 0 && (img[row][col+1] == 0)){
+					getLeft = 1;
+					leftBlack[row] = col;
+					break;
+				}
+			}
+		}
 
-		for(col=IMG_W-1; col >= 1; --col){
-			if((img[row][col]!=0) && (img[row][col-1] == 0)){
+		for(col=IMG_W/2; col < IMG_W; ++col){
+			if((img[row][col]==0) && (img[row][col+1] != 0)){
 				getRight = 1;
-				rightBlack[row] = col;
+				rightBlack[row] = col + 1;
 				break;
+			}
+		}
+		if(!getRight){
+			for(col=IMG_W/2; col > 0; --col){
+				if((img[row][col] != 0) && (img[row][col-1] == 0)){
+					getRight = 1;
+					rightBlack[row] = col;
+					break;
+				}
 			}
 		}
 
 		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) &&
-				(ABS(rightBlack[row]-leftBlack[row]) > 10)){            //找到两边黑线
+				(ABS(rightBlack[row]-leftBlack[row]) > 20)){            //找到两边黑线
 			middle[row] = (leftBlack[row]+rightBlack[row])/2;
 		}else if(getLeft && getRight &&
 				((leftBlack[row] > rightBlack[row]) && leftBlack[row] > IMG_W/2)
@@ -454,16 +474,21 @@ imgGetMidLine(void)
 	for(row = (IMG_H-8); row > 0; --row){
 		getLeft = getRight = 0;
 		start   = middle[row+1];
-		end     = 1;
-		for(col=start; col >= end; --col){   //从中线往左搜索
+		end     = leftBlack[row+1] -3;
+		if (end < 0) end = 0;
+		for(col=start; col > end; --col){   //从中线往左搜索
 			if((img[row][col] == 0) && (img[row][col-1] != 0)){
 				getLeft = 1;
 				leftBlack[row] = col-1;
+
 				break;
 			}
 		}
 
-		end = IMG_W-1;
+		end = rightBlack[row+1] + 3;
+		if (end > IMG_W-1){
+			end = IMG_W-1;
+		}
 
 		for(col=start; col < end; ++col){   //从中线往右搜索
 			if((img[row][col] == 0) && (img[row][col+1] != 0)){
@@ -473,13 +498,23 @@ imgGetMidLine(void)
 			}
 		}
 
-		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) && (ABS(rightBlack[row]-leftBlack[row]) > 10)){            //找到两边黑线
+		if(getLeft && getRight && (leftBlack[row] < rightBlack[row]) && ((rightBlack[row]-leftBlack[row]) > 10)){            //找到两边黑线
 			middle[row] = (leftBlack[row]+rightBlack[row])/2;
-		}else if(getLeft && !getRight){     //丢失右边黑线
-			middle[row] = middle[row+1] + leftBlack[row+1] - leftBlack[row+2];
-		}else if(!getLeft && getRight){     //丢失左边黑线
-			middle[row] = middle[row+1] + rightBlack[row+1] - rightBlack[row+2];
-		}else if(!getLeft && !getRight){    //两边丢线
+		}else if(getLeft && !getRight &&
+				(((leftBlack[row]-leftBlack[row+1]) > -10) && ((leftBlack[row] -leftBlack[row+1])) < 10)
+		){     //丢失右边黑线
+			middle[row] = middle[row+1] + (leftBlack[row] - leftBlack[row+1]);
+		}else if(getLeft && !getRight){
+			middle[row] = (leftBlack[row] + IMG_W) / 2;
+		}
+		else if(!getLeft && getRight &&
+				(((rightBlack[row]-rightBlack[row+1]) > -10) && ((rightBlack[row] -rightBlack[row+1])) < 10)
+		){     //丢失左边黑线
+			middle[row] = middle[row+1] + (rightBlack[row] - rightBlack[row+1]);
+		}else if(!getLeft && getRight){
+			middle[row] = rightBlack[row] / 2;
+		}
+		else if(!getLeft && !getRight){    //两边丢线
 			// ??
 			middle[row] = middle[row+1];
 		}
@@ -490,10 +525,9 @@ imgGetMidLine(void)
 		}
 	}
 
-	for(row=IMG_H-2;row>=lostRow; ++row){
+	for(row=IMG_H-4;row>=lostRow+2; ++row){
 		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
 	}
-
 }
 
 
