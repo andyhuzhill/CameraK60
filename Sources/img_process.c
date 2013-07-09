@@ -121,33 +121,33 @@ imgProcess(void)
 
 		error = average - IMG_MID;
 
-//		switch(choice){
-//		case LOWEST:
-//			maxspeed = 9;
-//			minspeed = 3;
-//			break;
-//		case MID:
-//			if(ABS(error) <= 3){
-//				maxspeed = 8;
-//			}else{
-//				maxspeed = 7;
-//			}
-//			break;
-//		case FASTER:
-//			if(ABS(error) <= 3){
-//				maxspeed = 15;
-//			}else{
-//				maxspeed = 10;
-//			}
-//			break;
-//		case FASTEST:
-//			maxspeed = 7;
-//			minspeed = 2;
-//			break;
-//		default:
-//			break;
-//		}
-		
+		//		switch(choice){
+		//		case LOWEST:
+		//			maxspeed = 9;
+		//			minspeed = 3;
+		//			break;
+		//		case MID:
+		//			if(ABS(error) <= 3){
+		//				maxspeed = 8;
+		//			}else{
+		//				maxspeed = 7;
+		//			}
+		//			break;
+		//		case FASTER:
+		//			if(ABS(error) <= 3){
+		//				maxspeed = 15;
+		//			}else{
+		//				maxspeed = 10;
+		//			}
+		//			break;
+		//		case FASTEST:
+		//			maxspeed = 7;
+		//			minspeed = 2;
+		//			break;
+		//		default:
+		//			break;
+		//		}
+
 		if(ABS(error) <= 3){
 			maxspeed = 15;
 			minspeed = 5;
@@ -335,16 +335,21 @@ imgGetMidLine(void)
 	for(row = (IMG_H-8); row > 0; --row){
 		getLeft = getRight = 0;
 		start   = middle[row+1];
-		end     = 0;
+		end     = leftBlack[row+1] -3;
+		if (end < 0) end = 0;
 		for(col=start; col > end; --col){   //从中线往左搜索
 			if((img[row][col] == 0) && (img[row][col-1] != 0)){
 				getLeft = 1;
 				leftBlack[row] = col-1;
+
 				break;
 			}
 		}
 
-		end = IMG_W-1;
+		end = rightBlack[row+1] + 3;
+		if (end > IMG_W-1){
+			end = IMG_W-1;
+		}
 
 		for(col=start; col < end; ++col){   //从中线往右搜索
 			if((img[row][col] == 0) && (img[row][col+1] != 0)){
@@ -383,13 +388,7 @@ imgGetMidLine(void)
 	}
 
 	for(row=IMG_H-4;row>=lostRow+2; ++row){
-
 		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
-
-		if(ABS(middle[row]-middle[row+1]) > 20){
-			lostRow = row;
-			break;
-		}
 	}
 }
 
