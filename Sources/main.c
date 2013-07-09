@@ -90,8 +90,7 @@ main(void)
 
 	while(1) 
 	{
-		imgProcess();
-		speed = 7;
+		speed = imgProcess();
 		motorSetSpeed(speed);
 	}
 }
