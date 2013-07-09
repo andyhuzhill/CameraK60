@@ -23,7 +23,7 @@ ledInit(void)
 	GPIO_InitTypeDef initGPIO;
 
 	initGPIO.Pin  = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 |
-			 GPIO_Pin_14 | GPIO_Pin_15;
+			GPIO_Pin_14 | GPIO_Pin_15;
 	initGPIO.MODE = Mode_OUT;
 	initGPIO.STATE = High;
 	initGPIO.IRQC = None_IRQ;
@@ -36,7 +36,7 @@ getSpeedChoice(void)
 {
 	gpio_init(PORT_D, 12, Mode_IN, High);
 	gpio_init(PORT_D, 13, Mode_IN, High);
-	
+
 	switch(((GPIOD_PDIR & (0x3 << 12)) >> 12))
 	{
 	case 0:
@@ -55,7 +55,7 @@ getSpeedChoice(void)
 		choice = LOWEST;
 		break;
 	}
-	
+
 	GPIOD_PDOR |= ((GPIOD_PDIR & (0x3 << 12)) >> 12) << 9;
 }
 
@@ -63,6 +63,7 @@ int
 main(void)
 {   
 	int speed = 0;
+	int i = 0;
 	DisableInterrupts;  //关全局中断
 
 	ledInit();
@@ -76,9 +77,9 @@ main(void)
 #endif
 
 	EnableInterrupts;   //开全局中断
-	
-//	DELAY_MS(2000);
-	
+
+	//	DELAY_MS(2000);
+
 	for (;;) 
 	{
 		speed = imgProcess();

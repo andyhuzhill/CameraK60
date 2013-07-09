@@ -150,8 +150,10 @@ imgProcess(void)
 		
 		if(ABS(error) <= 3){
 			maxspeed = 15;
+			minspeed = 5;
 		}else{
 			maxspeed = 10;
+			minspeed = 2;
 		}
 
 		if(ABS(error) < 0){
