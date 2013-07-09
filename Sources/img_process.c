@@ -115,9 +115,9 @@ imgProcess(void)
 
 #endif
 
-		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-			//			imgStartLine();
-		}
+//		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
+//			//			imgStartLine();
+//		}
 
 		error = average - IMG_MID;
 
@@ -149,17 +149,17 @@ imgProcess(void)
 		//		}
 
 		if(ABS(error) <= 3){
-			maxspeed = 15;
+			maxspeed = 10;
 			minspeed = 5;
 		}else{
-			maxspeed = 10;
+			maxspeed = 8;
 			minspeed = 2;
 		}
 
 		if(ABS(error) < 0){
-			pidSteer.kp = error*error/80 + 10;
+			pidSteer.kp = error*error/100 + 10;
 		}else {
-			pidSteer.kp = error*error/100 + 60;
+			pidSteer.kp = error*error/100 + 50;
 		}
 		ret = steerUpdate(error);
 
