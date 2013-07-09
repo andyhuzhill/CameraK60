@@ -45,11 +45,7 @@ main(void)
 	Site_t strsite = {0,70};
 	int speed = 0;
 	int8 status = 0;
-	FATFS fs;
-	FIL file;
-	int res;
-	uint32 filesize;
-
+	
 	DisableInterrupts;  //关全局中断
 
 	LCD_Init(YELLOW);
@@ -71,17 +67,17 @@ main(void)
 			switch(com){
 			case COM_IMG:
 				LCD_Img_Binary(site, size, (uint16*)srcImg);
-				
-//				outimg(img_bin_buff);
-				
+
 				img_flag = IMG_FINISH;
 				imgProcess();
 				
-				printf("\nimg\n");
-				for(int i = 0; i<600; ++i){
-					printf("%d,", srcImg[i]);
+				if(!(GPIOE_PDIR & (1<<6))){
+					printf("\nimg\n");
+					for(int i = 0; i<600; ++i){
+						printf("%d,", srcImg[i]);
+					}
 				}
-				
+
 				break;
 			default:
 				break;
