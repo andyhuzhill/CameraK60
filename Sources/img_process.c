@@ -157,9 +157,9 @@ imgProcess(void)
 		}
 
 		if(ABS(error) < 0){
-			pidSteer.kp = error*error/100 + 10;
+			pidSteer.kp = error*error/80 + 10;
 		}else {
-			pidSteer.kp = error*error/100 + 50;
+			pidSteer.kp = error*error/100 + 60;
 		}
 		ret = steerUpdate(error);
 
