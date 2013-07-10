@@ -52,9 +52,9 @@ imgFilter(void);
  * 找两边黑线
  * 影响到的变量 leftBlack[] 和 rightBlack[]
  */
-//__relocate_code__
-//void
-//imgFindLine(void);
+__relocate_code__
+void
+imgFindLine(void);
 
 /*
  * 说明: 提取图像中线

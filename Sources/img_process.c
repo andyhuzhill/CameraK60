@@ -98,6 +98,7 @@ imgProcess(void)
 
 		imgResize();
 		imgFilter();
+		imgFindLine();
 		imgGetMidLine();
 
 		b = MAX(lostRow,3); 
@@ -218,6 +219,148 @@ imgFilter(void)
 	}
 }
 
+/*
+ * 找两边黑线
+ * 影响到的变量 leftBlack[] 和 rightBlack[]
+ */
+__relocate_code__
+void
+imgFindLine(void)
+{
+	int8_t row, col;
+
+	int8_t leftStart, leftEnd, rightStart, rightEnd;
+	int8_t getLeftBlack=0, getRightBlack=0;  //标志是否找到黑线
+	int8_t leftLostCnt =0, rightLostCnt=0;
+
+	memset((void *)leftBlack, -1, sizeof(leftBlack));
+	memset((void *)rightBlack, IMG_W, sizeof(rightBlack));
+
+	row = IMG_H -5;
+	getRightBlack = getLeftBlack = 0;
+	do{
+		for (col = (IMG_W /2); col >= 0; --col) {  // 先找左边黑线
+			if ((img[row][col] != 0) && (img[row][col+1]==0)){
+				leftBlack[row] = col;               //记录下黑线的列数
+				getLeftBlack ++;
+				break;
+			}
+		}
+
+		for (col = (IMG_W /2)+1; col <= (IMG_W -1); ++col) {  // 再找右边黑线
+			if ((img[row][col] != 0) && (img[row][col-1] == 0)){     //发现黑线
+				rightBlack[row] = col;   //记录下黑线的列数
+				getRightBlack ++;
+				break;
+			}
+		}
+		row --;
+	}while(getLeftBlack != 5 && getRightBlack != 5);
+
+	if(ABS(leftBlack[row+1] - rightBlack[row+1]) <= 3){
+		if((leftBlack[row+1] - leftBlack[row+4]) > 0){    //丢右线
+			rightBlack[row+1] = rightBlack[row+2] = rightBlack[row+3] = rightBlack[row+4] = IMG_W;
+		}
+		if((leftBlack[row+1] - leftBlack[row+4]) < 0){    //丢左线
+			leftBlack[row+1] = leftBlack[row+2] = leftBlack[row+3] = leftBlack[row+4] = -1;
+		}
+	}
+
+	startRow = row;
+
+	leftStart = leftEnd = leftBlack[row+1];
+	rightStart = rightEnd = rightBlack[row+1];
+
+	do{  //找左边黑线
+		getLeftBlack = 0;
+		leftStart += 3;
+		leftEnd -= 3;
+		if (leftEnd < 0) leftEnd = 0;
+		if (leftStart > IMG_W -1) leftStart = IMG_W-1;//避免数组访问越界
+
+		for (col = leftStart; col >= leftEnd ; --col) { //从右向左搜索
+			if ((img[row][col] != 0) && (img[row][col+1] == 0) ){//找到黑线
+				leftBlack[row] = col;
+				leftStart = leftEnd = col;
+				getLeftBlack = 1;
+				if(leftLostCnt == 1){  //补线
+					leftBlack[row+1] = (leftBlack[row+2] + leftBlack[row]) /2;
+				}
+				if(leftLostCnt == 2){ //补线
+					leftBlack[row+1] = leftBlack[row]   - (leftBlack[row]-leftBlack[row+3])/3;
+					leftBlack[row+2] = leftBlack[row+3] + (leftBlack[row]-leftBlack[row+3])/3;
+				}
+				if(leftLostCnt == 3 && ABS(col-rightBlack[row+1])>=3){
+					leftBlack[row+1] = leftBlack[row]   - (leftBlack[row]-leftBlack[row+4])/4;
+					leftBlack[row+2] = leftBlack[row+4] + (leftBlack[row]-leftBlack[row+4])/2;
+					leftBlack[row+3] = leftBlack[row+4] + (leftBlack[row]-leftBlack[row+4])/4;
+				}
+				if(leftLostCnt == 4 && ABS(col-rightBlack[row+1])>=3){
+					leftBlack[row+1] = leftBlack[row] - (leftBlack[row]-leftBlack[row+5])/5;
+					leftBlack[row+2] = leftBlack[row] - (leftBlack[row]-leftBlack[row+5])*2/5;
+					leftBlack[row+3] = leftBlack[row+5] + (leftBlack[row]-leftBlack[row+5])*3/5;
+					leftBlack[row+4] = leftBlack[row+5] + (leftBlack[row]-leftBlack[row+5])*2/5;
+					leftBlack[row+5] = leftBlack[row+5] + (leftBlack[row]-leftBlack[row+5])/5;
+				}
+				leftLostCnt = 0;
+				break;  //找到黑线退出for循环
+			}
+		}
+		if(getLeftBlack != 1){ //没有找到黑线
+			leftLostCnt ++;
+			leftBlack[row] = -1;
+			if(leftLostCnt > 4){
+				leftStart -= 3;
+				leftEnd += 3;
+			}
+		}
+
+		getRightBlack = 0;    //找右边黑线
+		rightStart -= 3;
+		rightEnd += 3;
+		if (rightStart < 0) rightStart = 0;
+		if (rightEnd > IMG_W -1) rightEnd = IMG_W-1; //避免数组访问越界
+
+		for (col = rightStart; col <= rightEnd; ++col){  //从左往右搜索
+			if ((img[row][col]!=0) && (img[row][col-1] == 0) ){ //找到黑线
+				rightBlack[row] = col;
+				rightStart = rightEnd = col;
+				getRightBlack = 1;
+				if(rightLostCnt == 1){ //补线
+					rightBlack[row+1] = (rightBlack[row+2]+rightBlack[row]) /2;
+				}
+				if(rightLostCnt == 2){  //补线
+					rightBlack[row+1] = rightBlack[row] - (rightBlack[row]-rightBlack[row+3])/3;
+					rightBlack[row+2] = rightBlack[row+3] + (rightBlack[row]-rightBlack[row+3])/3;
+				}
+				if(rightLostCnt == 3  && ABS(col-leftBlack[row+1])>=3){
+					rightBlack[row+1] = rightBlack[row] - (rightBlack[row]-rightBlack[row+4])/4;
+					rightBlack[row+2] = rightBlack[row+4] + (rightBlack[row]-rightBlack[row+4])/2;
+					rightBlack[row+3] = rightBlack[row+4] + (rightBlack[row]-rightBlack[row+4])/4;
+				}
+				if(rightLostCnt == 4 && ABS(col-leftBlack[row+1])>=3){
+					rightBlack[row+1] = rightBlack[row] - (rightBlack[row]-rightBlack[row+5])/5;
+					rightBlack[row+2] = rightBlack[row] - (rightBlack[row]-rightBlack[row+5])*2/5;
+					rightBlack[row+3] = rightBlack[row+5] + (rightBlack[row]-rightBlack[row+5])*3/5;
+					rightBlack[row+4] = rightBlack[row+5] + (rightBlack[row]-rightBlack[row+5])*2/5;
+					rightBlack[row+5] = rightBlack[row+5] + (rightBlack[row]-rightBlack[row+5])/5;
+				}
+				break;      //跳出for循环
+			}
+		}
+		if (getRightBlack != 1){ //没有找到黑线
+			rightBlack[row] = IMG_W;
+			rightLostCnt ++;
+			if(rightLostCnt > 4){
+				rightStart += 3;
+				rightEnd -= 3;
+			}
+		}
+		row --;
+	}while(row > 0);
+}
+
+
 /**
  * 说明: 提取图像中线
  * 影响到的变量:  middle[];
@@ -226,6 +369,7 @@ __relocate_code__
 void
 imgGetMidLine(void)
 {
+#if 0
 	int8_t getLeft=0, getRight=0;
 	int8_t row, col;
 	int8_t start, end;
@@ -363,6 +507,44 @@ imgGetMidLine(void)
 			return;
 		}
 	}
+#else
+	int leftCnt=0, rightCnt=0;
+	lostRow = 3;
+	int slop1 = 0, slop2 = 0;
+
+	memset((void *)middle, IMG_W/2 , sizeof(middle));
+
+	for (int row = IMG_H-8; row > 0; --row) {
+		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
+			middle[row] = (leftBlack[row] + rightBlack[row])/2;
+			leftCnt = rightCnt = 0;
+			continue;
+		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //丢失左线
+			if(row > 50){
+				middle[row] = rightBlack[row] / 2 ;
+			}else{
+				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+			}
+		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
+			if(row > 50){
+				middle[row] = (leftBlack[row]+IMG_W) /2 ;
+			}else{
+				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
+			}
+		}
+	}
+
+	for(int row = IMG_H-8; row > 1; --row){
+		middle[row]= (middle[row+1]+middle[row-1])/2;
+
+		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
+			if(lostRow == 3){
+				lostRow = row;
+			}
+		}
+	}
+
+#endif
 }
 
 //
