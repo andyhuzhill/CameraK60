@@ -45,7 +45,7 @@ main(void)
 	Site_t strsite = {0,70};
 	int speed = 0;
 	int8 status = 0;
-	
+
 	DisableInterrupts;  //关全局中断
 
 	LCD_Init(YELLOW);
@@ -70,13 +70,13 @@ main(void)
 
 				img_flag = IMG_FINISH;
 				imgProcess();
-				
-				if((GPIOE_PDIR & (1<<6))){
-					printf("\nimg\n");
-					for(int i = 0; i<600; ++i){
-						printf("%d,", srcImg[i]);
-					}
+
+				//				if((GPIOE_PDIR & (1<<6))){
+				printf("\nimg\n");
+				for(int i = 0; i<600; ++i){
+					printf("%d,", srcImg[i]);
 				}
+				//				}
 
 				break;
 			default:
