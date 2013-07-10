@@ -52,7 +52,7 @@ Register_Info ov7727_reg[] =
 {
 
         //¼Ä´æÆ÷£¬¼Ä´æÆ÷Öµ´Î
-        {COM4         ,0x41},
+        {COM4         ,0x64},
         {CLKRC        ,0x00}, 
         {COM2         ,0x03}, 
         {COM3         ,0xD0}, 
@@ -122,7 +122,7 @@ Register_Info ov7727_reg[] =
         {BDMStep      ,0x03},
         {SDE          ,0x04},
         {BRIGHT       ,0x00},                              
-        {CNST         ,0x39},
+        {CNST         ,0x40},
         {SIGN         ,0x06},
         {UVADJ0       ,0x11},
         {UVADJ1       ,0x02},

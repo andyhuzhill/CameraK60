@@ -56,6 +56,7 @@ DMA0_ISR(void)
 
 vint8 getEncoder = 0;
 extern vint32  speed_cnt;
+vint32 imgspeed;
 
 void 
 PIT0_ISR(void)
@@ -63,6 +64,7 @@ PIT0_ISR(void)
     speed_cnt = encoder_cnt;
     getEncoder = 1;
     encoder_cnt = 0;
+    imgspeed ++;
     
     printf("\t");
     
