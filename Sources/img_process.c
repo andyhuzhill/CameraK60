@@ -96,7 +96,7 @@ imgProcess(void)
 
 		imgResize();
 		imgFilter();
-		//		imgFindLine();
+		imgFindLine();
 		imgGetMidLine();
 
 		b = MAX(lostRow,3); 
@@ -114,15 +114,15 @@ imgProcess(void)
 		}while(status == TX_ISR_SEND);
 
 #endif
-
-		//		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-		//			//			imgStartLine();
-		//		}
+//
+//		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
+//			imgStartLine();
+//		}
 
 		error = average - IMG_MID;
 
 		if(ABS(error) <= 3){
-			pidSteer.kp = error*error/5 + 10;
+			pidSteer.kp = error*error/8 + 10;
 		}else{
 			pidSteer.kp = error*error/5 + 30;
 		}
@@ -303,7 +303,7 @@ imgFindLine(void)
 		if(getLeftBlack != 1){ //没有找到黑线
 			leftLostCnt ++;
 			leftBlack[row] = -1;
-			if(leftLostCnt > 3){
+			if(leftLostCnt > 4){
 				leftStart -= 3;
 				leftEnd += 3;
 			}
@@ -345,7 +345,7 @@ imgFindLine(void)
 		if (getRightBlack != 1){ //没有找到黑线
 			rightBlack[row] = IMG_W;
 			rightLostCnt ++;
-			if(rightLostCnt > 3){
+			if(rightLostCnt > 4){
 				rightStart += 3;
 				rightEnd -= 3;
 			}
@@ -396,7 +396,9 @@ imgGetMidLine(void)
 	for(int row = IMG_H-8; row > 1; --row){
 		middle[row]= (middle[row+1]+ middle[row] + middle[row-1])/3;
 
-		if((middle[row]<3) || (middle[row] > (IMG_W-3))){
+		if((middle[row]<3) || (middle[row] > (IMG_W-3)) 
+				|| (ABS(middle[row] - middle[row+1]) > 15)
+		){
 			if(lostRow == 3){
 				lostRow = row;
 			}
