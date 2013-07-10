@@ -26,6 +26,7 @@ static uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN); //保存摄像头采集
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
+
 static int8 lostRow;
 static int8 startRow;
 
@@ -87,12 +88,12 @@ imgProcess(void)
 	f_mount(0,&fs);
 #endif
 
-	
+
 	imgGetImg();
 
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
-	
+
 		imgcount ++;
 
 		imgResize();
@@ -124,7 +125,7 @@ imgProcess(void)
 		if(ABS(error) <= 3){
 			pidSteer.kp = error*error/100 + 10;
 		}else{
-			pidSteer.kp = error*error/100 + 100;
+			pidSteer.kp = error*error/100 + 120;
 		}
 
 		ret = steerUpdate(error);
@@ -138,7 +139,7 @@ imgProcess(void)
 
 		img_flag = IMG_READY;
 
-		
+
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
 
@@ -302,10 +303,10 @@ imgGetMidLine(void)
 
 	for(row = (IMG_H-8); row > 0; --row){
 		getLeft = getRight = 0;
-		start   = middle[row+1];
-		end     = leftBlack[row+1] -3;
+		start   = leftBlack[row+1] + 5;
+		end     = leftBlack[row+1] - 5;
 		if (end < 0) end = 0;
-		for(col=start; col > end; --col){   //从中线往左搜索
+		for(col=start; col > end; --col){   //从右往左搜索
 			if((img[row][col] == 0) && (img[row][col-1] != 0)){
 				getLeft = 1;
 				leftBlack[row] = col-1;
@@ -313,10 +314,10 @@ imgGetMidLine(void)
 			}
 		}
 
-		end = rightBlack[row+1] + 3;
+		start   = rightBlack[row+1] - 5;
+		end     = rightBlack[row+1] + 5;
 		if (end > IMG_W-1) end = IMG_W-1;
-
-		for(col=start; col < end; ++col){   //从中线往右搜索
+		for(col=start; col < end; ++ col){   //从左往右搜索
 			if((img[row][col] == 0) && (img[row][col+1] != 0)){
 				getRight = 1;
 				rightBlack[row] = col+1;
@@ -327,25 +328,23 @@ imgGetMidLine(void)
 		if(getLeft && getRight
 				&& (leftBlack[row] < rightBlack[row])
 				&& ((rightBlack[row]-leftBlack[row]) > 10)
-				&& (ABS(leftBlack[row]-leftBlack[row+1])<10)
+				&& (ABS(leftBlack[row]-leftBlack[row+1]) < 10)
 				&& (ABS(rightBlack[row]-rightBlack[row+1]) < 10)
 		){            //找到两边黑线
 			middle[row] = (leftBlack[row]+rightBlack[row])/2;
-		}else if(getLeft && !getRight &&
-				(((leftBlack[row]-leftBlack[row+1]) > -10) && ((leftBlack[row] -leftBlack[row+1])) < 10)
-		){     //丢失右边黑线
+		}else if(getLeft && !getRight
+				&& (ABS(leftBlack[row]-leftBlack[row+1]) < 10)
+		){         //丢失右边黑线
 			middle[row] = middle[row+1] + (leftBlack[row] - leftBlack[row+1]);
 		}else if(getLeft && !getRight){
 			middle[row] = (leftBlack[row] + IMG_W) / 2;
-		}
-		else if(!getLeft && getRight &&
-				(((rightBlack[row]-rightBlack[row+1]) > -10) && ((rightBlack[row] -rightBlack[row+1])) < 10)
+		}else if(!getLeft && getRight
+				&& (ABS(rightBlack[row]-rightBlack[row+1]) < 10)
 		){     //丢失左边黑线
 			middle[row] = middle[row+1] + (rightBlack[row] - rightBlack[row+1]);
 		}else if(!getLeft && getRight){
 			middle[row] = rightBlack[row] / 2;
-		}
-		else if(!getLeft && !getRight){    //两边丢线
+		}else if(!getLeft && !getRight){    //两边丢线
 			// ??
 			middle[row] = middle[row+1];
 		}
@@ -358,6 +357,11 @@ imgGetMidLine(void)
 
 	for(row=IMG_H-4;row>=lostRow+2; ++row){
 		middle[row] = (middle[row-1]+middle[row]+middle[row+1])/3;
+
+		if(ABS(middle[row]-middle[row+1]) > 15){
+			lostRow = row;
+			return;
+		}
 	}
 }
 

@@ -148,10 +148,6 @@ motorSetSpeed(int32 speed)
 		do{
 			status = NRF_ISR_Tx_State();
 		}while ( status == TX_ISR_SEND);
-#else
-		//#ifdef SERIAL
-		//		printf("%d\n",speed_cnt);
-		//#endif
 #endif
 
 		if(duty >= FTM_PRECISON*2/3) duty = FTM_PRECISON*2/3;

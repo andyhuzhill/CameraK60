@@ -56,7 +56,7 @@ getSpeedChoice(void)
 		break;
 	case 3:
 		choice = FASTEST;
-		maxspeed = 15;
+		maxspeed = 7;
 		minspeed = 7;
 		break;
 	default:
