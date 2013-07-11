@@ -65,7 +65,7 @@
 #define MOTOR1_FTM              FTM0
 #define MOTOR1_CHN              CH1
 #define MOTOR1_FREQ             12000        //单位Hz
-#define MOTOR1_DEFAULT_DUTY     FTM_PRECISON         //单位 万分之一
+#define MOTOR1_DEFAULT_DUTY     FTM_PRECISON        //单位 万分之一
 
 #define MOTOR2_FTM              FTM0
 #define MOTOR2_CHN              CH0
@@ -78,7 +78,7 @@
 //  定义舵机PID参数
 #define PID_STEER_KP  20
 #define PID_STEER_KI  0.0
-#define PID_STEER_KD  300.0
+#define PID_STEER_KD  400.0
 #define PID_STEER_INTEGRATION_LIMIT     20.0
 
 //  定义电机PID参数
