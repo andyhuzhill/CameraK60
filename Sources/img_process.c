@@ -98,18 +98,7 @@ imgProcess(void)
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
-		
-//		if(lostRow >= 50){
-//			img_flag = IMG_READY;
-//			return ret;
-//		}
-
-		b = MAX(lostRow,3); 
-		if (b >= 50) b = 3;
-		for(i= b ;i<50;i++){
-			sum += middle[i];
-		}
-		average = sum/(50-b);
+		average = imgAverage();
 
 #ifdef SENDIMG
 		NRF_MSG_send(COM_IMG, nrf_buff);
@@ -448,6 +437,26 @@ imgGetMidLine(void)
 #endif
 }
 
+
+
+/*
+ * 求中线平均值
+ */
+__relocate_code__
+int
+imgAverage(void)
+{
+	int sum=0, average=0;
+	int end = MAX(lostRow, 10);
+	if(end > 50) end = 10;
+	
+	for(int i= 50; i > end; --i){
+		sum += middle[i];
+	}
+	
+	average = sum / (50-end);
+	return average;
+}
 //
 ///**
 // *  使用最小二乘法计算跑道方向

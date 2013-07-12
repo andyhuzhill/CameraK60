@@ -64,6 +64,13 @@ void
 imgGetMidLine(void);
 
 
+/*
+ * 求中线平均值
+ */
+__relocate_code__
+int
+imgAverage(void);
+
 /**
  *  使用最小二乘法计算跑道方向
  *  输入变量:  BaseLine起始行 < FinalLine终止行
