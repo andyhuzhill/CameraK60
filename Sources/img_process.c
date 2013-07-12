@@ -206,8 +206,6 @@ imgProcess(void)
 
 #endif
 	return ret;
-	//	}
-	//	return ret;
 }
 
 
@@ -536,16 +534,15 @@ imgGetMidLine(void)
 	}
 #else
 
-	int leftCnt=0, rightCnt=0;
+//	int leftCnt=0, rightCnt=0;
 	lostRow = 3;
-	int slop1 = 0, slop2 = 0;
+//	int slop1 = 0, slop2 = 0;
 
-	memset((void *)middle, IMG_W/2 , sizeof(middle));
+	memset((void *)middle, 0 , sizeof(middle));
 
 	for (int row = IMG_H-8; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
 			middle[row] = (leftBlack[row] + rightBlack[row])/2;
-			leftCnt = rightCnt = 0;
 			continue;
 		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
 			if(row > 50){
@@ -565,7 +562,7 @@ imgGetMidLine(void)
 	for(int row = IMG_H-8; row > 1; --row){
 		middle[row]= (middle[row+1]+middle[row-1])/2;
 
-		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
+		if(middle[row]<3 || middle[row] > (IMG_W-3)){
 			if(lostRow == 3){
 				lostRow = row;
 			}
