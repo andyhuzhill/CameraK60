@@ -132,21 +132,22 @@ imgProcess(void)
 	}
 //	pidSteer.kp = error*error/30 + 30;
 	if(ABS(error) <= 3){
-		pidSteer.kp = error*error/100+10;
+		pidSteer.kp = error*error/5+10;
+		pidSteer.kd = 300;
 	}else{
-		pidSteer.kp = error*error/100+30;
+		pidSteer.kp = error*error/5+30;
+		pidSteer.kd = 700;
 	}
 	ret = steerUpdate(error);
 
 	ret += FTM_PRECISON/2;
-	//		steerSetDuty(ret);
 	if(ret >= 0){
 		LCD_Char(steersign, ' ', WHITE, WHITE);
 	}else{
 		ret = - ret;
-		LCD_Char(steersign, '-', YELLOW, WHITE);
+		LCD_Char(steersign, '-', RED, WHITE);
 	}
-	LCD_Num_C(steersite, ret, YELLOW, WHITE);
+	LCD_Num_C(steersite, ret, RED, WHITE);
 
 
 	ret = maxspeed - error*error*(maxspeed-minspeed)/(1600);
