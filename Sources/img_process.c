@@ -95,10 +95,10 @@ imgProcess(void)
 		imgcount ++;
 
 		imgResize();
-		imgFilter();
+		//		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
-		average = imgAverage();
+		average = imgAverage(MAX(lostRow, 10), 50);
 
 #ifdef SENDIMG
 		NRF_MSG_send(COM_IMG, nrf_buff);
@@ -108,10 +108,10 @@ imgProcess(void)
 		}while(status == TX_ISR_SEND);
 
 #endif
-//
-//		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-//			imgStartLine();
-//		}
+		//
+		//		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
+		//			imgStartLine();
+		//		}
 
 		error = average - IMG_MID;
 
@@ -128,12 +128,14 @@ imgProcess(void)
 		ret += FTM_PRECISON/2;
 		steerSetDuty(ret);
 
+
+		error = imgAverage(lostRow, lostRow+5)-IMG_MID;
 		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
 
 		GPIOD_PTOR |= (1 << 9);
 
 		img_flag = IMG_READY;
-//		printf("imgspeed = %d\n", imgspeed);
+		//		printf("imgspeed = %d\n", imgspeed);
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -359,24 +361,34 @@ void
 imgGetMidLine(void)
 {
 #if 1
-
 	int leftCnt=0, rightCnt=0;
 	lostRow = 3;
+	int slop1 = 0, slop2 = 0;
 
 	memset((void *)middle, 0 , sizeof(middle));
 
 	for (int row = IMG_H-8; row > 0; --row) {
-		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row]) && ((rightBlack[row] - leftBlack[row])>15)){
+		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
 			middle[row] = (leftBlack[row] + rightBlack[row])/2;
 			leftCnt = rightCnt = 0;
 			continue;
 		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //丢失左线
+			for(int i= middle[row+1]; i> 0; --i){
+				if(img[row][i] != 0 && img[row][i+1] ==0){
+					leftBlack[row] = i;
+				}
+			}
 			if((row > 40) || (ABS(rightBlack[row+1]-rightBlack[row+2]) > 5)){
 				middle[row] = rightBlack[row] / 2 ;
 			}else{
 				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
 			}
 		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
+			for(int i= middle[row+1]; i < IMG_W; ++i){
+				if(img[row][i] != 0 && img[row][i-1] ==0){
+					rightBlack[row] = i;
+				}
+			}
 			if(row > 40 || (ABS(leftBlack[row+1]-leftBlack[row+2]) > 5)){
 				middle[row] = (leftBlack[row]+IMG_W) /2 ;
 			}else{
@@ -384,7 +396,11 @@ imgGetMidLine(void)
 			}
 		}
 		if(leftBlack[row] == -1 && rightBlack[row] == IMG_W){   //两边丢线
-			middle[row] = middle[row+1];
+			if(middle[row+1] != 0){
+				middle[row] = middle[row+1];
+			}else{
+				middle[row] = IMG_W/2;
+			}
 		}
 	}
 
@@ -399,40 +415,40 @@ imgGetMidLine(void)
 	}
 #else
 	int leftCnt=0, rightCnt=0;
-	lostRow = 3;
-	int slop1 = 0, slop2 = 0;
+lostRow = 3;
+int slop1 = 0, slop2 = 0;
 
-	memset((void *)middle, IMG_W/2 , sizeof(middle));
+memset((void *)middle, IMG_W/2 , sizeof(middle));
 
-	for (int row = IMG_H-8; row > 0; --row) {
-		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
-			middle[row] = (leftBlack[row] + rightBlack[row])/2;
-			leftCnt = rightCnt = 0;
-			continue;
-		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //丢失左线
-			if(row > 50){
-				middle[row] = rightBlack[row] / 2 ;
-			}else{
-				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
-			}
-		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
-			if(row > 50){
-				middle[row] = (leftBlack[row]+IMG_W) /2 ;
-			}else{
-				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
-			}
+for (int row = IMG_H-8; row > 0; --row) {
+	if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
+		middle[row] = (leftBlack[row] + rightBlack[row])/2;
+		leftCnt = rightCnt = 0;
+		continue;
+	}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //丢失左线
+		if(row > 50){
+			middle[row] = rightBlack[row] / 2 ;
+		}else{
+			middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+		}
+	}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
+		if(row > 50){
+			middle[row] = (leftBlack[row]+IMG_W) /2 ;
+		}else{
+			middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
 		}
 	}
+}
 
-	for(int row = IMG_H-8; row > 1; --row){
-		middle[row]= (middle[row+1]+middle[row-1])/2;
+for(int row = IMG_H-8; row > 1; --row){
+	middle[row]= (middle[row+1]+middle[row-1])/2;
 
-		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
-			if(lostRow == 3){
-				lostRow = row;
-			}
+	if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
+		if(lostRow == 3){
+			lostRow = row;
 		}
 	}
+}
 
 #endif
 }
@@ -441,20 +457,19 @@ imgGetMidLine(void)
 
 /*
  * 求中线平均值
+ * start < end
  */
 __relocate_code__
 int
-imgAverage(void)
+imgAverage(int8_t start, int8_t end)
 {
 	int sum=0, average=0;
-	int end = MAX(lostRow, 10);
-	if(end > 50) end = 10;
-	
-	for(int i= 50; i > end; --i){
+
+	for(int i= start; i < end; ++i){
 		sum += middle[i];
 	}
-	
-	average = sum / (50-end);
+
+	average = sum / (end -start);
 	return average;
 }
 //

@@ -41,13 +41,13 @@ getSpeedChoice(void)
 	{
 	case 0:
 		choice = LOWEST;
-		maxspeed = 12;
-		minspeed = -7;
+		maxspeed = 10;
+		minspeed = 5;
 		break;
 	case 1:
 		choice = MID;
-		maxspeed = 10;
-		minspeed = 7;
+		maxspeed = 12;
+		minspeed = -5;
 		break;
 	case 2:
 		choice = FASTER;

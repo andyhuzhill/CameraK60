@@ -69,7 +69,7 @@ imgGetMidLine(void);
  */
 __relocate_code__
 int
-imgAverage(void);
+imgAverage(int8_t start, int8_t end);
 
 /**
  *  使用最小二乘法计算跑道方向
