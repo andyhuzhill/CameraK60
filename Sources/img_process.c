@@ -98,6 +98,11 @@ imgProcess(void)
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
+		
+//		if(lostRow >= 50){
+//			img_flag = IMG_READY;
+//			return ret;
+//		}
 
 		b = MAX(lostRow,3); 
 		if (b >= 50) b = 3;
@@ -123,8 +128,10 @@ imgProcess(void)
 
 		if(ABS(error) <= 3){
 			pidSteer.kp = error*error/8 + 10;
+			pidSteer.kd = 300;
 		}else{
 			pidSteer.kp = error*error/5 + 30;
+			pidSteer.kd = 500;
 		}
 
 		ret = steerUpdate(error);
@@ -137,8 +144,7 @@ imgProcess(void)
 		GPIOD_PTOR |= (1 << 9);
 
 		img_flag = IMG_READY;
-		printf("imgspeed = %d\n", imgspeed);
-
+//		printf("imgspeed = %d\n", imgspeed);
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -368,7 +374,7 @@ imgGetMidLine(void)
 	int leftCnt=0, rightCnt=0;
 	lostRow = 3;
 
-	memset((void *)middle, IMG_W/2 , sizeof(middle));
+	memset((void *)middle, 0 , sizeof(middle));
 
 	for (int row = IMG_H-8; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row]) && ((rightBlack[row] - leftBlack[row])>15)){
@@ -396,9 +402,7 @@ imgGetMidLine(void)
 	for(int row = IMG_H-8; row > 1; --row){
 		middle[row]= (middle[row+1]+ middle[row] + middle[row-1])/3;
 
-		if((middle[row]<3) || (middle[row] > (IMG_W-3)) 
-				|| (ABS(middle[row] - middle[row+1]) > 15)
-		){
+		if((middle[row]<3) || (middle[row] > (IMG_W-3))){
 			if(lostRow == 3){
 				lostRow = row;
 			}
