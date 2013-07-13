@@ -119,7 +119,7 @@ imgProcess(void)
 			pidSteer.kp = error*error/8 + 10;
 			pidSteer.kd = 300;
 		}else{
-			pidSteer.kp = error*error/5 + 30;
+			pidSteer.kp = error*error/5 + 50;
 			pidSteer.kd = 500;
 		}
 
