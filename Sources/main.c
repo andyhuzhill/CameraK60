@@ -29,6 +29,12 @@ ledInit(void)
 	initGPIO.IRQC = None_IRQ;
 
 	GPIO_init(PORT_D, &initGPIO);
+	
+	gpio_init(PORT_B, 20, Mode_IN, High);
+	gpio_init(PORT_B, 21, Mode_IN, High);
+	
+//	pit_init_ms(PIT1, 1);
+//	disable_irq(PIT1_IRQn);
 }
 
 void
@@ -41,8 +47,8 @@ getSpeedChoice(void)
 	{
 	case 0:
 		choice = LOWEST;
-		maxspeed = 10;
-		minspeed = 5;
+		maxspeed = 12;
+		minspeed = 3;
 		break;
 	case 1:
 		choice = MID;

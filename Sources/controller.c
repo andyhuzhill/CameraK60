@@ -176,7 +176,6 @@ motorSetSpeed(int32 speed)
 void
 stopcar(void)
 {
-	DELAY_MS(500);
 	steerSetDuty(FTM_PRECISON/2);
 	motorSetSpeed(0);
 	while(1)
