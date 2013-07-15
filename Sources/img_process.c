@@ -337,6 +337,9 @@ imgFindLine(void)
 		}
 		if(getLeftBlack != 1){ //没有找到黑线
 			leftBlack[row] = leftBlack[row+1]+ (leftBlack[row+1] -leftBlack[row+4])/3;
+			if(leftBlack[row] <= -1){
+				leftBlack[row] = -1;
+			}
 			if(leftLostCnt > 4){
 				leftStart -= 3;
 				leftEnd += 3;
@@ -359,7 +362,9 @@ imgFindLine(void)
 		}
 		if (getRightBlack != 1){ //没有找到黑线
 			rightBlack[row] = rightBlack[row+1] + (rightBlack[row+1]- rightBlack[row+4])/3;
-
+			if(rightBlack[row] >= IMG_W){
+				rightBlack[row] = IMG_W;
+			}
 			if(rightLostCnt > 4){
 				rightStart += 3;
 				rightEnd -= 3;
@@ -515,7 +520,7 @@ imgGetMidLine(void)
 
 	memset((void *)middle, 0 , sizeof(middle));
 
-	for (int row = IMG_H-8; row > 0; --row) {
+	for (int row = IMG_H-5; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
 			middle[row] = (leftBlack[row] + rightBlack[row])/2;
 			continue;
@@ -534,7 +539,7 @@ imgGetMidLine(void)
 		}
 	}
 
-	for(int row = IMG_H-8; row > 1; --row){
+	for(int row = IMG_H-5; row > 1; --row){
 		middle[row]= (middle[row+1]+middle[row] + middle[row-1])/3;
 
 		if(middle[row]<3 || middle[row] > (IMG_W-3)){
