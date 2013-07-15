@@ -61,6 +61,9 @@ main(void)
 
 	for (;;) 
 	{
+		
+		printf("Hello world\n");
+		
 		do{
 			status = NRF_MSG_receive(&com, nrf_buff);
 		}while( status == NRF_RESULT_RX_NOVALID);
