@@ -43,9 +43,11 @@ imgResize(void);
 /*
  * 滤波 将孤立的噪声去掉
  */
-__relocate_code__
 void
 imgFilter(void);
+
+void
+outimg(uint8*imgpointer);
 
 
 /*
@@ -64,28 +66,29 @@ void
 imgGetMidLine(void);
 
 
-/*
- * 求中线平均值
- */
-__relocate_code__
-int
-imgAverage(int8_t start, int8_t end);
-
 /**
  *  使用最小二乘法计算跑道方向
  *  输入变量:  BaseLine起始行 < FinalLine终止行
  *  输出变量:  k, 斜率 b 常数项  
  */
-//__relocate_code__
-//void 
-//imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
+__relocate_code__
+void 
+imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
+
+/*
+ * 求中线平均值
+ * start < end
+ */
+__relocate_code__
+int8
+imgAverage(int8_t start, int8_t end);
 
 
 /*
  * 起跑线检测
  */
 __relocate_code__
-void
+int
 imgStartLine(void);
 
 #endif /* IMG_PROCESS_H_ */

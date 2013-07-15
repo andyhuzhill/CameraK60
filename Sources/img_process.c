@@ -100,7 +100,7 @@ imgProcess(void)
 		//		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
-		average = imgAverage(MAX(lostRow, 10), 50);
+		average = imgAverage(MAX(lostRow+5, 4), 50);
 
 #ifdef SENDIMG
 		NRF_MSG_send(COM_IMG, nrf_buff);
@@ -414,8 +414,8 @@ imgFindLine(void)
 		if(getLeftBlack != 1){ //Ã»ÓÐÕÒµ½ºÚÏß
 			leftBlack[row] = leftBlack[row+1]+ (leftBlack[row+1] -leftBlack[row+4])/3;
 			if(leftLostCnt > 4){
-				leftStart += 5;
-				leftEnd -= 5;
+				leftStart -= 3;
+				leftEnd += 3;
 			}
 		}
 
@@ -436,8 +436,8 @@ imgFindLine(void)
 		if (getRightBlack != 1){ //Ã»ÓÐÕÒµ½ºÚÏß
 			rightBlack[row] = rightBlack[row+1] + (rightBlack[row+1]- rightBlack[row+4])/3;
 			if(rightLostCnt > 4){
-				rightStart -= 5;
-				rightEnd += 5;
+				rightStart += 3;
+				rightEnd -= 3;
 			}
 		}
 		row --;
@@ -455,52 +455,33 @@ void
 imgGetMidLine(void)
 {
 #if 1
-	int leftCnt=0, rightCnt=0;
 	lostRow = 3;
-	int slop1 = 0, slop2 = 0;
 
 	memset((void *)middle, 0 , sizeof(middle));
 
 	for (int row = IMG_H-8; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
 			middle[row] = (leftBlack[row] + rightBlack[row])/2;
-			leftCnt = rightCnt = 0;
 			continue;
-		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
-			for(int i= middle[row+1]; i> 0; --i){
-				if(img[row][i] != 0 && img[row][i+1] ==0){
-					leftBlack[row] = i;
-				}
-			}
-			if((row > 40) || (ABS(rightBlack[row+1]-rightBlack[row+2]) > 5)){
+		}else if(leftBlack[row] <= -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
+			if(row > 50){
 				middle[row] = rightBlack[row] / 2 ;
 			}else{
 				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
 			}
-		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
-			for(int i= middle[row+1]; i < IMG_W; ++i){
-				if(img[row][i] != 0 && img[row][i-1] ==0){
-					rightBlack[row] = i;
-				}
-			}
-			if(row > 40 || (ABS(leftBlack[row+1]-leftBlack[row+2]) > 5)){
+		}else if(leftBlack[row] != -1 && rightBlack[row] >= IMG_W-1){     //¶ªÊ§ÓÒÏß
+			if(row > 50){
 				middle[row] = (leftBlack[row]+IMG_W) /2 ;
 			}else{
 				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
 			}
 		}
-		if(leftBlack[row] == -1 && rightBlack[row] == IMG_W){   //Á½±ß¶ªÏß
-			if(middle[row+1] != 0){
-				middle[row] = middle[row+1];
-			}else{
-				middle[row] = IMG_W/2;
-			}
-		}
 	}
 
 	for(int row = IMG_H-8; row > 1; --row){
-		middle[row]= (middle[row+1]+ middle[row] + middle[row-1])/3;
-		if((middle[row]<3) || (middle[row] > (IMG_W-3)) || ( row < 50 &&(ABS(middle[row]-middle[row+1]) > 15))){
+		middle[row]= (middle[row+1]+middle[row] + middle[row-1])/3;
+
+		if(middle[row]<3 || middle[row] > (IMG_W-3)){
 			if(lostRow == 3){
 				lostRow = row;
 			}
@@ -508,40 +489,40 @@ imgGetMidLine(void)
 	}
 #else
 	int leftCnt=0, rightCnt=0;
-lostRow = 3;
-int slop1 = 0, slop2 = 0;
+	lostRow = 3;
+	int slop1 = 0, slop2 = 0;
 
-memset((void *)middle, IMG_W/2 , sizeof(middle));
+	memset((void *)middle, IMG_W/2 , sizeof(middle));
 
-for (int row = IMG_H-8; row > 0; --row) {
-	if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
-		middle[row] = (leftBlack[row] + rightBlack[row])/2;
-		leftCnt = rightCnt = 0;
-		continue;
-	}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
-		if(row > 50){
-			middle[row] = rightBlack[row] / 2 ;
-		}else{
-			middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
-		}
-	}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
-		if(row > 50){
-			middle[row] = (leftBlack[row]+IMG_W) /2 ;
-		}else{
-			middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
-		}
-	}
-}
-
-for(int row = IMG_H-8; row > 1; --row){
-	middle[row]= (middle[row+1]+middle[row-1])/2;
-
-	if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
-		if(lostRow == 3){
-			lostRow = row;
+	for (int row = IMG_H-8; row > 0; --row) {
+		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
+			middle[row] = (leftBlack[row] + rightBlack[row])/2;
+			leftCnt = rightCnt = 0;
+			continue;
+		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
+			if(row > 50){
+				middle[row] = rightBlack[row] / 2 ;
+			}else{
+				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+			}
+		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
+			if(row > 50){
+				middle[row] = (leftBlack[row]+IMG_W) /2 ;
+			}else{
+				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
+			}
 		}
 	}
-}
+
+	for(int row = IMG_H-8; row > 1; --row){
+		middle[row]= (middle[row+1]+middle[row-1])/2;
+
+		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
+			if(lostRow == 3){
+				lostRow = row;
+			}
+		}
+	}
 
 #endif
 }
@@ -553,7 +534,7 @@ for(int row = IMG_H-8; row > 1; --row){
  * start < end
  */
 __relocate_code__
-int
+int8
 imgAverage(int8_t start, int8_t end)
 {
 	int sum=0, average=0;
@@ -613,7 +594,7 @@ imgAverage(int8_t start, int8_t end)
  * ÆðÅÜÏß¼ì²â
  */
 __relocate_code__
-void
+int
 imgStartLine(void)
 {
 
