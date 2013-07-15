@@ -413,6 +413,9 @@ imgFindLine(void)
 		}
 		if(getLeftBlack != 1){ //没有找到黑线
 			leftBlack[row] = leftBlack[row+1]+ (leftBlack[row+1] -leftBlack[row+4])/3;
+			if(leftBlack[row] < -1){
+				leftBlack[row] = -1;
+			}
 			if(leftLostCnt > 4){
 				leftStart -= 3;
 				leftEnd += 3;
@@ -435,6 +438,9 @@ imgFindLine(void)
 		}
 		if (getRightBlack != 1){ //没有找到黑线
 			rightBlack[row] = rightBlack[row+1] + (rightBlack[row+1]- rightBlack[row+4])/3;
+			if(rightBlack[row] > IMG_W){
+				rightBlack[row] = IMG_W;
+			}
 			if(rightLostCnt > 4){
 				rightStart += 3;
 				rightEnd -= 3;
