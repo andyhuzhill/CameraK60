@@ -52,7 +52,6 @@ main(void)
 	DisableInterrupts;  //关全局中断
 
 	LCD_Init(YELLOW);
-//	gpio_init(PORT_E, 6, Mode_IN, High);
 
 #ifdef AT2401
 	NRF_Init();
@@ -74,12 +73,12 @@ main(void)
 				img_flag = IMG_FINISH;
 				imgProcess();
 
-				if(!(GPIOB_PDIR & (1<<23))){
-					printf("\nimg\n");
-					for(int i = 0; i<600; ++i){
-						printf("%d,", srcImg[i]);
-					}
-				}
+//				if(!(GPIOB_PDIR & (1<<23))){
+//					printf("\nimg\n");
+//					for(int i = 0; i<600; ++i){
+//						printf("%d,", srcImg[i]);
+//					}
+//				}
 
 				break;
 			default:
