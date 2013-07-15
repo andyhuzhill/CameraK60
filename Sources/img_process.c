@@ -40,6 +40,8 @@ extern vint32 imgspeed;
 extern speedChoice choice;
 extern int32 imgcount;
 
+vint8 startLine =0;
+
 void
 imgInit(void)
 {
@@ -108,11 +110,14 @@ imgProcess(void)
 		}while(status == TX_ISR_SEND);
 
 #endif
-		//
-		//		if((imgcount >= 500) && (ABS(average-IMG_MID)<=3)){
-		//			imgStartLine();
-		//		}
-
+//
+		if(//(imgcount >= 500) && 
+				(ABS(average-IMG_MID)<=3)){
+			startLine = 1;
+		}else{
+			startLine = 0;
+		}
+		
 		error = average - IMG_MID;
 
 		if(ABS(error) <= 3){
@@ -132,10 +137,7 @@ imgProcess(void)
 		error = imgAverage(lostRow, lostRow+5)-IMG_MID;
 		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
 
-		GPIOD_PTOR |= (1 << 9);
-
 		img_flag = IMG_READY;
-		//		printf("imgspeed = %d\n", imgspeed);
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -415,40 +417,40 @@ imgGetMidLine(void)
 	}
 #else
 	int leftCnt=0, rightCnt=0;
-lostRow = 3;
-int slop1 = 0, slop2 = 0;
+	lostRow = 3;
+	int slop1 = 0, slop2 = 0;
 
-memset((void *)middle, IMG_W/2 , sizeof(middle));
+	memset((void *)middle, IMG_W/2 , sizeof(middle));
 
-for (int row = IMG_H-8; row > 0; --row) {
-	if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
-		middle[row] = (leftBlack[row] + rightBlack[row])/2;
-		leftCnt = rightCnt = 0;
-		continue;
-	}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
-		if(row > 50){
-			middle[row] = rightBlack[row] / 2 ;
-		}else{
-			middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
-		}
-	}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
-		if(row > 50){
-			middle[row] = (leftBlack[row]+IMG_W) /2 ;
-		}else{
-			middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
-		}
-	}
-}
-
-for(int row = IMG_H-8; row > 1; --row){
-	middle[row]= (middle[row+1]+middle[row-1])/2;
-
-	if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
-		if(lostRow == 3){
-			lostRow = row;
+	for (int row = IMG_H-8; row > 0; --row) {
+		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
+			middle[row] = (leftBlack[row] + rightBlack[row])/2;
+			leftCnt = rightCnt = 0;
+			continue;
+		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //¶ªÊ§×óÏß
+			if(row > 50){
+				middle[row] = rightBlack[row] / 2 ;
+			}else{
+				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
+			}
+		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //¶ªÊ§ÓÒÏß
+			if(row > 50){
+				middle[row] = (leftBlack[row]+IMG_W) /2 ;
+			}else{
+				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
+			}
 		}
 	}
-}
+
+	for(int row = IMG_H-8; row > 1; --row){
+		middle[row]= (middle[row+1]+middle[row-1])/2;
+
+		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
+			if(lostRow == 3){
+				lostRow = row;
+			}
+		}
+	}
 
 #endif
 }
@@ -523,26 +525,30 @@ __relocate_code__
 void
 imgStartLine(void)
 {
-	int8 row, col;
-	int8 count = 0;
-	int8 tiaobian[8] = {0};
 
-	for(row = IMG_H-1; row > (2); --row){
-		count = 0;
-		for(col=0;col<(IMG_W-1); ++col){
-			if(img[row][col]!= img[row][col+1]){
-				tiaobian[count++] = row;
-				if(count >= 5){
-					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) //&&
-							//							((tiaobian[2]-tiaobian[1]) >= 15) &&
-							//							(tiaobian[3]-tiaobian[2] >= 15)
-					)
-					{
-						stopcar();
-						return ;
-					}
-				}
-			}
-		}
+	if((GPIO_read_bit(PORT_B, 20) + GPIO_read_bit(PORT_B, 21) + GPIO_read_bit(PORT_B, 22) + GPIO_read_bit(PORT_B,23)) <= 2 ){
+		stopcar();
 	}
+	//	int8 row, col;
+	//	int8 count = 0;
+	//	int8 tiaobian[8] = {0};
+	//
+	//	for(row = IMG_H-1; row > (2); --row){
+	//		count = 0;
+	//		for(col=0;col<(IMG_W-1); ++col){
+	//			if(img[row][col]!= img[row][col+1]){
+	//				tiaobian[count++] = row;
+	//				if(count >= 5){
+	//					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) //&&
+	//							//							((tiaobian[2]-tiaobian[1]) >= 15) &&
+	//							//							(tiaobian[3]-tiaobian[2] >= 15)
+	//					)
+	//					{
+	//						stopcar();
+	//						return ;
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
 }

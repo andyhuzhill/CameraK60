@@ -16,6 +16,7 @@
 
 speedChoice choice;
 int32 imgcount = 0;
+extern vint8 startLine ;
 
 void
 ledInit(void)
@@ -29,6 +30,16 @@ ledInit(void)
 	initGPIO.IRQC = None_IRQ;
 
 	GPIO_init(PORT_D, &initGPIO);
+}
+
+
+void
+startLineInit(void)
+{
+	gpio_init(PORT_B, 20, Mode_IN, High);
+	gpio_init(PORT_B, 21, Mode_IN, High);
+	gpio_init(PORT_B, 22, Mode_IN, High);
+	gpio_init(PORT_B, 23, Mode_IN, High);
 }
 
 void
@@ -52,7 +63,7 @@ getSpeedChoice(void)
 	case 2:
 		choice = FASTER;
 		maxspeed = 13;
-		minspeed = 3;
+		minspeed = 5;
 		break;
 	case 3:
 		choice = FASTEST;
@@ -78,6 +89,7 @@ main(void)
 	steerInit();	//舵机初始化
 	imgInit();      //摄像头初始化
 	motorInit();    //电机控制初始化
+	startLineInit();
 	getSpeedChoice();
 
 #ifdef AT2401
@@ -92,5 +104,9 @@ main(void)
 	{
 		speed = imgProcess();
 		motorSetSpeed(speed);
+		
+	    if(startLine && (((GPIOB_PDIR & (0xf << 20)) >> 20) <= 2)){
+	    	stopcar();
+	    }
 	}
 }

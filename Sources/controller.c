@@ -176,14 +176,11 @@ motorSetSpeed(int32 speed)
 void
 stopcar(void)
 {
-	DELAY_MS(500);
-	steerSetDuty(FTM_PRECISON/2);
-	motorSetSpeed(0);
+	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, 0);
+	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, 0);
 	while(1)
 	{
-		GPIOD_PTOR |= (0x55 << 8);
-		DELAY_MS(500);
-		GPIOD_PTOR |= (0x55 << 8);
-		DELAY_MS(500);
+		imgProcess();
+		GPIOD_PDOR |= (0xff << 8);
 	}
 }
