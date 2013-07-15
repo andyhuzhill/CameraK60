@@ -457,7 +457,7 @@ imgGetMidLine(void)
 #if 1
 	lostRow = 3;
 
-	memset((void *)middle, 0 , sizeof(middle));
+	memset((void *)middle, IMG_MID , sizeof(middle));
 
 	for (int row = IMG_H-8; row > 0; --row) {
 		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
