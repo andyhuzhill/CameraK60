@@ -120,13 +120,12 @@ imgProcess(void)
 
 		error = average - IMG_MID;
 
-		if(ABS(error) <= 3){
+		if(ABS(error) <= 4){
 			pidSteer.kp = error*error/10 + 10;
 			pidSteer.kd = 200;
-			pidSteer.prevError = 0;
 		}else{
-			pidSteer.kp = error*error/5 + 50;
-			pidSteer.kd = 500;
+			pidSteer.kp = error*error/10 + 80;
+			pidSteer.kd = 400;
 		}
 
 		ret = steerUpdate(error);
@@ -135,7 +134,7 @@ imgProcess(void)
 		steerSetDuty(ret);
 
 
-		error = imgAverage(lostRow, lostRow+5)-IMG_MID;
+		error = imgAverage(lostRow, lostRow+10)-IMG_MID;
 		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
 
 		img_flag = IMG_READY;
@@ -412,14 +411,14 @@ imgFindLine(void)
 					continue;
 				}
 				leftStart = leftEnd = col;
-				if(leftBlack[row] != -1 && leftBlack[row+2] != -1 && leftBlack[row+4] != -1){
-					slop1 = leftBlack[row] - leftBlack[row+2];
-					slop2 = leftBlack[row+2] - leftBlack[row+4];
-					if(slop1*slop2 < 0){
-						leftBlack[row+1] = leftBlack[row+2] + slop2 /2;
-						leftBlack[row]   = leftBlack[row+2] + slop2;
-					}
-				}
+//				if(leftBlack[row] != -1 && leftBlack[row+2] != -1 && leftBlack[row+4] != -1){
+//					slop1 = leftBlack[row] - leftBlack[row+2];
+//					slop2 = leftBlack[row+2] - leftBlack[row+4];
+//					if(slop1*slop2 < 0){
+//						leftBlack[row+1] = leftBlack[row+2] + slop2 /2;
+//						leftBlack[row]   = leftBlack[row+2] + slop2;
+//					}
+//				}
 
 				getLeftBlack = 1;
 				leftLostCnt = 0;
@@ -454,14 +453,14 @@ imgFindLine(void)
 				rightStart = rightEnd = col;
 				rightLostCnt = 0;
 				getRightBlack = 1;
-				if(rightBlack[row] != IMG_W && rightBlack[row+2] != IMG_W && rightBlack[row+4]!= IMG_W){
-					slop1 = rightBlack[row] - rightBlack[row+2];
-					slop2 = rightBlack[row+2] - rightBlack[row+4];
-					if(slop1*slop2 < 0){
-						rightBlack[row+1] = rightBlack[row+2] + slop2 /2;
-						rightBlack[row]   = rightBlack[row+2] + slop2;
-					}
-				}
+//				if(rightBlack[row] != IMG_W && rightBlack[row+2] != IMG_W && rightBlack[row+4]!= IMG_W){
+//					slop1 = rightBlack[row] - rightBlack[row+2];
+//					slop2 = rightBlack[row+2] - rightBlack[row+4];
+//					if(slop1*slop2 < 0){
+//						rightBlack[row+1] = rightBlack[row+2] + slop2 /2;
+//						rightBlack[row]   = rightBlack[row+2] + slop2;
+//					}
+//				}
 				break;      //Ìø³öforÑ­»·
 			}
 		}

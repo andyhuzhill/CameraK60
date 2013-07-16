@@ -87,8 +87,8 @@
 #define PID_MOTOR_KD  1000.0
 #define PID_MOTOR_INTEGRATION_LIMIT     10.0
 
-#define STEER_MAX  (FTM_PRECISON*6/10+200)
-#define STEER_MIN  (FTM_PRECISON*4/10-200)
+#define STEER_MAX  (FTM_PRECISON*6/10)
+#define STEER_MIN  (FTM_PRECISON*4/10)
 
 //#define  SDCARD			//SD¿¨µ÷ÊÔ
 

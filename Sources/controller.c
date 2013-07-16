@@ -176,8 +176,8 @@ motorSetSpeed(int32 speed)
 void
 stopcar(void)
 {
-	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, FTM_PRECISON);
-	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, FTM_PRECISON);
+	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, 0);
+	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, 0);
 	while(1)
 	{
 		imgProcess();
