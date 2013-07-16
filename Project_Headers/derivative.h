@@ -57,10 +57,12 @@
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
 
+#define STEER_MID 				5100
+
 #define STEER_FTM               FTM2
 #define STEER_CHN               CH0
 #define STEER_FREQ              300         //单位Hz
-#define STEER_DEFAULT_DUTY      FTM_PRECISON /2          //单位 千分之一
+#define STEER_DEFAULT_DUTY      STEER_MID          //单位 万分之一
 
 #define MOTOR1_FTM              FTM0
 #define MOTOR1_CHN              CH1
@@ -87,8 +89,8 @@
 #define PID_MOTOR_KD  1000.0
 #define PID_MOTOR_INTEGRATION_LIMIT     10.0
 
-#define STEER_MAX  (FTM_PRECISON*6/10)
-#define STEER_MIN  (FTM_PRECISON*4/10)
+#define STEER_MAX  (6400)
+#define STEER_MIN  (3800)
 
 //#define  SDCARD			//SD卡调试
 

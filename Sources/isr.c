@@ -45,21 +45,20 @@ PORTA_ISR(void)         //场中断处理函数
 	PORTA_ISFR  = ~0;                              //场中断里，全部都要清中断标志位
 }
 
-//extern vint8 startLine;
-//
-//void 
-//PORTB_ISR(void)
-//{
-//	printf("get %x\n",(PORTB_ISFR & (0xf << 20)) >> 20);
-//	if(startLine){
-//		if(PORTB_ISFR & (0xf << 20)){
-//			if(((PORTB_ISFR & (0xf<<20)) >> 20) >= 2){
-//				stopcar();
-//			}
-//		}
-//	}
-//	PORTB_ISFR = ~0;
-//}
+extern vint8 startLine;
+
+void 
+PORTB_ISR(void)
+{
+	if(startLine){
+		if(PORTB_ISFR & (0xf << 20)){
+			if(((PORTB_ISFR & (0xf<<20)) >> 20) >= 2){
+				stopcar();
+			}
+		}
+	}
+	PORTB_ISFR = ~0;
+}
 
 
 void 

@@ -36,10 +36,18 @@ ledInit(void)
 void
 startLineInit(void)
 {
-	gpio_init(PORT_B, 20, Mode_IN, High);
-	gpio_init(PORT_B, 21, Mode_IN, High);
-	gpio_init(PORT_B, 22, Mode_IN, High);
-	gpio_init(PORT_B, 23, Mode_IN, High);
+//	gpio_init(PORT_B, 20, Mode_IN, High);
+//	gpio_init(PORT_B, 21, Mode_IN, High);
+//	gpio_init(PORT_B, 22, Mode_IN, High);
+//	gpio_init(PORT_B, 23, Mode_IN, High);
+//	
+	port_init(PTB20, IRQ_FALLING | PULLUP);
+	port_init(PTB21, IRQ_FALLING | PULLUP);
+	port_init(PTB22, IRQ_FALLING | PULLUP);
+	port_init(PTB23, IRQ_FALLING | PULLUP);
+	
+//	disable_irq(PORTB_IRQn);
+	enable_irq(PORTB_IRQn);
 }
 
 void
@@ -97,7 +105,7 @@ main(void)
 #endif
 
 	EnableInterrupts;   //开全局中断
-
+	
 	//	DELAY_MS(2000);
 
 	while(1) 
@@ -105,8 +113,8 @@ main(void)
 		speed = imgProcess();
 		motorSetSpeed(speed);
 		
-	    if(startLine && (((GPIOB_PDIR & (0xf << 20)) >> 20) <= 2)){
-	    	stopcar();
-	    }
+//	    if(startLine && (((GPIOB_PDIR & (0xf << 20)) >> 20) <= 2)){
+//	    	stopcar();
+//	    }
 	}
 }
