@@ -61,9 +61,7 @@ main(void)
 
 	for (;;) 
 	{
-		
-		printf("Hello world\n");
-		
+
 		do{
 			status = NRF_MSG_receive(&com, nrf_buff);
 		}while( status == NRF_RESULT_RX_NOVALID);
@@ -76,12 +74,12 @@ main(void)
 				img_flag = IMG_FINISH;
 				imgProcess();
 
-//				if(!(GPIOB_PDIR & (1<<23))){
-//					printf("\nimg\n");
-//					for(int i = 0; i<600; ++i){
-//						printf("%d,", srcImg[i]);
-//					}
-//				}
+				//				if(!(GPIOB_PDIR & (1<<23))){
+				printf("\nimg\n");
+				for(int i = 0; i<600; ++i){
+					printf("%d,", srcImg[i]);
+				}
+				//				}
 
 				break;
 			default:
