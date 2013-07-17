@@ -36,17 +36,17 @@ ledInit(void)
 void
 startLineInit(void)
 {
-//	gpio_init(PORT_B, 20, Mode_IN, High);
-//	gpio_init(PORT_B, 21, Mode_IN, High);
-//	gpio_init(PORT_B, 22, Mode_IN, High);
-//	gpio_init(PORT_B, 23, Mode_IN, High);
-//	
+	gpio_init(PORT_B, 20, Mode_IN, High);
+	gpio_init(PORT_B, 21, Mode_IN, High);
+	gpio_init(PORT_B, 22, Mode_IN, High);
+	gpio_init(PORT_B, 23, Mode_IN, High);
+	//	
 	port_init(PTB20, IRQ_FALLING | PULLUP);
 	port_init(PTB21, IRQ_FALLING | PULLUP);
 	port_init(PTB22, IRQ_FALLING | PULLUP);
 	port_init(PTB23, IRQ_FALLING | PULLUP);
-	
-//	disable_irq(PORTB_IRQn);
+
+	//	disable_irq(PORTB_IRQn);
 	enable_irq(PORTB_IRQn);
 }
 
@@ -60,23 +60,23 @@ getSpeedChoice(void)
 	{
 	case 0:
 		choice = LOWEST;
-		maxspeed = 7;
-		minspeed = 7;
+		maxspeed = 12;
+		minspeed = 12;
 		break;
 	case 1:
 		choice = MID;
 		maxspeed = 12;
-		minspeed = 5;
+		minspeed = 7;
 		break;
 	case 2:
 		choice = FASTER;
 		maxspeed = 10;
-		minspeed = 5;
+		minspeed = 7;
 		break;
 	case 3:
 		choice = FASTEST;
-		maxspeed = 15;
-		minspeed = 5;
+		maxspeed = 22;
+		minspeed = 2;
 		break;
 	default:
 		choice = LOWEST;
@@ -97,7 +97,6 @@ main(void)
 	steerInit();	//舵机初始化
 	imgInit();      //摄像头初始化
 	motorInit();    //电机控制初始化
-	startLineInit();
 	getSpeedChoice();
 
 #ifdef AT2401
@@ -105,16 +104,12 @@ main(void)
 #endif
 
 	EnableInterrupts;   //开全局中断
-	
+
 	//	DELAY_MS(2000);
 
 	while(1) 
 	{
 		speed = imgProcess();
 		motorSetSpeed(speed);
-		
-//	    if(startLine && (((GPIOB_PDIR & (0xf << 20)) >> 20) <= 2)){
-//	    	stopcar();
-//	    }
 	}
 }

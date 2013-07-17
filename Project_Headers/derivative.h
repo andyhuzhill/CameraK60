@@ -96,7 +96,7 @@
 
 //#define  SERIAL
 
-#define SENDIMG
+//#define SENDIMG
 
 #ifdef SENDIMG
 	#ifndef AT2401

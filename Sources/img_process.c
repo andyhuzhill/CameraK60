@@ -97,6 +97,9 @@ imgProcess(void)
 		imgcount ++;
 
 		imgResize();
+		img_flag = IMG_READY;
+		imgGetImg();
+	
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
@@ -111,12 +114,10 @@ imgProcess(void)
 
 #endif
 		//
-		//		if(//(imgcount >= 500) && 
-		//				(ABS(average-IMG_MID)<=3)){
-		startLine = 1;
-		//		}else{
-		//			startLine = 0;
-		//		}
+//		if((imgcount >= 500) && 
+//				(ABS(average-IMG_MID)<=3)){
+//			imgStartLine();
+//		}
 
 		error = average - IMG_MID;
 
@@ -137,7 +138,7 @@ imgProcess(void)
 		error = imgAverage(lostRow, lostRow+10)-IMG_MID;
 		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
 
-		img_flag = IMG_READY;
+//		img_flag = IMG_READY;
 
 #ifdef SDCARD
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
@@ -411,14 +412,14 @@ imgFindLine(void)
 					continue;
 				}
 				leftStart = leftEnd = col;
-				//				if(leftBlack[row] != -1 && leftBlack[row+2] != -1 && leftBlack[row+4] != -1){
-				//					slop1 = leftBlack[row] - leftBlack[row+2];
-				//					slop2 = leftBlack[row+2] - leftBlack[row+4];
-				//					if(slop1*slop2 < 0){
-				//						leftBlack[row+1] = leftBlack[row+2] + slop2 /2;
-				//						leftBlack[row]   = leftBlack[row+2] + slop2;
-				//					}
-				//				}
+				if(leftBlack[row] != -1 && leftBlack[row+2] != -1 && leftBlack[row+4] != -1){
+					slop1 = leftBlack[row] - leftBlack[row+2];
+					slop2 = leftBlack[row+2] - leftBlack[row+4];
+					if(slop1*slop2 < 0){
+						leftBlack[row+1] = leftBlack[row+2] + slop2 /2;
+						leftBlack[row]   = leftBlack[row+2] + slop2;
+					}
+				}
 
 				getLeftBlack = 1;
 				leftLostCnt = 0;
@@ -453,14 +454,14 @@ imgFindLine(void)
 				rightStart = rightEnd = col;
 				rightLostCnt = 0;
 				getRightBlack = 1;
-				//				if(rightBlack[row] != IMG_W && rightBlack[row+2] != IMG_W && rightBlack[row+4]!= IMG_W){
-				//					slop1 = rightBlack[row] - rightBlack[row+2];
-				//					slop2 = rightBlack[row+2] - rightBlack[row+4];
-				//					if(slop1*slop2 < 0){
-				//						rightBlack[row+1] = rightBlack[row+2] + slop2 /2;
-				//						rightBlack[row]   = rightBlack[row+2] + slop2;
-				//					}
-				//				}
+				if(rightBlack[row] != IMG_W && rightBlack[row+2] != IMG_W && rightBlack[row+4]!= IMG_W){
+					slop1 = rightBlack[row] - rightBlack[row+2];
+					slop2 = rightBlack[row+2] - rightBlack[row+4];
+					if(slop1*slop2 < 0){
+						rightBlack[row+1] = rightBlack[row+2] + slop2 /2;
+						rightBlack[row]   = rightBlack[row+2] + slop2;
+					}
+				}
 				break;      //Ìø³öforÑ­»·
 			}
 		}
@@ -648,29 +649,29 @@ int
 imgStartLine(void)
 {
 
-	if((GPIO_read_bit(PORT_B, 20) + GPIO_read_bit(PORT_B, 21) + GPIO_read_bit(PORT_B, 22) + GPIO_read_bit(PORT_B,23)) <= 2 ){
-		stopcar();
-	}
-	//	int8 row, col;
-	//	int8 count = 0;
-	//	int8 tiaobian[8] = {0};
-	//
-	//	for(row = IMG_H-1; row > (2); --row){
-	//		count = 0;
-	//		for(col=0;col<(IMG_W-1); ++col){
-	//			if(img[row][col]!= img[row][col+1]){
-	//				tiaobian[count++] = row;
-	//				if(count >= 5){
-	//					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) //&&
-	//							//							((tiaobian[2]-tiaobian[1]) >= 15) &&
-	//							//							(tiaobian[3]-tiaobian[2] >= 15)
-	//					)
-	//					{
-	//						stopcar();
-	//						return ;
-	//					}
-	//				}
-	//			}
-	//		}
+	//	if((GPIO_read_bit(PORT_B, 20) + GPIO_read_bit(PORT_B, 21) + GPIO_read_bit(PORT_B, 22) + GPIO_read_bit(PORT_B,23)) <= 2 ){
+	//		stopcar();
 	//	}
+	int8 row, col;
+	int8 count = 0;
+	int8 tiaobian[8] = {0};
+
+	for(row = IMG_H-1; row > (2); --row){
+		count = 0;
+		for(col=0;col<(IMG_W-1); ++col){
+			if(img[row][col]!= img[row][col+1]){
+				tiaobian[count++] = row;
+				if(count >= 5){
+					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) //&&
+							//							((tiaobian[2]-tiaobian[1]) >= 15) &&
+							//							(tiaobian[3]-tiaobian[2] >= 15)
+					)
+					{
+						stopcar();
+						return ;
+					}
+				}
+			}
+		}
+	}
 }
