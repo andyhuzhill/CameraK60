@@ -41,13 +41,13 @@ startLineInit(void)
 	gpio_init(PORT_B, 22, Mode_IN, High);
 	gpio_init(PORT_B, 23, Mode_IN, High);
 	//	
-	port_init(PTB20, IRQ_FALLING | PULLUP);
-	port_init(PTB21, IRQ_FALLING | PULLUP);
-	port_init(PTB22, IRQ_FALLING | PULLUP);
-	port_init(PTB23, IRQ_FALLING | PULLUP);
-
-	//	disable_irq(PORTB_IRQn);
-	enable_irq(PORTB_IRQn);
+//	port_init(PTB20, IRQ_FALLING | PULLUP);
+//	port_init(PTB21, IRQ_FALLING | PULLUP);
+//	port_init(PTB22, IRQ_FALLING | PULLUP);
+//	port_init(PTB23, IRQ_FALLING | PULLUP);
+//
+//	//	disable_irq(PORTB_IRQn);
+//	enable_irq(PORTB_IRQn);
 }
 
 void
@@ -60,8 +60,8 @@ getSpeedChoice(void)
 	{
 	case 0:
 		choice = LOWEST;
-		maxspeed = 12;
-		minspeed = 12;
+		maxspeed = 10;
+		minspeed = 10;
 		break;
 	case 1:
 		choice = MID;
@@ -94,10 +94,11 @@ main(void)
 	DisableInterrupts;  //关全局中断
 
 	ledInit();
-	steerInit();	//舵机初始化
-	imgInit();      //摄像头初始化
-	motorInit();    //电机控制初始化
-	getSpeedChoice();
+//	steerInit();	//舵机初始化
+//	imgInit();      //摄像头初始化
+//	motorInit();    //电机控制初始化
+//	getSpeedChoice();
+	startLineInit();
 
 #ifdef AT2401
 	NRF_Init();
@@ -109,7 +110,8 @@ main(void)
 
 	while(1) 
 	{
-		speed = imgProcess();
-		motorSetSpeed(speed);
+		GPIOD_PDOR |= ((GPIOB_PDIR & (0xf<<20)) >> 20) << 8;
+//		speed = imgProcess();
+//		motorSetSpeed(speed);
 	}
 }

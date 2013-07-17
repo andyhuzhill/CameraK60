@@ -52,7 +52,7 @@ Register_Info ov7727_reg[] =
 {
 
         //¼Ä´æÆ÷£¬¼Ä´æÆ÷Öµ´Î
-        {COM4         ,0x64},
+        {COM4         ,0x51},
         {CLKRC        ,0x00}, 
         {COM2         ,0x03}, 
         {COM3         ,0xD0}, 

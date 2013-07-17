@@ -83,12 +83,20 @@ __relocate_code__
 int8
 imgAverage(int8_t start, int8_t end);
 
+/*
+ * 直道判断
+ */
+
+__relocate_code__
+int
+imgZhiDao(void);
+
 
 /*
  * 起跑线检测
  */
 __relocate_code__
-int
+void
 imgStartLine(void);
 
 #endif /* IMG_PROCESS_H_ */

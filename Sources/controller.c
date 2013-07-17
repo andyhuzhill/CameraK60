@@ -181,6 +181,7 @@ stopcar(void)
 	while(1)
 	{
 		imgProcess();
-		GPIOD_PDOR |= (0xff << 8);
+		GPIOD_PTOR |= (0xff << 8);
+		DELAY_MS(50);
 	}
 }
