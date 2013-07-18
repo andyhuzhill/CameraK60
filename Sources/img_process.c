@@ -136,7 +136,7 @@ imgProcess(void)
 		steerSetDuty(ret);
 
 		//ËÙ¶È¿ØÖÆ
-		error = imgAverage(lostRow, lostRow+5)-IMG_MID;
+		error = imgAverage(lostRow, lostRow+4)-IMG_MID;
 		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
 
 #ifdef SDCARD
