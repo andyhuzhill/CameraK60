@@ -17,6 +17,7 @@
 speedChoice choice;
 int32 imgcount = 0;
 extern vint8 startLine ;
+int8 isStraight = 1;
 
 void
 ledInit(void)
@@ -36,17 +37,17 @@ ledInit(void)
 void
 startLineInit(void)
 {
-//	gpio_init(PORT_B, 20, Mode_IN, High);
-//	gpio_init(PORT_B, 21, Mode_IN, High);
-//	gpio_init(PORT_B, 22, Mode_IN, High);
-//	gpio_init(PORT_B, 23, Mode_IN, High);
+	//	gpio_init(PORT_B, 20, Mode_IN, High);
+	//	gpio_init(PORT_B, 21, Mode_IN, High);
+	//	gpio_init(PORT_B, 22, Mode_IN, High);
+	//	gpio_init(PORT_B, 23, Mode_IN, High);
 	//	
 	port_init(PTB20, IRQ_FALLING | PULLUP);
 	port_init(PTB21, IRQ_FALLING | PULLUP);
 	port_init(PTB22, IRQ_FALLING | PULLUP);
 	port_init(PTB23, IRQ_FALLING | PULLUP);
-//
-//	//	disable_irq(PORTB_IRQn);
+	//
+	//	//	disable_irq(PORTB_IRQn);
 	enable_irq(PORTB_IRQn);
 }
 
@@ -75,8 +76,8 @@ getSpeedChoice(void)
 		break;
 	case 3:
 		choice = FASTEST;
-		maxspeed = 30;
-		minspeed = 0;
+		maxspeed = 28;
+		minspeed = 3;
 		break;
 	default:
 		choice = LOWEST;
@@ -88,7 +89,7 @@ getSpeedChoice(void)
 
 int 
 main(void)
-{   
+ {   
 	int speed = 0;
 	int i = 0;
 	DisableInterrupts;  //关全局中断
@@ -105,12 +106,14 @@ main(void)
 #endif
 
 	EnableInterrupts;   //开全局中断
+	
+	startLine = 1;
+	isStraight = 1;
 
-	//	DELAY_MS(2000);
+	DELAY_MS(2000);
 
-	while(1) 
+	for(;;)
 	{
-//		GPIOD_PDOR |= ((GPIOB_PDIR & (0xf<<20)) >> 20) << 8;
 		speed = imgProcess();
 		motorSetSpeed(speed);
 	}

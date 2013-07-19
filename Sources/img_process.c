@@ -40,6 +40,7 @@ extern vint32 imgspeed;
 extern speedChoice choice;
 extern int32 imgcount;
 extern PidObject pidSteer;
+extern int8 isStraight;
 
 vint8 startLine = 0;
 
@@ -91,13 +92,13 @@ imgProcess(void)
 
 	if(IMG_FINISH == img_flag)  {      // 当图像采集完毕 开始处理图像
 		img_flag = IMG_PROCESS;
-		
+
 		imgcount ++;
 
 		imgResize();
 		img_flag = IMG_READY;
 		imgGetImg();
-	
+
 		imgFilter();
 		imgFindLine();
 		imgGetMidLine();
@@ -111,21 +112,19 @@ imgProcess(void)
 		}while(status == TX_ISR_SEND);
 
 #endif
-		
-		if(//(imgcount >= 500) && 
-				(ABS(average-IMG_MID)<=3)){
-//			imgStartLine();
-			startLine = 1;
-		}else{
-			startLine = 0;
+
+		if((imgcount >= 500) && 
+				startLine && isStraight && 
+				(ABS(average-IMG_MID)<=2)){
+			imgStartLine();
 		}
-		
+
 		error = average - IMG_MID;
 
 		//角度控制
 		if(ABS(error) <= 3){
 			pidSteer.kp = error*error/8 + 20;
-			pidSteer.kd = 200;
+			pidSteer.kd = 300;
 		}else{
 			pidSteer.kp = error*error/5 + 50;
 			pidSteer.kd = 400;
@@ -363,6 +362,8 @@ imgFindLine(void)
 	memset((void *)leftBlack, -1, sizeof(leftBlack));
 	memset((void *)rightBlack, IMG_W, sizeof(rightBlack));
 
+	isStraight = 1;
+
 	row = IMG_H -3;
 	getRightBlack = getLeftBlack = 0;
 	do{
@@ -408,6 +409,9 @@ imgFindLine(void)
 				leftBlack[row] = col;
 				if((ABS(leftBlack[row]-leftBlack[row+5]) > 20) && leftBlack[row+5] != -1){
 					leftBlack[row] = -1;
+					if(row > 10 && row < 50){
+						isStraight = 0;
+					}
 					continue;
 				}
 				leftStart = leftEnd = col;
@@ -427,6 +431,9 @@ imgFindLine(void)
 		}
 		if(getLeftBlack != 1){ //没有找到黑线
 			leftBlack[row] = leftBlack[row+1]+ (leftBlack[row+2] -leftBlack[row+4])/2;
+			if(row > 10 && row < 50){
+				isStraight = 0;
+			}
 			if(leftBlack[row] <= 0){
 				leftBlack[row] = -1;
 			}
@@ -448,6 +455,9 @@ imgFindLine(void)
 				rightBlack[row] = col;
 				if(rightBlack[row] < leftBlack[row] || (ABS(rightBlack[row]-leftBlack[row]) < 10) || ((ABS(rightBlack[row]-rightBlack[row+5]) > 20) && rightBlack[row+5] != IMG_W)){
 					rightBlack[row] = IMG_W;
+					if(row > 10 && row < 50){
+						isStraight = 0;
+					}
 					continue;
 				}
 				rightStart = rightEnd = col;
@@ -466,6 +476,9 @@ imgFindLine(void)
 		}
 		if (getRightBlack != 1){ //没有找到黑线
 			rightBlack[row] = rightBlack[row+1] + (rightBlack[row+2]- rightBlack[row+4])/2;
+			if(row > 10 && row < 50){
+				isStraight = 0;
+			}
 			if(rightBlack[row] >= IMG_W){
 				rightBlack[row] = IMG_W;
 			}
@@ -650,7 +663,7 @@ imgZhiDao(void)
 			cnt ++;
 		}
 	}
-	
+
 	if(cnt >= 50){
 		return 1;
 	}else{
@@ -662,7 +675,7 @@ imgZhiDao(void)
  * 起跑线检测
  */
 __relocate_code__
-void
+int
 imgStartLine(void)
 {
 
@@ -673,22 +686,37 @@ imgStartLine(void)
 	int8 count = 0;
 	int8 tiaobian[8] = {0};
 
-	for(row = IMG_H-1; row > (2); --row){
+	for(row = IMG_H-8; row > (15); --row){
 		count = 0;
-		for(col=0;col<(IMG_W-1); ++col){
-			if(img[row][col]!= img[row][col+1]){
-				tiaobian[count++] = row;
-				if(count == 6){
-//					if((ABS((tiaobian[2]-tiaobian[1])-(tiaobian[4]-tiaobian[3])) <= 2) &&
-//														((tiaobian[2]-tiaobian[1]) >= 10) &&
-//														(tiaobian[3]-tiaobian[2] >= 10)
-//					)
-					{
-						stopcar();
-						return ;
-					}
-				}
+		for(col =0; col < IMG_W-1; ++col){
+			if(img[row][col] != img[row][col+1]){
+				tiaobian[count ++] = col;
 			}
 		}
+
+		if(count == 6){
+			if(ABS(tiaobian[0] -leftBlack[row])<2 && ABS(tiaobian[5] -rightBlack[row])<2){
+				stopcar();
+			}
+			//			for(col = middle[row]; col > 1; --col){
+			//				if(img[row][col] != 0 && img[row][col+1] == 0){
+			//					if(col == leftBlack[row]){
+			//						break;
+			//					}else{
+			//						for(col = middle[row]; col < IMG_W-1; ++col){
+			//							if(img[row][col] != 0 && img[row][col-1] ==0){
+			//								if(col == rightBlack[row]){
+			//									break;
+			//								}else{
+			//									stopcar();
+			//								}
+			//							}
+			//						}
+			//					}
+			//				}
+			//			}
+		}
 	}
+
+	return 0;
 }

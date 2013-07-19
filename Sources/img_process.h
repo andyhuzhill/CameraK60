@@ -96,7 +96,7 @@ imgZhiDao(void);
  * ∆≈‹œﬂºÏ≤‚
  */
 __relocate_code__
-void
+int
 imgStartLine(void);
 
 #endif /* IMG_PROCESS_H_ */
