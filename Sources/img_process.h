@@ -46,8 +46,6 @@ imgResize(void);
 void
 imgFilter(void);
 
-
-
 /*
  * 找两边黑线
  * 影响到的变量 leftBlack[] 和 rightBlack[]
