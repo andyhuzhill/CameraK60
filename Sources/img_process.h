@@ -61,15 +61,15 @@ __relocate_code__
 void
 imgGetMidLine(void);
 
-
-/**
- *  使用最小二乘法计算跑道方向
- *  输入变量:  BaseLine起始行 < FinalLine终止行
- *  输出变量:  k, 斜率 b 常数项  
- */
-__relocate_code__
-void 
-imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
+//
+///**
+// *  使用最小二乘法计算跑道方向
+// *  输入变量:  BaseLine起始行 < FinalLine终止行
+// *  输出变量:  k, 斜率 b 常数项  
+// */
+//__relocate_code__
+//void 
+//imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
 
 /*
  * 求中线平均值
