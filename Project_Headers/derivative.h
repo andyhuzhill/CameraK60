@@ -57,7 +57,10 @@
 #define MAX(x,y) ((x)>(y) ? (x) : (y))
 #define MIN(x,y) ((x)>(y) ? (y) : (x))
 
-#define STEER_MID 				5100
+#define STEER_MID 				(5100)
+#define STEER_MAX  				(6400)
+#define STEER_MIN  				(3800)
+
 
 #define STEER_FTM               FTM2
 #define STEER_CHN               CH0
@@ -89,9 +92,6 @@
 #define PID_MOTOR_KD  1000.0
 #define PID_MOTOR_INTEGRATION_LIMIT     10.0
 
-#define STEER_MAX  (6400)
-#define STEER_MIN  (3800)
-
 //#define  SDCARD			//SD¿¨µ÷ÊÔ
 
 //#define  SERIAL
@@ -121,7 +121,6 @@ typedef enum{
 	FASTER  = 2,
 	FASTEST = 3,
 }speedChoice;
-
 
 extern int8 maxspeed ;
 extern int8 minspeed ;

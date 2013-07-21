@@ -14,6 +14,7 @@
 
 #include "derivative.h" /* include peripheral declarations */
 
+//全局变量
 speedChoice choice;
 int32 imgcount = 0;
 extern vint8 startLine ;
