@@ -46,8 +46,6 @@ imgResize(void);
 void
 imgFilter(void);
 
-void
-outimg(uint8*imgpointer);
 
 
 /*
@@ -82,14 +80,6 @@ imgLeastsq(int8 BaseLine, int8 FinalLine, float *k, int8 *b);
 __relocate_code__
 int8
 imgAverage(int8_t start, int8_t end);
-
-/*
- * ÷±µ¿≈–∂œ
- */
-
-__relocate_code__
-int
-imgZhiDao(void);
 
 
 /*

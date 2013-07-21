@@ -71,13 +71,12 @@ imgProcess(void)
 {
 	static int32 ret;
 	int error = 0;
-
+	int sum = 0;
+	int8 average;
+	
 #ifdef SENDIMG
 	int8 status = 0;
 #endif
-
-	int sum = 0;
-	int8 average;
 
 #ifdef SDCARD
 	FATFS fs;
@@ -115,7 +114,7 @@ imgProcess(void)
 
 		if((imgcount >= 500) && 
 				startLine && isStraight && 
-				(ABS(average-IMG_MID)<=2)){
+				(ABS(average-IMG_MID)<=3)){
 			imgStartLine();
 		}
 
@@ -653,23 +652,6 @@ imgAverage(int8_t start, int8_t end)
 //	*b = (int8) averageY -*k*averageX;
 //}
 
-__relocate_code__
-int
-imgZhiDao(void)
-{
-	int cnt = 0;
-	for(int row = 4; row <= IMG_H-5; row++){
-		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && ABS(middle[row] - IMG_MID) < 3){
-			cnt ++;
-		}
-	}
-
-	if(cnt >= 50){
-		return 1;
-	}else{
-		return 0;
-	}
-}
 
 /*
  * ÆğÅÜÏß¼ì²â

@@ -179,11 +179,11 @@ stopcar(void)
 {
 	FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, 0);
 	FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, 0);
-	
+
 	while(1)
 	{
 		startLine = 0;
 		imgProcess();
-		GPIOD_PTOR |= (0xff << 8);
+		GPIOD_PDOR &= ~(0xff << 8);
 	}
 }

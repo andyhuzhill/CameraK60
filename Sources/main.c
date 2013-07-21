@@ -33,24 +33,6 @@ ledInit(void)
 	GPIO_init(PORT_D, &initGPIO);
 }
 
-
-void
-startLineInit(void)
-{
-	//	gpio_init(PORT_B, 20, Mode_IN, High);
-	//	gpio_init(PORT_B, 21, Mode_IN, High);
-	//	gpio_init(PORT_B, 22, Mode_IN, High);
-	//	gpio_init(PORT_B, 23, Mode_IN, High);
-	//	
-	port_init(PTB20, IRQ_FALLING | PULLUP);
-	port_init(PTB21, IRQ_FALLING | PULLUP);
-	port_init(PTB22, IRQ_FALLING | PULLUP);
-	port_init(PTB23, IRQ_FALLING | PULLUP);
-	//
-	//	//	disable_irq(PORTB_IRQn);
-	enable_irq(PORTB_IRQn);
-}
-
 void
 getSpeedChoice(void)
 {
@@ -67,22 +49,22 @@ getSpeedChoice(void)
 	case 1:
 		choice = MID;
 		maxspeed = 15;
-		minspeed = 8;
+		minspeed = 2;
 		break;
 	case 2:
 		choice = FASTER;
-		maxspeed = 18;
-		minspeed = 7;
+		maxspeed = 20;
+		minspeed = 2;
 		break;
 	case 3:
 		choice = FASTEST;
-		maxspeed = 28;
-		minspeed = 3;
+		maxspeed = 35;
+		minspeed = 0;
 		break;
 	default:
 		choice = LOWEST;
-		maxspeed = 7;
-		minspeed = 7;
+		maxspeed = 10;
+		minspeed = 10;
 		break;
 	}
 }
@@ -99,7 +81,6 @@ main(void)
 	imgInit();      //摄像头初始化
 	motorInit();    //电机控制初始化
 	getSpeedChoice();
-//	startLineInit();
 
 #ifdef AT2401
 	NRF_Init();
@@ -110,7 +91,7 @@ main(void)
 	startLine = 1;
 	isStraight = 1;
 
-	DELAY_MS(2000);
+//	DELAY_MS(2000);
 
 	for(;;)
 	{
