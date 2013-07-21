@@ -50,17 +50,17 @@ getSpeedChoice(void)
 	case 1:
 		choice = MID;
 		maxspeed = 15;
-		minspeed = 2;
+		minspeed = 5;
 		break;
 	case 2:
 		choice = FASTER;
 		maxspeed = 20;
-		minspeed = 2;
+		minspeed = 1;
 		break;
 	case 3:
 		choice = FASTEST;
-		maxspeed = 35;
-		minspeed = 0;
+		maxspeed = 30;
+		minspeed = -5;
 		break;
 	default:
 		choice = LOWEST;
@@ -92,7 +92,7 @@ main(void)
 	startLine = 1;
 	isStraight = 1;
 
-//	DELAY_MS(2000);
+	DELAY_MS(2000);
 
 	for(;;)
 	{
