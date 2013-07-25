@@ -38,7 +38,7 @@ ledInit(void)
 }
 
 /*
- * 函数功能: 获取拨码开关的值 觉得速度策略
+ * 函数功能: 获取拨码开关的值 决定速度策略
  */
 void
 getSpeedChoice(void)
