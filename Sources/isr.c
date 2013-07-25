@@ -22,7 +22,7 @@ static vuint32 encoder_cnt;
 void 
 PORTA_ISR(void)         //场中断处理函数
 {
-	if(PORTA_ISFR & (1 << 29))                       //PTA29触发中断
+	if(PORTA_ISFR & (1 << 29))                       //PTA29触发场中断
 	{
 		switch(img_flag)
 		{
@@ -45,23 +45,9 @@ PORTA_ISR(void)         //场中断处理函数
 	PORTA_ISFR  = ~0;                              //场中断里，全部都要清中断标志位
 }
 
-//extern vint8 startLine;
-//
-//void 
-//PORTB_ISR(void)
-//{
-//	GPIOD_PDOR |= (PORTB_ISFR & (0xf<<20)) >> 12;
-//	if(startLine){
-//		if(PORTB_ISFR & (0xf << 20)){
-//			if(((PORTB_ISFR & (0xf<<20)) >> 20) >= 2){
-//				stopcar();
-//			}
-//		}
-//	}
-//	PORTB_ISFR = ~0;
-//}
-
-
+/*
+ * 图像采集完成的DMA中断
+ */
 void 
 DMA0_ISR(void)
 {
@@ -76,12 +62,12 @@ extern vint32  speed_cnt;
 vint32 imgspeed;
 
 void 
-PIT0_ISR(void)
+PIT0_ISR(void)			//PIT0 中断函数 每1ms执行一次 获得编码器的值
 {
 	speed_cnt = encoder_cnt;
 	getEncoder = 1;
 	encoder_cnt = 0;
-	imgspeed ++;
+	imgspeed ++;		//测量图像处理所需时间的变量
 
 	printf("\t");
 

@@ -15,11 +15,14 @@
 #include "derivative.h" /* include peripheral declarations */
 
 //全局变量
-speedChoice choice;
-int32 imgcount = 0;
-extern vint8 startLine ;
-int8 isStraight = 1;
+speedChoice choice;				//速度选择
+int32 imgcount = 0;				//计算图像采集的场数, 用来跳过一开始的起跑线检测
+extern vint8 startLine ;		//是否检测起跑线  0 为不检测  1 为检测
+int8 isStraight = 1;			//是否是直直道	 1 为直道    0 为非直道
 
+/*
+ * 函数功能: 初始化核心板上的LED灯作为程序的指示
+ */
 void
 ledInit(void)
 {
@@ -34,6 +37,9 @@ ledInit(void)
 	GPIO_init(PORT_D, &initGPIO);
 }
 
+/*
+ * 函数功能: 获取拨码开关的值 觉得速度策略
+ */
 void
 getSpeedChoice(void)
 {
@@ -89,14 +95,14 @@ main(void)
 
 	EnableInterrupts;   //开全局中断
 	
-	startLine = 1;
-	isStraight = 1;
+	startLine = 1;		// 检测起跑线
+	isStraight = 1;		// 是直道
 
-	DELAY_MS(2000);
-
+	DELAY_MS(2000);		// 规则规定发车需延时两秒钟
+	
 	for(;;)
 	{
-		speed = imgProcess();
-		motorSetSpeed(speed);
+		speed = imgProcess();	// 图像处理 舵机控制 并计算速度控制值
+		motorSetSpeed(speed);	// 速度控制
 	}
 }

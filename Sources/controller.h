@@ -66,7 +66,7 @@ void
 motorSetSpeed(int32 speed);
 
 /**
- * É²³µ
+ * Í£³µ
  */
 void
 stopcar(void);

@@ -98,7 +98,6 @@ void steerSetDuty(int32 duty)
 		duty = STEER_MIN;
 	}
 	FTM_PWM_Duty(STEER_FTM, STEER_CHN, duty);
-	//	FTM_PWM_init(STEER_FTM, STEER_CHN, STEER_FREQ, duty);
 }
 
 void 
@@ -137,7 +136,7 @@ motorSetSpeed(int32 speed)
 
 		duty = duty + pwm;
 
-#ifdef SPEED
+#ifdef SPEED			//如果是调试速度控制参数 用AT2401发送编码器返回的值
 		txbuff[0] = speed_cnt / (1 << 24);
 		txbuff[1] = speed_cnt/(1 << 16) - (speed_cnt/(1<<24) << 8);
 		txbuff[2] = speed_cnt/(1 << 8) - (speed_cnt/(1<<16) << 8);
@@ -153,7 +152,7 @@ motorSetSpeed(int32 speed)
 		if(duty >= FTM_PRECISON*2/3) duty = FTM_PRECISON*2/3;
 		if(duty <= 0) duty = 0;
 
-		if(speed_cnt > speed){
+		if(speed_cnt > speed){	//如果当前速度大于期望速度 则刹车
 			FTM_PWM_Duty(MOTOR1_FTM, MOTOR1_CHN, 0);
 			FTM_PWM_Duty(MOTOR2_FTM, MOTOR2_CHN, 0);
 		}else{
@@ -173,6 +172,9 @@ motorSetSpeed(int32 speed)
 #endif
 }
 
+/*
+ * 停车
+ */
 extern vint8 startLine;
 void
 stopcar(void)
@@ -183,7 +185,7 @@ stopcar(void)
 	while(1)
 	{
 		startLine = 0;
-		imgProcess();
-		GPIOD_PDOR &= ~(0xff << 8);
+		imgProcess();		//刹车时 舵机不能打死
+		GPIOD_PDOR &= ~(0xff << 8);  // 刹车后 指示灯全亮
 	}
 }

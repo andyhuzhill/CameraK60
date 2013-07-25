@@ -14,33 +14,32 @@
  */
 
 #include "img_process.h"
-#include "string.h"
+#include "string.h"				//为了使用memset函数
 
 //// 本模块公共变量声明
-static int8 leftBlack[IMG_H] = {0};
-static int8 rightBlack[IMG_H]={0};
-static int8 middle[IMG_H] = {0};                         //记录中线位置
+static int8 leftBlack[IMG_H] = {0};						//记录左边黑线位置
+static int8 rightBlack[IMG_H]={0};						//记录右边黑线位置
+static int8 middle[IMG_H] = {0};                        //记录中线位置
 
-static uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];
+static uint8 nrf_buff[CAMERA_SIZE + MAX_ONCE_TX_NUM];	//无线发送用的数组
 static uint8 *srcImg = (uint8 *)(((uint8 *)&nrf_buff)+COM_LEN); //保存摄像头采集数据
 static vuint8 img[IMG_H][IMG_W];                         //将摄像头采集数据另存入此数组
 static int8 leftLostRow=0, rightLostRow =0;              //左右边线丢失的行数
 
 
-static int8 lostRow;
+static int8 lostRow;					//图像丢线的行数
 static int8 startRow;
 
-int8 maxspeed ;
-int8 minspeed ;
-static int8 getStartLine = 0;
+int8 maxspeed ;							//设置最大速度
+int8 minspeed ;							//设置最小速度
 
 ////// 外部公共变量声明
-extern volatile IMG_STATE img_flag;
-extern vint32 imgspeed;
-extern speedChoice choice;
-extern int32 imgcount;
-extern PidObject pidSteer;
-extern int8 isStraight;
+extern volatile IMG_STATE img_flag;		//图像采集状态变量
+extern vint32 imgspeed;					//用来测试图像处理程序的速度的变量(调试用)
+extern speedChoice choice;				//速度控制策略
+extern int32 imgcount;					//计算图像采集的场数, 用来跳过一开始的起跑线检测
+extern PidObject pidSteer;				//舵机PID控制结构体
+extern int8 isStraight;					//判断是否是直道 1 为直道 0 为非直道
 
 vint8 startLine = 0;
 
@@ -69,16 +68,16 @@ imgGetImg(void)
 int
 imgProcess(void)
 {
-	static int32 ret;
-	int error = 0;
-	int sum = 0;
-	int8 average;
+	static int32 ret;			//返回速度控制量
+	int error = 0;				//计算图像中心与摄像头中心的偏差
+	int sum = 0;				//求和用的临时变量
+	int8 average;				//计算所有有效行的图像中心的平均值
 	
-#ifdef SENDIMG
+#ifdef SENDIMG					//如果定义了 SENDIMG 宏 将使用AT2401无线模块发送图像数据
 	int8 status = 0;
 #endif
 
-#ifdef SDCARD
+#ifdef SDCARD					//如果定义了 SDCARD 宏, 将使用TF卡保存图像数据
 	FATFS fs;
 	FIL file;
 	int res;
@@ -94,14 +93,14 @@ imgProcess(void)
 
 		imgcount ++;
 
-		imgResize();
+		imgResize();					//将图像解压保存到IMG_W x IMG_H 的数组中方便处理
 		img_flag = IMG_READY;
-		imgGetImg();
+		imgGetImg();					//此时图像已经解压完成,可以进行下一次的DMA图像采集 减少图像采集的时间间隔
 
-		imgFilter();
-		imgFindLine();
-		imgGetMidLine();
-		average = imgAverage(MAX(lostRow+4, 5), 50);
+		imgFilter();					// 滤除图像部分杂乱的点
+		imgFindLine();					// 找到跑道的左右两边黑线
+		imgGetMidLine();				// 找到跑道的中心线
+		average = imgAverage(MAX(lostRow+4, 5), 50);  //计算有效行的中心线平均值
 
 #ifdef SENDIMG
 		NRF_MSG_send(COM_IMG, nrf_buff);
@@ -112,32 +111,32 @@ imgProcess(void)
 
 #endif
 
-		if((imgcount >= 500) && 
-				startLine && isStraight && 
-				(ABS(average-IMG_MID)<=3)){
-			imgStartLine();
+		if((imgcount >= 500) && 			// 超过发车时的起跑线
+				startLine && isStraight &&  // 设置为检测起跑线 且目前的图像没有补线 不是小S虚线或十字路口
+				(ABS(average-IMG_MID)<=3)){ // 当前图像为直道     
+			imgStartLine();					// 检测起跑线 如果检测到将刹车
 		}
 
-		error = average - IMG_MID;
+		error = average - IMG_MID;			// 计算图像中心与摄像头中心的偏差值
 
 		//角度控制
-		if(ABS(error) <= 3){
-			pidSteer.kp = error*error/8 + 20;
-			pidSteer.kd = 300;
-		}else{
-			pidSteer.kp = error*error/5 + 50;
-			pidSteer.kd = 400;
+		if(ABS(error) <= 3){					//如果偏差值较小
+			pidSteer.kp = error*error/8 + 20;   //舵机控制的P值较小
+			pidSteer.kd = 300;					//舵机控制的D值较小
+		}else{									//如果偏差值较大
+			pidSteer.kp = error*error/5 + 50;   //舵机控制的P值较大	
+			pidSteer.kd = 400;					//舵机控制的D值较大
 		}
 
-		ret = steerUpdate(error);
+		ret = steerUpdate(error);				//使用位置式PID计算舵机输出值
 		ret += STEER_MID;
-		steerSetDuty(ret);
+		steerSetDuty(ret);						//输出舵机控制值
 
 		//速度控制
-		error = imgAverage(lostRow, lostRow+4)-IMG_MID;
-		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;
+		error = imgAverage(lostRow, lostRow+4)-IMG_MID;		//计算较远处中心线的平均值
+		ret = maxspeed - (maxspeed-minspeed)*(error)*(error)/1600;	//计算速度控制量
 
-#ifdef SDCARD
+#ifdef SDCARD		//按指定格式保存图像
 		res = f_open(&file, "0:/img.img", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
 
 		filesize = f_size(&file);
@@ -157,7 +156,7 @@ imgProcess(void)
 		f_close(&file);
 #endif 
 
-#ifdef SERIALIMG
+#ifdef SERIALIMG		//按指定格式发送图像
 		printf("img\n");
 		for (int row = 0; row < IMG_H; ++row) {
 			for (int col = 0; col < IMG_W ; ++col)  {
@@ -175,6 +174,7 @@ imgProcess(void)
 
 /**
  * 影响到的变量 img[]
+ * 将以字节保存八个像素点的图像数据 解压为一个字节一个像素点的数组
  */
 __relocate_code__
 void
@@ -353,9 +353,9 @@ imgFindLine(void)
 #else
 	int8_t row, col;
 
-	int8_t leftStart, leftEnd, rightStart, rightEnd;
+	int8_t leftStart, leftEnd, rightStart, rightEnd; //每次左右边线扫描的起止点
 	int8_t getLeftBlack=0, getRightBlack=0;  //标志是否找到黑线
-	int8_t leftLostCnt =0, rightLostCnt=0;
+	int8_t leftLostCnt =0, rightLostCnt=0;   //记录下丢失左右边线的次数
 	int8_t slop1, slop2;
 
 	memset((void *)leftBlack, -1, sizeof(leftBlack));
@@ -363,7 +363,7 @@ imgFindLine(void)
 
 	isStraight = 1;
 
-	row = IMG_H -3;
+	row = IMG_H -3;				//从倒数第三行开始往上扫描
 	getRightBlack = getLeftBlack = 0;
 	do{
 		for (col = IMG_W/2 ; col >= 0; --col) {  // 先找左边黑线
@@ -409,7 +409,7 @@ imgFindLine(void)
 				if((ABS(leftBlack[row]-leftBlack[row+5]) > 20) && leftBlack[row+5] != -1){
 					leftBlack[row] = -1;
 					if(row > 10 && row < 50){
-						isStraight = 0;
+						isStraight = 0;			//如果有补线 就说明不是直道
 					}
 					continue;
 				}
@@ -455,7 +455,7 @@ imgFindLine(void)
 				if(rightBlack[row] < leftBlack[row] || (ABS(rightBlack[row]-leftBlack[row]) < 10) || ((ABS(rightBlack[row]-rightBlack[row+5]) > 20) && rightBlack[row+5] != IMG_W)){
 					rightBlack[row] = IMG_W;
 					if(row > 10 && row < 50){
-						isStraight = 0;
+						isStraight = 0;			//如果有补线了 就说明不是直道
 					}
 					continue;
 				}
@@ -500,7 +500,6 @@ __relocate_code__
 void
 imgGetMidLine(void)
 {
-#if 1
 	lostRow = 3;
 
 	memset((void *)middle, 0 , sizeof(middle));
@@ -549,44 +548,6 @@ imgGetMidLine(void)
 			}
 		}
 	}
-#else
-	int leftCnt=0, rightCnt=0;
-	lostRow = 3;
-	int slop1 = 0, slop2 = 0;
-
-	memset((void *)middle, IMG_W/2 , sizeof(middle));
-
-	for (int row = IMG_H-8; row > 0; --row) {
-		if(leftBlack[row] != -1 && rightBlack[row] != IMG_W && (leftBlack[row] < rightBlack[row])){
-			middle[row] = (leftBlack[row] + rightBlack[row])/2;
-			leftCnt = rightCnt = 0;
-			continue;
-		}else if(leftBlack[row] == -1 && rightBlack[row] != IMG_W){     //丢失左线
-			if(row > 50){
-				middle[row] = rightBlack[row] / 2 ;
-			}else{
-				middle[row] = middle[row+1] + (rightBlack[row+1] - rightBlack[row+2]);
-			}
-		}else if(leftBlack[row] != -1 && rightBlack[row] == IMG_W){     //丢失右线
-			if(row > 50){
-				middle[row] = (leftBlack[row]+IMG_W) /2 ;
-			}else{
-				middle[row] = middle[row+1] + (leftBlack[row+1] - leftBlack[row+2]);
-			}
-		}
-	}
-
-	for(int row = IMG_H-8; row > 1; --row){
-		middle[row]= (middle[row+1]+middle[row-1])/2;
-
-		if(middle[row]<3 || middle[row] > (IMG_W-3) || (ABS(middle[row]-middle[row+1])>=10)){
-			if(lostRow == 3){
-				lostRow = row;
-			}
-		}
-	}
-
-#endif
 }
 
 
@@ -660,43 +621,23 @@ __relocate_code__
 int
 imgStartLine(void)
 {
-
-	//	if((GPIO_read_bit(PORT_B, 20) + GPIO_read_bit(PORT_B, 21) + GPIO_read_bit(PORT_B, 22) + GPIO_read_bit(PORT_B,23)) <= 2 ){
-	//		stopcar();
-	//	}
 	int8 row, col;
-	int8 count = 0;
+	int8 count = 0;		//记录跳变点个数
 	int8 tiaobian[8] = {0};
 
 	for(row = IMG_H-8; row > (15); --row){
 		count = 0;
 		for(col =0; col < IMG_W-1; ++col){
 			if(img[row][col] != img[row][col+1]){
-				tiaobian[count ++] = col;
+				tiaobian[count ++] = col;		//记录某一行的跳变点位置
 			}
 		}
 
-		if(count == 6){
-			if(ABS(tiaobian[0] -leftBlack[row])<2 && ABS(tiaobian[5] -rightBlack[row])<2){
+		if(count == 6){				//如果跳变点数刚好为6个 (起跑线处跳变为6个)
+			if(ABS(tiaobian[0] -leftBlack[row])<2 && ABS(tiaobian[5] -rightBlack[row])<2){ 
+				//且 最左和最右 两个跳变点为找到的左右边线 说明是起跑线 则停车
 				stopcar();
 			}
-			//			for(col = middle[row]; col > 1; --col){
-			//				if(img[row][col] != 0 && img[row][col+1] == 0){
-			//					if(col == leftBlack[row]){
-			//						break;
-			//					}else{
-			//						for(col = middle[row]; col < IMG_W-1; ++col){
-			//							if(img[row][col] != 0 && img[row][col-1] ==0){
-			//								if(col == rightBlack[row]){
-			//									break;
-			//								}else{
-			//									stopcar();
-			//								}
-			//							}
-			//						}
-			//					}
-			//				}
-			//			}
 		}
 	}
 

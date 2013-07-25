@@ -61,7 +61,6 @@
 #define STEER_MAX  				(6400)
 #define STEER_MIN  				(3800)
 
-
 #define STEER_FTM               FTM2
 #define STEER_CHN               CH0
 #define STEER_FREQ              300         //单位Hz
@@ -94,9 +93,9 @@
 
 //#define  SDCARD			//SD卡调试
 
-//#define  SERIAL
+//#define  SERIAL			//串口调试
 
-//#define SENDIMG
+//#define SENDIMG			//无线图像发送
 
 #ifdef SENDIMG
 	#ifndef AT2401
@@ -105,7 +104,7 @@
 #endif
 
 
-//#define SPEED
+//#define SPEED				//无线速度发送
 
 #ifdef SPEED
 #ifndef AT2401
@@ -113,7 +112,7 @@
 #endif
 #endif
 
-#define  CLOSE_LOOP		//闭环调速
+#define  CLOSE_LOOP		//定义是否闭环调速
 
 typedef enum{
 	LOWEST  = 0,
